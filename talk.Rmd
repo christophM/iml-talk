@@ -1,0 +1,47 @@
+---
+title: "Interpretable Machine Learning"
+author: "Christoph Molnar"
+date: "December 11, 2017"
+output: ioslides_presentation
+---
+
+
+## What is Machine Learning
+
+##
+![](images/machine-learning-xkcd.png)
+
+## Interpretability
+- The degree to which an observer can understand the cause of a decision.
+- Current state in machine learning: Minimize loss, get best prediction, ignore interpretation
+- Current state in statistics: Fit model, interpret output, ignore predictive performance
+- Ideal world: Get best predictive performance + interpretability
+
+## When is it important
+
+
+## Different entry points
+- Understand data better
+- Use only interpretable models (sparse linear models, short decision trees, rules, ...)
+- **Apply model-agnostic methods to make black boxes interpretable**
+
+## Model-agnostic methods
+- Not bound to model
+- Use always the same type of explanation
+- ...
+- Disadvantage: Can't take advantage of internal structures
+
+## Predicting house prices
+TODO: Add example dataset
+
+## PDP
+
+## ICE
+
+## LIME
+
+## Shapley value
+
+## The big picture
+
+## Book
