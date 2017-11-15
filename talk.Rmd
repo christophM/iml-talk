@@ -31,8 +31,18 @@ output: ioslides_presentation
 - ...
 - Disadvantage: Can't take advantage of internal structures
 
-## Predicting house prices
-TODO: Add example dataset
+## Predicting data scientist salaries
+Kaggle survey data
+n  = ...
+Questions asked: ...
+
+## Predicting data scientist scenario
+TODO: Show code to fit the model
+
+## Hypothetical scenario
+We are an HR consulting company that want to use the model to suggest data scientist compensations for companies. 
+We have the model now. 
+Do we use it?
 
 ## PDP
 
