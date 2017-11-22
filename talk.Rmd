@@ -8,6 +8,50 @@ output: ioslides_presentation
 
 ## What is Machine Learning
 
+Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+
+# Let's predict data scientist salaries
+
+## Step 1: Find a problem
+Hypothetical scenario: For a customer, an HR company, we want to predict data scientist salaries. 
+
+
+## Step 2: Find some data
+Kaggle conducted an industry-wide survey of data scientists. 
+Questions asked: 
+- Demographic
+- Salary
+- Are you currently enrolled as a student at a degree granting school?	
+- How adequately do you feel your title describes what you do (or what you did if retired)?	
+- How long have you been learning data science?	
+TODO: Add only relevant questions here for analysis
+
+
+```{r load-data, warning=FALSE, include=FALSE}
+library('mlr')
+library('ggplot2')
+source('code/prepare-kaggle-data.R')
+```
+
+
+
+## Step 3: Throw ML on your data
+```{r learn}
+set.seed(42)
+task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
+n = getTaskSize(task)
+lrn = makeLearner('regr.randomForest')
+mod = train(lrn, task, subset = seq(1, n, 2))
+pred = predict(mod, task = task, subset = seq(2, n, 2))
+## TODO: Find better variables https://www.kaggle.com/kaggle/kaggle-survey-2017/data
+performance(pred, measures = list('mae'=mae))
+```
+## We are done! {.center}
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/done-here.gif")
+```
+
 ##
 ![](images/machine-learning-xkcd.png)
 
@@ -18,12 +62,13 @@ output: ioslides_presentation
 - Ideal world: Get best predictive performance + interpretability
 
 ## When is it important
-
+http://people.dbmi.columbia.edu/noemie/papers/15kdd.pdf
+Asthma example
 
 ## Different entry points
-- Understand data better
-- Use only interpretable models (sparse linear models, short decision trees, rules, ...)
-- **Apply model-agnostic methods to make black boxes interpretable**
+- Understand data better $\rightarrow$ do it!
+- Use only interpretable models (sparse linear models, short decision trees, rules, ...) $\rightarrow$ does not always work. 
+- **Apply model-agnostic methods to make black boxes interpretable** $\rightarrow$ cool, tell me more
 
 ## Model-agnostic methods
 - Not bound to model
@@ -31,20 +76,30 @@ output: ioslides_presentation
 - ...
 - Disadvantage: Can't take advantage of internal structures
 
-## Predicting data scientist salaries
-Kaggle survey data
-n  = ...
-Questions asked: ...
 
-## Predicting data scientist scenario
-TODO: Show code to fit the model
+## Partial dependence plots
+TODO: Fix Tenure variable ordering
+TODO: Rotate labels
+```{r}
+pdp1 = generatePartialDependenceData(mod, task, features =c('Tenure'))
+ggplot(pdp1$data) + geom_point(aes(x=Tenure, y=CompensationAmount)) + 
+  scale_y_continuous(limits=c(0, NA))
+```
 
-## Hypothetical scenario
-We are an HR consulting company that want to use the model to suggest data scientist compensations for companies. 
-We have the model now. 
-Do we use it?
 
-## PDP
+## By age
+
+```{r}
+pdp1 = generatePartialDependenceData(mod, task, features =c('Age'))
+plotPartialDependence(pdp1) + scale_y_continuous(limits = c(0, NA))
+```
+
+## By education
+
+```{r}
+pdp1 = generatePartialDependenceData(mod, task, features =c('FormalEducation'))
+plotPartialDependence(pdp1) + scale_y_continuous(limits = c(0, NA))
+```
 
 ## ICE
 
