@@ -5,25 +5,33 @@ date: "December 11, 2017"
 output: ioslides_presentation
 ---
 
+##
+
+![](images/wow.jpg)
+
+
+# Let's predict data scientist salaries
+
+
 
 ## What is Machine Learning
 
 Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
 
-# Let's predict data scientist salaries
 
-## Step 1: Find a problem
-Hypothetical scenario: For a customer, an HR company, we want to predict data scientist salaries. 
+![](images/magic.jpg)
 
 
-## Step 2: Find some data
+## Step 1: Find some data
 Kaggle conducted an industry-wide survey of data scientists. 
-Questions asked: 
+Questions asked:  
+
 - Demographic
 - Salary
 - Are you currently enrolled as a student at a degree granting school?	
 - How adequately do you feel your title describes what you do (or what you did if retired)?	
 - How long have you been learning data science?	
+
 TODO: Add only relevant questions here for analysis
 
 
@@ -35,25 +43,90 @@ source('code/prepare-kaggle-data.R')
 
 
 
-## Step 3: Throw ML on your data
-```{r learn}
+## Step 2: Throw ML on your data
+```{r learn, warning=FALSE}
 set.seed(42)
 task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
 n = getTaskSize(task)
-lrn = makeLearner('regr.randomForest')
+lrn = makeLearner('regr.randomForest', importance=TRUE)
 mod = train(lrn, task, subset = seq(1, n, 2))
 pred = predict(mod, task = task, subset = seq(2, n, 2))
 ## TODO: Find better variables https://www.kaggle.com/kaggle/kaggle-survey-2017/data
-performance(pred, measures = list('mae'=mae))
 ```
-## We are done! {.center}
+## Step 3: Profit. We are done! {.center}
 
 ```{r, echo=FALSE}
 knitr::include_graphics("images/done-here.gif")
 ```
 
+## 
+
+![](images/Hide-the-pain-harold-phone.jpg)
+
+## "There is a problem with the model!"
+![](images/age.jpeg)
+
+## Individual Conditional Expectation
+
+```{r}
+ice = generatePartialDependenceData(mod, task, features =c('Age'), 
+                                     individual = TRUE)
+plotPartialDependence(ice) + scale_y_continuous(limits=c(0, NA))
+```
+
+## ICE, centered
+
+```{r}
+ice.centered = generatePartialDependenceData(mod, task, 
+                features =c('Age'), individual = TRUE, center = list(Age=20))
+plotPartialDependence(ice.centered)
+```
+
+
+## Partial dependence plots
+```{r}
+pdp = generatePartialDependenceData(mod, task, features =c('Age'))
+plotPartialDependence(pdp) + scale_y_continuous(limits=c(0, NA))
+```
+
+
+## "We want to understand the model better!"
+
+
+## Permutation feature importance
+
+```{r, warning=FALSE}
+feat.imp = getFeatureImportance(mod, type=1)
+knitr::kable(t(feat.imp$res))
+```
+
+## Gender?
+
+```{r}
+pdp = generatePartialDependenceData(mod, task, features =c('GenderSelect'))
+knitr::kable(pdp$data)
+```
+
 ##
-![](images/machine-learning-xkcd.png)
+
+![](images/hidden-pain-bias.jpg)
+
+## 
+
+TODO: Add zoomed in version of Hidden Pain Harolds face
+
+## "We want to understand each decision!"
+
+
+## Shapley value
+
+Based on Game theory. 
+TODO: Add visualisation
+
+## Shapley value
+
+TODO: Calculate shapley value for one instance. 
+
 
 ## Interpretability
 - The degree to which an observer can understand the cause of a decision.
@@ -76,37 +149,8 @@ Asthma example
 - ...
 - Disadvantage: Can't take advantage of internal structures
 
-
-## Partial dependence plots
-TODO: Fix Tenure variable ordering
-TODO: Rotate labels
-```{r}
-pdp1 = generatePartialDependenceData(mod, task, features =c('Tenure'))
-ggplot(pdp1$data) + geom_point(aes(x=Tenure, y=CompensationAmount)) + 
-  scale_y_continuous(limits=c(0, NA))
-```
-
-
-## By age
-
-```{r}
-pdp1 = generatePartialDependenceData(mod, task, features =c('Age'))
-plotPartialDependence(pdp1) + scale_y_continuous(limits = c(0, NA))
-```
-
-## By education
-
-```{r}
-pdp1 = generatePartialDependenceData(mod, task, features =c('FormalEducation'))
-plotPartialDependence(pdp1) + scale_y_continuous(limits = c(0, NA))
-```
-
-## ICE
-
-## LIME
-
-## Shapley value
-
-## The big picture
-
 ## Book
+Interested in learning more! 
+
+Read my book: https://christophm.github.io/xai-book/
+
