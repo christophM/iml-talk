@@ -5,7 +5,8 @@ date: "December 11, 2017"
 output: ioslides_presentation
 ---
 
-##
+## 
+Scenario: A company approaches you to predict data scientist salaries with machine learning.  
 
 ![](images/wow.jpg)
 
