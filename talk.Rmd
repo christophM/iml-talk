@@ -39,6 +39,8 @@ TODO: Add only relevant questions here for analysis
 ```{r load-data, warning=FALSE, include=FALSE}
 library('mlr')
 library('ggplot2')
+library('tidyr')
+library('lime')
 source('code/prepare-kaggle-data.R')
 ```
 
@@ -56,35 +58,48 @@ pred = predict(mod, task = task, subset = seq(2, n, 2))
 ```
 ## Step 3: Profit. We are done! {.center}
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, out.width='70%', fig.align='center'}
 knitr::include_graphics("images/done-here.gif")
+```
+
+
+
+## "There is a problem with the model!"
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
+```
+
+
+## "The older the applicants, the higher the predicted salary, regardless of skills."
+```{r, echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("images/age.jpeg")
+```
+
+
+
+# Individual Conditional Expectation
+
+##
+
+```{r}
+ice = generatePartialDependenceData(mod, task, features ='Age', 
+                                    individual = TRUE)
+plotPartialDependence(ice) + scale_y_continuous(limits=c(0, NA))
 ```
 
 ## 
 
-![](images/Hide-the-pain-harold-phone.jpg)
-
-## "There is a problem with the model!"
-![](images/age.jpeg)
-
-## Individual Conditional Expectation
-
 ```{r}
-ice = generatePartialDependenceData(mod, task, features =c('Age'), 
-                                     individual = TRUE)
-plotPartialDependence(ice) + scale_y_continuous(limits=c(0, NA))
-```
-
-## ICE, centered
-
-```{r}
-ice.centered = generatePartialDependenceData(mod, task, 
-                features =c('Age'), individual = TRUE, center = list(Age=20))
-plotPartialDependence(ice.centered)
+ice.c = generatePartialDependenceData(mod, task, features ='Age', 
+          individual = TRUE, center = list(Age=20))
+plotPartialDependence(ice.c)
 ```
 
 
-## Partial dependence plots
+# Partial dependence plots
+
+##
+
 ```{r}
 pdp = generatePartialDependenceData(mod, task, features =c('Age'))
 plotPartialDependence(pdp) + scale_y_continuous(limits=c(0, NA))
@@ -93,15 +108,23 @@ plotPartialDependence(pdp) + scale_y_continuous(limits=c(0, NA))
 
 ## "We want to understand the model better!"
 
+# Permutation feature importance
 
-## Permutation feature importance
+##
 
 ```{r, warning=FALSE}
-feat.imp = getFeatureImportance(mod, type=1)
-knitr::kable(t(feat.imp$res))
+feat.imp = getFeatureImportance(mod, type=1)$res
+dat = gather(feat.imp, key='Feature', value='Importance') %>% arrange(Importance)
+dat$Feature = factor(dat$Feature, levels = dat$Feature)
+ggplot(dat)  + geom_point(aes(y=Feature, x = Importance))
 ```
 
-## Gender?
+## Gender?!
+```{r, echo=FALSE, fig.align='center', out.width='60%'}
+knitr::include_graphics("images/big-mistake.png")
+```
+
+##
 
 ```{r}
 pdp = generatePartialDependenceData(mod, task, features =c('GenderSelect'))
@@ -110,23 +133,29 @@ knitr::kable(pdp$data)
 
 ##
 
-![](images/hidden-pain-bias.jpg)
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/hidden-pain-bias.jpg")
+```
 
-## 
 
-TODO: Add zoomed in version of Hidden Pain Harolds face
 
 ## "We want to understand each decision!"
 
 
-## Shapley value
+# LIME
 
-Based on Game theory. 
-TODO: Add visualisation
+## 
+```{r, echo=FALSE, fig.align='center'}
+set.seed(44)
+```
+```{r, echo=TRUE, fig.align='center'}
+dat = getTaskData(task)
+explanation <- lime(dat, mod)
+# Explain new instance
+explainer <- lime::explain(dat[3, ], explanation, n_features = 3)
+plot_features(explainer, ncol=1)
+```
 
-## Shapley value
-
-TODO: Calculate shapley value for one instance. 
 
 
 ## Interpretability
@@ -136,22 +165,12 @@ TODO: Calculate shapley value for one instance.
 - Ideal world: Get best predictive performance + interpretability
 
 ## When is it important
-http://people.dbmi.columbia.edu/noemie/papers/15kdd.pdf
-Asthma example
+Interpretability of machine learning models is when the problem is fundamentally underspecified. 
 
-## Different entry points
-- Understand data better $\rightarrow$ do it!
-- Use only interpretable models (sparse linear models, short decision trees, rules, ...) $\rightarrow$ does not always work. 
-- **Apply model-agnostic methods to make black boxes interpretable** $\rightarrow$ cool, tell me more
-
-## Model-agnostic methods
-- Not bound to model
-- Use always the same type of explanation
-- ...
-- Disadvantage: Can't take advantage of internal structures
 
 ## Book
 Interested in learning more! 
 
-Read my book: https://christophm.github.io/xai-book/
+Read my book about "Interpretable Machine Learning"
+https://christophm.github.io/xai-book/
 
