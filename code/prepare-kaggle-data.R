@@ -1,12 +1,13 @@
 ## Prepare survey data
 library('dplyr')
+library('mlr')
 data.dir = 'data/'
 
 survey.raw = read.csv(sprintf('%smultipleChoiceResponses.csv', data.dir), na.strings = c('NA', '-1', '-99', ''))
 exchange = read.csv(sprintf('%sconversionRates.csv', data.dir), row.names = 1)
 survey = survey.raw
 
-survey = filter(survey, CompensationCurrency %in% c('EUR', 'USE'))
+survey = filter(survey, CompensationCurrency %in% c('EUR'))
 
 usd.to.eur = 1/exchange[exchange$originCountry == 'EUR','exchangeRate']
 # Choose variables of interest
@@ -18,16 +19,6 @@ survey = left_join(survey, exchange, by = c('CompensationCurrency' = 'originCoun
 survey$CompensationAmount = usd.to.eur * survey$CompensationAmount * survey$exchangeRate
 survey$CompensationCurrency = NULL
 survey$exchangeRate = NULL
-
-
-## Fix country
-source('code/countries-to-continents.R')
-survey$Country = as.character(survey$Country)
-survey$Country[survey$Country == "People 's Republic of China"] <- "People's Republic of China"
-survey$Country[survey$Country == "Republic of China"] <- "People's Republic of China"
-survey$Continent <- Countries.Continents$Continent[match(survey$Country,
-                                                              Countries.Continents$Country)]
-survey$Continent = droplevels(as.factor(survey$Continent))
 
 ## Remove missing and exorbitant salaries
 survey = filter(survey, !is.na(CompensationAmount) & CompensationAmount < 200000)
@@ -44,20 +35,17 @@ survey = filter(survey, !is.na(CompensationAmount) & CompensationAmount < 200000
 mean.missing = lapply(survey, function(x) mean(is.na(x)))
 mean.missing[mean.missing < 0.1]
 survey$EmploymentStatus = droplevels(survey$EmploymentStatus)
-survey = select(survey, GenderSelect, Continent, Age, EmploymentStatus, CurrentJobTitleSelect, TitleFit, 
+survey = select(survey, Gender=GenderSelect, Age, CodeWriter, EmploymentStatus, JobTitle=CurrentJobTitleSelect, 
                 CompensationAmount, LanguageRecommendationSelect, LearningDataScienceTime,
-                FormalEducation, Tenure)
+                FormalEducation, Tenure, DataScientist=DataScienceIdentitySelect, JobSkillImportanceR)
+
+survey$Gender = factor(survey$Gender, levels = c('Female', 'Male', 'A different identity', 
+                                              'Non-binary, genderqueer, or gender non-conforming'))
 
 nunique = function(x){length(unique(x))}
 lapply(survey, nunique)
 survey.imp = impute(survey, classes = list(integer = imputeMean(), factor = imputeMode()))
 survey.dat = survey.imp$data
-
-# 
-# pdp1 = generatePartialDependenceData(mod, task, features = c('GenderSelect'))
-# ggplot(pdp1$data) + geom_point(aes(x = GenderSelect, y = CompensationAmount), stat='identity') + scale_y_continuous(limits = c(0, NA))
-# 
-# 
 
 
 
