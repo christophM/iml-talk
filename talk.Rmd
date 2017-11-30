@@ -54,6 +54,7 @@ source('code/prepare-kaggle-data.R')
 
 ## Step 2: Throw ML on your data
 ```{r learn, warning=FALSE}
+library('mlr')
 set.seed(42)
 task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
 lrn = makeLearner('regr.randomForest', importance=TRUE)
