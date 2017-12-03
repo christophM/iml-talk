@@ -181,7 +181,7 @@ plot_features(explainer, ncol=1)
 ## Interested in learning more?
 
 Read my book about "Interpretable Machine Learning"
-https://christophm.github.io/xai-book/
+https://christophm.github.io/interpretable-ml-book/
 
 ```{r, echo=FALSE, fig.align='center', out.width='80%'}
 knitr::include_graphics("images/book.png")
