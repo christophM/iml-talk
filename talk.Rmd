@@ -58,6 +58,7 @@ source('code/prepare-kaggle-data.R')
 
 ## Step 2: Throw ML on your data
 ```{r learn, warning=FALSE}
+library('mlr')
 set.seed(42)
 task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
 lrn = makeLearner('regr.randomForest', importance=TRUE)
@@ -184,7 +185,7 @@ plot_features(explainer, ncol=1)
 ## Interested in learning more?
 
 Read my book about "Interpretable Machine Learning"
-https://christophm.github.io/xai-book/
+https://christophm.github.io/interpretable-ml-book/
 
 ```{r, echo=FALSE, fig.align='center', out.width='80%'}
 knitr::include_graphics("images/book.png")
