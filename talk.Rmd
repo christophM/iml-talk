@@ -64,7 +64,7 @@ task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
 lrn = makeLearner('regr.randomForest', importance=TRUE)
 mod = train(lrn, task)
 ```
-## Step 3: Profit. We are done! {.center}
+## Step 3: Profit. {.center}
 
 ```{r, echo=FALSE, out.width='70%', fig.align='center'}
 knitr::include_graphics("images/done-here.gif")
@@ -98,6 +98,9 @@ ice = generatePartialDependenceData(mod, task, features ='Age',
 plotPartialDependence(ice) + scale_y_continuous(limits=c(0, NA))
 ```
 
+
+<font size="2">Goldstein, A., Kapelner, A., Bleich, J., & Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1–22. https://doi.org/10.1080/10618600.2014.907095 </font>
+
 ## 
 
 ```{r}
@@ -116,6 +119,8 @@ pdp = generatePartialDependenceData(mod, task, features =c('Age'))
 plotPartialDependence(pdp) + scale_y_continuous(limits=c(0, NA))
 ```
 
+<font size="2">Friedman, J. H. (1999). Greedy Function Approximation : A Gradient Boosting Machine. North, 1(3), 1–10. https://doi.org/10.2307/2699986 </font>
+
 
 ##  {.emphasizedabit}
 
@@ -131,6 +136,8 @@ dat = gather(feat.imp, key='Feature', value='Importance') %>% arrange(Importance
 dat$Feature = factor(dat$Feature, levels = dat$Feature)
 ggplot(dat)  + geom_point(aes(y=Feature, x = Importance))
 ```
+
+<font size="2">Breiman, Leo. "Random forests." Machine learning 45.1 (2001): 5-32. </font>
 
 ## Gender?!
 ```{r, echo=FALSE, fig.align='center', out.width='80%'}
@@ -172,14 +179,16 @@ knitr::include_graphics("images/angry.gif")
 ## 
 ```{r, echo=FALSE, fig.align='center'}
 set.seed(44)
+dat = getTaskData(task)
 ```
 ```{r, echo=TRUE, fig.align='center'}
-dat = getTaskData(task)
 explanation <- lime(dat, mod)
-# Explain new instance
 explainer <- lime::explain(dat[3, ], explanation, n_features = 3)
 plot_features(explainer, ncol=1)
 ```
+
+
+<font size="2">Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). “Why Should I Trust You?”: Explaining the Predictions of Any Classifier. Retrieved from http://arxiv.org/abs/1602.04938</font>
 
 
 ## Interested in learning more?
