@@ -42,6 +42,10 @@ Information asked:
 - ...
 
 
+<font size="2">Contains information from Kaggle ML and Data Science Survey, 2017, which is made available here under the Open Database License (ODbL).</font>
+
+
+
 ```{r load-data, warning=FALSE, include=FALSE}
 library('mlr')
 library('ggplot2')
