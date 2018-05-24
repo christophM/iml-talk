@@ -9,7 +9,7 @@ survey = survey.raw
 
 survey = filter(survey, CompensationCurrency %in% c('EUR'))
 
-usd.to.eur = 1/exchange[exchange$originCountry == 'EUR','exchangeRate']
+# usd.to.eur = 1/exchange[exchange$originCountry == 'EUR','exchangeRate']
 # Choose variables of interest
 # GenderSelect, Country, Age, EmploymentStatus, StudentStatus, 
 # CodeWriter, CareerSwitsche, CurrentJobTitleSelect, TitleFit, 
@@ -35,9 +35,13 @@ survey = filter(survey, !is.na(CompensationAmount) & CompensationAmount < 200000
 mean.missing = lapply(survey, function(x) mean(is.na(x)))
 mean.missing[mean.missing < 0.1]
 survey$EmploymentStatus = droplevels(survey$EmploymentStatus)
-survey = select(survey, Gender=GenderSelect, Age, CodeWriter, EmploymentStatus, JobTitle=CurrentJobTitleSelect, 
-                CompensationAmount, LanguageRecommendationSelect, LearningDataScienceTime,
-                FormalEducation, Tenure, DataScientist=DataScienceIdentitySelect, JobSkillImportanceR)
+survey = select(survey, Gender=GenderSelect, Age, EmploymentStatus, JobTitle=CurrentJobTitleSelect, 
+                CompensationAmount, LanguageRecommendationSelect, EmployerIndustry,
+                FormalEducation, Tenure, DataScientist=DataScienceIdentitySelect, MLToolNextYearSelect, LanguageRecommendationSelect)
+
+survey$LanguageRecommendationSelect = droplevels(survey$LanguageRecommendationSelect)
+survey$MLToolNextYearSelect = droplevels(survey$MLToolNextYearSelect)
+
 
 survey$Gender = factor(survey$Gender, levels = c('Female', 'Male', 'A different identity', 
                                               'Non-binary, genderqueer, or gender non-conforming'))
