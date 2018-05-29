@@ -1,0 +1,264 @@
+---
+title: "Interpretable Machine Learning"
+author: "Christoph Molnar"
+date: "December 4, 2017"
+output: ioslides_presentation
+css: styles.css
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+  warning = FALSE,
+  message = FALSE, 
+  fig.align='center')
+```
+
+##  {.emphasizedabit}
+A client wants you to predict data scientist salaries with machine learning.  
+
+##
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/wow.jpg")
+```
+
+# Let's predict data scientist salaries
+
+
+
+## What is Machine Learning
+
+Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/magic.jpg")
+```
+
+
+## Step 1: Find some data
+Kaggle conducted an industry-wide survey of data scientists. 
+https://www.kaggle.com/kaggle/kaggle-survey-2017
+
+Information asked:  
+
+- Compensation
+- Demographics
+- Job title
+- Experience
+- ...
+
+
+<font size="2">Contains information from Kaggle ML and Data Science Survey, 2017, which is made available here under the Open Database License (ODbL).</font>
+
+
+
+```{r load-data,include=FALSE}
+library('mlr')
+library('ggplot2')
+library('tidyr')
+library('lime')
+source('code/prepare-kaggle-data.R')
+```
+
+
+
+## Step 2: Throw ML on your data
+```{r learn}
+library('mlr')
+set.seed(42)
+task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
+lrn = makeLearner('regr.randomForest')
+mod = train(lrn, task)
+```
+## Step 3: Profit. {.center}
+
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("images/done-here.gif")
+```
+
+##  {.emphasizedabit}
+
+"There is a problem with the model!"
+
+## What problem?
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
+```
+
+
+## "The older the applicants, the higher the predicted salary, regardless of skills."
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics("images/age.jpeg")
+```
+
+
+
+# Partial Dependence Plots
+
+##
+
+```{r}
+library("iml")
+X = survey.dat[-which(names(survey.dat) == "CompensationAmount")]
+predictor = Predictor$new(mod, data = X, y = getTaskTargets(task))
+pd = Partial$new(predictor, feature ='Age')
+pd$plot() 
+```
+
+
+<font size="2">Goldstein, A., Kapelner, A., Bleich, J., & Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1–22. https://doi.org/10.1080/10618600.2014.907095 </font>
+
+<font size="2">Friedman, J. H. (1999). Greedy Function Approximation : A Gradient Boosting Machine. North, 1(3), 1–10. https://doi.org/10.2307/2699986 </font>
+
+
+##  {.emphasizedabit}
+
+Client: "We want to understand the model better!"
+
+# Permutation feature importance
+
+##
+
+```{r, warning=FALSE}
+feat.imp = FeatureImp$new(predictor, loss = 'mae')
+feat.imp$plot()
+```
+
+<font size="2">Breiman, Leo. "Random forests." Machine learning 45.1 (2001): 5-32. </font>
+
+## Gender?!
+```{r, echo=FALSE, out.width='80%'}
+knitr::include_graphics("images/big-mistake.png")
+```
+
+##
+
+```{r}
+pdp = Partial$new(predictor, feature="Gender")
+pdp$plot() 
+```
+
+
+```{r}
+pdp$results[pdp$results$.type == "pdp", c("Gender", ".y.hat")]
+```
+
+
+##
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/hidden-pain-bias.jpg")
+```
+
+##
+
+```{r, echo=FALSE, out.width='40%'}
+knitr::include_graphics("images/angry.gif")
+```
+
+
+
+# LIME
+
+## 
+```{r, echo=FALSE}
+set.seed(44)
+```
+
+
+```{r}
+explanation = LocalModel$new(predictor)
+explanation$explain(X[15, ])
+explanation$plot()
+```
+
+
+<font size="2">Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). “Why Should I Trust You?”: Explaining the Predictions of Any Classifier. Retrieved from http://arxiv.org/abs/1602.04938</font>
+
+# Shapley
+
+## 
+```{r}
+set.seed(44)
+```
+
+
+```{r}
+explanation = Shapley$new(predictor)
+explanation$explain(X[15, ])
+explanation$plot()
+```
+
+
+# Some Theory
+
+## What is interpretability?
+
+Interpretability is the degree to which a human can understand the cause of a decision. 
+But we don't really have a good way to measure that really. Not as easy as benchmarking ML algorithms. 
+
+Some things:
+sparsity, contrastiveness, social, focus on the abnormal, truthful, coherent with prior beliefs, general and probable.
+
+<font size="2">Miller, Tim. 2017. “Explanation in Artificial Intelligence: Insights from the Social Sciences.” arXiv Preprint arXiv:1706.07269.</font>
+
+## When do we need interpretability?
+
+We need interpretability when the loss function does not cover all constraints. 
+
+(like, everything)
+
+## When don't we need interpretability?
+
+When we can capture everything in the loss function and the data collection.
+only causal relationships.
+perfect operationalization of features.
+
+## What tools do we have?
+
+- Intrinsically interpretable models
+- Tools for analyzing specific black box models
+- Model-agnostic tools: analysing any black box model
+- Interpretability through making data explainable
+
+
+### Interpretable Models
+
+TODO: Graphic with schematic interpretable model
+
+### Interpretable Models
+
+TODO: Graphic with tree+if-then-rules+decision tree
+
+## Model-agnostic methods
+TODO: Graphic with schematic Model-agnostic methods
+
+## Model-agnostic methods
+
+- Partial dependence plots
+- LIME
+- ...
+
+## Model-specific methods
+TODO: Graphic with schematic Model-specific methods
+
+TODO: add images from papers
+
+## Model-specific methods
+
+- RandomForestExplainer
+- Visualizing activations of neural networks
+- 
+
+
+## Interested in learning more?
+
+Read my book about "Interpretable Machine Learning"
+https://christophm.github.io/interpretable-ml-book/
+
+```{r, echo=FALSE, fig.align='center', out.width='30%'}
+knitr::include_graphics("images/book.jpg")
+```
+

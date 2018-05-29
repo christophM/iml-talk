@@ -9,7 +9,7 @@ survey = survey.raw
 
 survey = filter(survey, CompensationCurrency %in% c('EUR'))
 
-# usd.to.eur = 1/exchange[exchange$originCountry == 'EUR','exchangeRate']
+usd.to.eur = 1/exchange[exchange$originCountry == 'EUR','exchangeRate']
 # Choose variables of interest
 # GenderSelect, Country, Age, EmploymentStatus, StudentStatus, 
 # CodeWriter, CareerSwitsche, CurrentJobTitleSelect, TitleFit, 
