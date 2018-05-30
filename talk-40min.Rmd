@@ -71,6 +71,9 @@ task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
 lrn = makeLearner('regr.randomForest')
 mod = train(lrn, task)
 ```
+
+TODO: Insert image
+
 ## Step 3: Profit. {.center}
 
 ```{r, echo=FALSE, out.width='70%'}
@@ -191,6 +194,16 @@ explanation$explain(X[15, ])
 explanation$plot()
 ```
 
+## The Problem
+
+- Opaque decision making by machine learning algorithms
+- Examples: AI doctor, self-driving cars, creditworthiness
+- Trust as a user: Should I start severe therapy, because the machine said so?
+- Debugging as a practitioner: Why did the algorithm miss-classify sample X? Did it learn generalizable features? 
+
+##
+
+![](images/black-box.png)
 
 # Some Theory
 
@@ -210,11 +223,33 @@ We need interpretability when the loss function does not cover all constraints.
 
 (like, everything)
 
+- Debugging
+- Increasing trust
+
+### Example: Doctor and ML
+
+### Example: Predictive CV screening
+
+- Nasty feedback loops
+- Biased data
+- Proxies instead of causality
+- 
+
+## Example: 
+
+
 ## When don't we need interpretability?
 
 When we can capture everything in the loss function and the data collection.
 only causal relationships.
 perfect operationalization of features.
+
+Things that work well. 
+Well defined problems
+
+## Example: Digit recognition
+
+![](images/mnist.jpeg)
 
 ## What tools do we have?
 
@@ -224,27 +259,31 @@ perfect operationalization of features.
 - Interpretability through making data explainable
 
 
-### Interpretable Models
+## Interpretable Models
 
-TODO: Graphic with schematic interpretable model
+![](images/black-box.png)
 
-### Interpretable Models
+## Interpretable Models
 
-TODO: Graphic with tree+if-then-rules+decision tree
+![](images/white-box.png)
 
-## Model-agnostic methods
-TODO: Graphic with schematic Model-agnostic methods
 
-## Model-agnostic methods
+## Interpretable Models
 
-- Partial dependence plots
-- LIME
+- Decision trees
+- Decision rules
+- Generalized regression models
 - ...
 
 ## Model-specific methods
-TODO: Graphic with schematic Model-specific methods
 
-TODO: add images from papers
+![](images/black-box.png)
+
+
+## Model-specific methods
+
+![](images/specific-black-box.png)
+
 
 ## Model-specific methods
 
@@ -252,6 +291,47 @@ TODO: add images from papers
 - Visualizing activations of neural networks
 - 
 
+
+TODO: add images from papers
+## Model-agnostic methods
+![](images/black-box.png)
+
+
+## Model-agnostic methods
+![](images/agnostic-black-box.png)
+
+
+## Model-agnostic methods
+
+- Partial dependence plots
+- LIME
+- ...
+
+
+## Data-focused methods
+![](images/black-box.png)
+
+
+## Data-focused methods
+![](images/data-box.png)
+
+
+## Data-focused methods
+
+- Prototypes: What is the prototype of a certain class
+- Criticisms: Which data points are unusual for a certain class. 
+- Counterfactuals: What do I need to change for an instance to change the prediction?
+- Anchors: What features do I have to anchor to keep prediction the same?
+
+TODO: Cite
+
+
+## Outcomes of interpretability method:
+
+- Model
+- Data point
+- Interpretable unit (like a weight)
+- Summary statistic for a feature
 
 ## Interested in learning more?
 
