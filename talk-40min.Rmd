@@ -1,8 +1,11 @@
 ---
 title: "Interpretable Machine Learning"
 author: "Christoph Molnar"
-date: "December 4, 2017"
-output: ioslides_presentation
+date: "June 7, 2018"
+output: 
+  ioslides_presentation:
+    widescreen: false
+    smaller: false
 css: styles.css
 ---
 
@@ -11,7 +14,8 @@ css: styles.css
 knitr::opts_chunk$set(echo = FALSE, 
   warning = FALSE,
   message = FALSE, 
-  fig.align='center')
+  fig.align='center', 
+  out.width = '100%')
 ```
 
 ##  {.emphasizedabit}
@@ -19,7 +23,7 @@ A client wants you to predict data scientist salaries with machine learning.
 
 ##
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, out.height = '100%', out.width=NULL}
 knitr::include_graphics("images/wow.jpg")
 ```
 
@@ -31,7 +35,7 @@ knitr::include_graphics("images/wow.jpg")
 
 Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, out.height = '100%', out.width=NULL}
 knitr::include_graphics("images/magic.jpg")
 ```
 
@@ -72,27 +76,34 @@ lrn = makeLearner('regr.randomForest')
 mod = train(lrn, task)
 ```
 
-TODO: Insert image
+```{r, echo=FALSE}
+knitr::include_graphics("images/comp-dog.gif")
+```
 
 ## Step 3: Profit. {.center}
 
-```{r, echo=FALSE, out.width='70%'}
+```{r, echo=FALSE, out.height=NULL, out.width='100%'}
 knitr::include_graphics("images/done-here.gif")
 ```
 
 ##  {.emphasizedabit}
 
-"There is a problem with the model!"
+Client: "There is a problem with the model!"
 
-## What problem?
+## {.emphasizedabit}
 
-```{r, echo=FALSE}
+"What problem?""
+
+```{r, echo=FALSE, out.height='50%'}
 knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
 ```
 
 
-## "The older the applicants, the higher the predicted salary, regardless of skills."
-```{r, echo=FALSE, out.width='100%'}
+## {.emphasizedabit}
+
+ Client: "Model predicts high salaries for old yet unskilled people."
+
+```{r, echo=FALSE, out.height='30%'}
 knitr::include_graphics("images/age.jpeg")
 ```
 
@@ -144,11 +155,6 @@ pdp$plot()
 ```
 
 
-```{r}
-pdp$results[pdp$results$.type == "pdp", c("Gender", ".y.hat")]
-```
-
-
 ##
 
 ```{r, echo=FALSE}
@@ -194,26 +200,29 @@ explanation$explain(X[15, ])
 explanation$plot()
 ```
 
+# Some Theory
+
+
+## The Problem
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/black-box.png")
+```
+
 ## The Problem
 
 - Opaque decision making by machine learning algorithms
-- Examples: AI doctor, self-driving cars, creditworthiness
-- Trust as a user: Should I start severe therapy, because the machine said so?
+- Bias and mistakes in the data
+- Trust as a user: Should I start a therapy with sever side effects, because the machine said so?
 - Debugging as a practitioner: Why did the algorithm miss-classify sample X? Did it learn generalizable features? 
 
-##
-
-![](images/black-box.png)
-
-# Some Theory
 
 ## What is interpretability?
 
 Interpretability is the degree to which a human can understand the cause of a decision. 
 But we don't really have a good way to measure that really. Not as easy as benchmarking ML algorithms. 
 
-Some things:
-sparsity, contrastiveness, social, focus on the abnormal, truthful, coherent with prior beliefs, general and probable.
+Interpretability is also a mean to look at the data and possible issues with them.
 
 <font size="2">Miller, Tim. 2017. “Explanation in Artificial Intelligence: Insights from the Social Sciences.” arXiv Preprint arXiv:1706.07269.</font>
 
@@ -221,22 +230,19 @@ sparsity, contrastiveness, social, focus on the abnormal, truthful, coherent wit
 
 We need interpretability when the loss function does not cover all constraints. 
 
-(like, everything)
+- Decisions about humans.
+- Critical applications that decide about life and death.
+- Newly developed systems with unknown consequences.
+- Models using proxies instead of causal inputs.
+- Debugging the models.
+- Increasing trust.
 
-- Debugging
-- Increasing trust
+### Examples where we need interpretability
 
-### Example: Doctor and ML
-
-### Example: Predictive CV screening
-
-- Nasty feedback loops
-- Biased data
-- Proxies instead of causality
-- 
-
-## Example: 
-
+- Credit scores
+- Autonomous vehicles
+- Medical recommendations
+- Automated diagnoses
 
 ## When don't we need interpretability?
 
@@ -261,11 +267,16 @@ Well defined problems
 
 ## Interpretable Models
 
-![](images/black-box.png)
+```{r, echo = FALSE}
+knitr::include_graphics("images/black-box.png")
+```
 
 ## Interpretable Models
 
-![](images/white-box.png)
+```{r, echo=FALSE}
+knitr::include_graphics("images/white-box.png")
+```
+
 
 
 ## Interpretable Models
@@ -277,12 +288,18 @@ Well defined problems
 
 ## Model-specific methods
 
-![](images/black-box.png)
+```{r, echo=FALSE}
+knitr::include_graphics("images/black-box.png")
+```
 
 
 ## Model-specific methods
 
-![](images/specific-black-box.png)
+```{r, echo=FALSE}
+knitr::include_graphics("images/specific-black-box.png")
+```
+
+
 
 
 ## Model-specific methods
@@ -293,12 +310,20 @@ Well defined problems
 
 
 TODO: add images from papers
+
 ## Model-agnostic methods
-![](images/black-box.png)
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/black-box.png")
+```
 
 
 ## Model-agnostic methods
-![](images/agnostic-black-box.png)
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/agnostic-black-box.png")
+```
+
 
 
 ## Model-agnostic methods
@@ -308,15 +333,22 @@ TODO: add images from papers
 - ...
 
 
-## Data-focused methods
-![](images/black-box.png)
+## Example-focused methods
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/black-box.png")
+```
 
 
-## Data-focused methods
-![](images/data-box.png)
 
 
-## Data-focused methods
+## Example-focused methods
+```{r, echo=FALSE}
+knitr::include_graphics("images/data-box.png")
+```
+
+
+## Example-focused methods
 
 - Prototypes: What is the prototype of a certain class
 - Criticisms: Which data points are unusual for a certain class. 
