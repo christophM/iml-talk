@@ -21,11 +21,9 @@ knitr::opts_chunk$set(echo = FALSE,
 ##  {.emphasizedabit}
 A client wants you to predict data scientist salaries with machine learning.  
 
-##
+## {.center data-background=images/wow.jpg data-background-size=contain}
 
-```{r, echo=FALSE, out.height = '100%', out.width=NULL}
-knitr::include_graphics("images/wow.jpg")
-```
+
 
 # Let's predict data scientist salaries
 
@@ -35,12 +33,15 @@ knitr::include_graphics("images/wow.jpg")
 
 Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
 
-```{r, echo=FALSE, out.height = '100%', out.width=NULL}
-knitr::include_graphics("images/magic.jpg")
-```
+## {data-background=images/magic.jpg data-background-size=contain}
+
+
+
+# Step 1: Find some data
 
 
 ## Step 1: Find some data
+
 Kaggle conducted an industry-wide survey of data scientists. 
 https://www.kaggle.com/kaggle/kaggle-survey-2017
 
@@ -67,7 +68,8 @@ source('code/prepare-kaggle-data.R')
 
 
 
-## Step 2: Throw ML on your data
+# Step 2: Throw ML on your data
+
 ```{r learn}
 library('mlr')
 set.seed(42)
@@ -76,44 +78,55 @@ lrn = makeLearner('regr.randomForest')
 mod = train(lrn, task)
 ```
 
-```{r, echo=FALSE}
-knitr::include_graphics("images/comp-dog.gif")
-```
 
-## Step 3: Profit. {.center}
+## {.center data-background=images/comp-dog.gif data-background-size=contain}
 
-```{r, echo=FALSE, out.height=NULL, out.width='100%'}
-knitr::include_graphics("images/done-here.gif")
+<div class="notes">
+- Random Forest
+- Target: Compensation
+- All features that you found in the data
+- Train, test, ship
+</div>
+
+# Step 3: Profit. {.center}
+
+## {data-background=images/done-here.gif data-background-size=contain}
+```{r, echo=FALSE, out.width='80%', include = FALSE}
+knitr::include_graphics("images/done-here.gif" )
 ```
 
 ##  {.emphasizedabit}
 
 Client: "There is a problem with the model!"
 
-## {.emphasizedabit}
+##  {.emphasizedabit .center data-background=images/Hide-the-pain-harold-phone.jpg data-background-size=cover}
 
-"What problem?""
+"What problem?"
 
-```{r, echo=FALSE, out.height='50%'}
+```{r, echo=FALSE, out.height='50%', include=FALSE}
 knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
 ```
 
 
 ## {.emphasizedabit}
 
- Client: "Model predicts high salaries for old yet unskilled people."
+Client: "Model predicts high salaries for old yet unskilled people."
 
-```{r, echo=FALSE, out.height='30%'}
+```{r, echo=FALSE, fig.width=16, include=FALSE}
 knitr::include_graphics("images/age.jpeg")
 ```
 
+##  {.emphasizedabit .center data-background=images/black-box.gif data-background-size=cover}
 
+<div class="white">
+Looking inside the black box
+</div>
 
-# Partial Dependence Plots
+# How do the features influence my predictions?
 
-##
+## Partial Dependence Plot
 
-```{r}
+```{r out.width="80%"}
 library("iml")
 X = survey.dat[-which(names(survey.dat) == "CompensationAmount")]
 predictor = Predictor$new(mod, data = X, y = getTaskTargets(task))
@@ -126,14 +139,19 @@ pd$plot()
 
 <font size="2">Friedman, J. H. (1999). Greedy Function Approximation : A Gradient Boosting Machine. North, 1(3), 1–10. https://doi.org/10.2307/2699986 </font>
 
+<div class="notes">
+- PDP answers: How does the prediction change when a feature input changes?
+- Average of ICE curves
+</div>
+
 
 ##  {.emphasizedabit}
 
 Client: "We want to understand the model better!"
 
-# Permutation feature importance
+# What are the most important features?
 
-##
+## Permutation feature importance
 
 ```{r, warning=FALSE}
 feat.imp = FeatureImp$new(predictor, loss = 'mae')
@@ -142,12 +160,15 @@ feat.imp$plot()
 
 <font size="2">Breiman, Leo. "Random forests." Machine learning 45.1 (2001): 5-32. </font>
 
-## Gender?!
-```{r, echo=FALSE, out.width='80%'}
+## Gender?! {.emphasizedabit .center data-background=images/big-mistake.png data-background-size=contain}
+
+```{r, echo=FALSE, out.width='80%', include=FALSE}
 knitr::include_graphics("images/big-mistake.png")
 ```
 
-##
+# What's the influence of gender on the prediction?
+
+## 
 
 ```{r}
 pdp = Partial$new(predictor, feature="Gender")
@@ -155,21 +176,24 @@ pdp$plot()
 ```
 
 
-##
+## {.center data-background=images/hidden-pain-bias.jpg data-background-size=contain}
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include = FALSE}
 knitr::include_graphics("images/hidden-pain-bias.jpg")
 ```
 
-##
+## {.center data-background=images/angry.gif data-background-size=contain}
 
-```{r, echo=FALSE, out.width='40%'}
+```{r, echo=FALSE, out.width='40%', include = FALSE}
 knitr::include_graphics("images/angry.gif")
 ```
 
+# Explaining individual predictions
 
 
 # LIME
+
+## {.center data-background=images/lime-fitting-1.png data-background-size=contain}
 
 ## 
 ```{r, echo=FALSE}
@@ -186,7 +210,11 @@ explanation$plot()
 
 <font size="2">Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). “Why Should I Trust You?”: Explaining the Predictions of Any Classifier. Retrieved from http://arxiv.org/abs/1602.04938</font>
 
-# Shapley
+# Shapley Value
+
+## 
+
+TODO: find image for explaining shapley value
 
 ## 
 ```{r}
@@ -203,31 +231,35 @@ explanation$plot()
 # Some Theory
 
 
-## The Problem
+## The Problem 
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("images/black-box.png")
 ```
-
-## The Problem
-
+<div class="notes">
 - Opaque decision making by machine learning algorithms
 - Bias and mistakes in the data
 - Trust as a user: Should I start a therapy with sever side effects, because the machine said so?
 - Debugging as a practitioner: Why did the algorithm miss-classify sample X? Did it learn generalizable features? 
+</div>
 
 
 ## What is interpretability?
 
+<div class="notes">
 Interpretability is the degree to which a human can understand the cause of a decision. 
 But we don't really have a good way to measure that really. Not as easy as benchmarking ML algorithms. 
 
 Interpretability is also a mean to look at the data and possible issues with them.
 
 <font size="2">Miller, Tim. 2017. “Explanation in Artificial Intelligence: Insights from the Social Sciences.” arXiv Preprint arXiv:1706.07269.</font>
+</div>
+
 
 ## When do we need interpretability?
 
+
+<div class="notes">
 We need interpretability when the loss function does not cover all constraints. 
 
 - Decisions about humans.
@@ -236,9 +268,12 @@ We need interpretability when the loss function does not cover all constraints.
 - Models using proxies instead of causal inputs.
 - Debugging the models.
 - Increasing trust.
+</div>
 
-### Examples where we need interpretability
 
+## Examples where we need interpretability
+
+TODO: Insert images
 - Credit scores
 - Autonomous vehicles
 - Medical recommendations
@@ -253,11 +288,12 @@ perfect operationalization of features.
 Things that work well. 
 Well defined problems
 
-## Example: Digit recognition
+## Example: Digit recognition {.center data-background=images/mnist.jpeg data-background-size=cover}
 
-![](images/mnist.jpeg)
 
 ## What tools do we have?
+
+TODO: replace with image
 
 - Intrinsically interpretable models
 - Tools for analyzing specific black box models
@@ -277,14 +313,14 @@ knitr::include_graphics("images/black-box.png")
 knitr::include_graphics("images/white-box.png")
 ```
 
-
-
-## Interpretable Models
-
+<div class="notes">
 - Decision trees
 - Decision rules
 - Generalized regression models
 - ...
+</div>
+
+
 
 ## Model-specific methods
 
@@ -299,17 +335,13 @@ knitr::include_graphics("images/black-box.png")
 knitr::include_graphics("images/specific-black-box.png")
 ```
 
-
-
-
-## Model-specific methods
-
-- RandomForestExplainer
+<div class="notes">
 - Visualizing activations of neural networks
-- 
+- Random Forest specific feature importance
+- xgboost explainer
+- problem: new models, not comparable between models, missing flexibility
+</div>
 
-
-TODO: add images from papers
 
 ## Model-agnostic methods
 
@@ -324,13 +356,12 @@ knitr::include_graphics("images/black-box.png")
 knitr::include_graphics("images/agnostic-black-box.png")
 ```
 
-
-
-## Model-agnostic methods
-
+<div class="notes">
 - Partial dependence plots
 - LIME
 - ...
+</div>
+
 
 
 ## Example-focused methods
@@ -347,23 +378,13 @@ knitr::include_graphics("images/black-box.png")
 knitr::include_graphics("images/data-box.png")
 ```
 
-
-## Example-focused methods
-
+<div class="notes">
 - Prototypes: What is the prototype of a certain class
 - Criticisms: Which data points are unusual for a certain class. 
 - Counterfactuals: What do I need to change for an instance to change the prediction?
 - Anchors: What features do I have to anchor to keep prediction the same?
+</div>
 
-TODO: Cite
-
-
-## Outcomes of interpretability method:
-
-- Model
-- Data point
-- Interpretable unit (like a weight)
-- Summary statistic for a feature
 
 ## Interested in learning more?
 

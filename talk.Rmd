@@ -82,7 +82,7 @@ knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
 
 
 ## "The older the applicants, the higher the predicted salary, regardless of skills."
-```{r, echo=FALSE, out.width='100%', fig.align='center'}
+```{r, echo=FALSE, out.height='100%', fig.align='center'}
 knitr::include_graphics("images/age.jpeg")
 ```
 
@@ -96,7 +96,7 @@ knitr::include_graphics("images/age.jpeg")
 library("iml")
 X = survey.dat[-which(names(survey.dat) == "CompensationAmount")]
 predictor = Predictor$new(mod, data = X, y = getTaskTargets(task))
-ice = Ice$new(predictor, feature ='Age')
+ice = Partial$new(predictor, feature ='Age')
 ice$plot()
 ```
 
