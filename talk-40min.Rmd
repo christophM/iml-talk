@@ -29,9 +29,11 @@ A client wants you to predict data scientist salaries with machine learning.
 
 
 
-## What is Machine Learning
+# What is Machine Learning?
 
+<div class="notes">
 Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+</div>
 
 ## {data-background=images/magic.jpg data-background-size=contain}
 
@@ -88,7 +90,7 @@ mod = train(lrn, task)
 - Train, test, ship
 </div>
 
-# Step 3: Profit. {.center}
+# Step 3: Profit {.center}
 
 ## {data-background=images/done-here.gif data-background-size=contain}
 ```{r, echo=FALSE, out.width='80%', include = FALSE}
@@ -191,7 +193,7 @@ knitr::include_graphics("images/angry.gif")
 # Explaining individual predictions
 
 
-# LIME
+# Local Models (LIME)
 
 ## {.center data-background=images/lime-fitting-1.png data-background-size=contain}
 
@@ -212,9 +214,8 @@ explanation$plot()
 
 # Shapley Value
 
-## 
+## {.center data-background=images/team.jpg data-background-size=contain}
 
-TODO: find image for explaining shapley value
 
 ## 
 ```{r}
@@ -244,19 +245,16 @@ knitr::include_graphics("images/black-box.png")
 </div>
 
 
-## What is interpretability?
-
-<div class="notes">
-Interpretability is the degree to which a human can understand the cause of a decision. 
-But we don't really have a good way to measure that really. Not as easy as benchmarking ML algorithms. 
-
-Interpretability is also a mean to look at the data and possible issues with them.
-
-<font size="2">Miller, Tim. 2017. “Explanation in Artificial Intelligence: Insights from the Social Sciences.” arXiv Preprint arXiv:1706.07269.</font>
-</div>
+# When do we need interpretability?
 
 
-## When do we need interpretability?
+## {.center data-background=images/credit.jpg data-background-size=cover}
+
+## {.center data-background=images/pill.jpg data-background-size=cover}
+
+## {.center data-background=images/death.jpg data-background-size=cover}
+
+## {.center data-background=images/people.jpg data-background-size=cover}
 
 
 <div class="notes">
@@ -271,34 +269,30 @@ We need interpretability when the loss function does not cover all constraints.
 </div>
 
 
-## Examples where we need interpretability
 
-TODO: Insert images
-- Credit scores
-- Autonomous vehicles
-- Medical recommendations
-- Automated diagnoses
+# When do we NOT need interpretability?
 
-## When don't we need interpretability?
 
+##  {.center data-background=images/mnist.jpeg data-background-size=cover}
+
+<div class="notes">
 When we can capture everything in the loss function and the data collection.
 only causal relationships.
 perfect operationalization of features.
 
 Things that work well. 
 Well defined problems
+</div>
 
-## Example: Digit recognition {.center data-background=images/mnist.jpeg data-background-size=cover}
 
+# What tools do we have?
 
-## What tools do we have?
-
-TODO: replace with image
-
+<div class="notes">
 - Intrinsically interpretable models
 - Tools for analyzing specific black box models
 - Model-agnostic tools: analysing any black box model
 - Interpretability through making data explainable
+</div>
 
 
 ## Interpretable Models
@@ -386,7 +380,7 @@ knitr::include_graphics("images/data-box.png")
 </div>
 
 
-## Interested in learning more?
+## Interested in learning more? 
 
 Read my book about "Interpretable Machine Learning"
 https://christophm.github.io/interpretable-ml-book/
@@ -394,4 +388,38 @@ https://christophm.github.io/interpretable-ml-book/
 ```{r, echo=FALSE, fig.align='center', out.width='30%'}
 knitr::include_graphics("images/book.jpg")
 ```
+
+# Backup slides
+
+# What is interpretability?
+
+<div class="notes">
+Interpretability is the degree to which a human can understand the cause of a decision. 
+But we don't really have a good way to measure that really. Not as easy as benchmarking ML algorithms. 
+
+Interpretability is also a mean to look at the data and possible issues with them.
+
+<font size="2">Miller, Tim. 2017. “Explanation in Artificial Intelligence: Insights from the Social Sciences.” arXiv Preprint arXiv:1706.07269.</font>
+</div>
+
+# Statistical Modeling: The Two Cultures
+
+<div class="notes">
+Paper by Leo Breiman (Random Forest)
+data modeling culture (statistics) vs algorithmic modeling culture (ml)
+tradeoff between interpretability and predictive performance
+example: tree vs. random forest, logistic regression vs. neural network
+</div>
+
+# What makes an explanation human-friendly?
+
+<div class="notes">
+short: 1-2 causes
+counterfactual: compares to other output
+truthful
+social context
+consistent with prior beliefs
+probable
+focuses on abnormal causes
+</div>
 
