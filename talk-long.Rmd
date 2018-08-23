@@ -112,7 +112,7 @@ knitr::include_graphics("images/Hide-the-pain-harold-phone.jpg")
 
 ## {.emphasizedabit}
 
-Client: "Model predicts high salaries for old yet unskilled people."
+Client: "The older the candidates, the higher the predicted salaries."
 
 ```{r, echo=FALSE, fig.width=16, include=FALSE}
 knitr::include_graphics("images/age.jpeg")
@@ -168,13 +168,11 @@ feat.imp$plot()
 knitr::include_graphics("images/big-mistake.png")
 ```
 
-# What's the influence of gender on the prediction?
-
-## 
+## What's the influence of gender on the prediction?
 
 ```{r}
-pdp = Partial$new(predictor, feature="Gender")
-pdp$plot() 
+pdp = Partial$new(predictor, feature="Gender", ice = FALSE)
+knitr::kable(pdp$results[c("Gender", ".y.hat")])
 ```
 
 
@@ -343,7 +341,7 @@ knitr::include_graphics("images/agnostic-black-box.png")
 
 
 
-## Example-focused methods
+## Example-based methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("images/black-box.png")
