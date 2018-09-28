@@ -38,36 +38,14 @@
 \usecolorstyle[colorPalette=BlueGrayOrange]{Russia}
 \usebackgroundstyle{Rays}
 \title{Interpretable Machine Learning}
-\author{Christoph Molnar, Prof. Bernd Bischl}
-\institute{Department of Statistics, Ludwig Maximilians University\\[0.5cm] \url{christoph.molnar@stat.uni-muenchen.de}}
+\author{Christoph Molnar \\ }
+\institute{
+LMU Munich / Department of Statistics/ \url{christoph.molnar@stat.uni-muenchen.de} \\
+Prof. Dr. Bernd Bischl}
 %\titlegraphic{\hspace{-3200px}\includegraphics[scale=0.3]{figures/logo.png}}
 \usetitlestyle{Empty}
 \colorlet{titlefgcolor}{black}
 \colorlet{titlebgcolor}{colorOne}
-\makeatletter
-\renewcommand\TP@maketitle{%
-   %\hspace{-200px}\includegraphics[scale=0.35]{figures/logo.png}\hspace{100px}
-     \tikz[remember picture, overlay]\node[scale=0.8,anchor=east,xshift=0.65\linewidth,yshift=4cm,inner sep=0pt] {%
-      \includegraphics[scale=6.5]{figures/logo.pdf} %green 1.3
-   };
-   \hspace{500px}
-   \centering
-   \begin{minipage}[b]{0.7\linewidth}
-        \centering
-        \color{titlefgcolor}
-        {\bfseries \huge \sc \@title \par}
-        \vspace*{1em}
-        {\Large \@author \par}
-        \vspace*{1em}
-        {\Large \@institute}
-    \end{minipage}%
-    %   \tikz[remember picture,overlay]\node[scale=0.8,anchor=east,xshift=0.45\linewidth,yshift=3cm,inner sep=0pt] {%
-    %    %\@titlegraphic
-    %    \includegraphics[width=8cm]{figures/LMU}
-    % };
-    %
-}
-\makeatother
 
 <<setup-child, include = FALSE, echo=FALSE>>=
 library(mlr)
@@ -129,32 +107,53 @@ theme_update(axis.line = element_line(colour = "black"),
 
 \begin{columns}
 
-\column{0.5}
-\block{Introduction}{
+\column{0.33}
+\block{What did you learn, computer?}{
 Let's predict how much rent you should pay for your flat, based on some data. [footnote]
 We got some data on it, contains rent in Euros, the size of the living area, the location (inner city, outer ring, industry, party area).
+TODO: Create graphic with features and output as icons.
 We use machine learning methods to let the computer learn by itself to prediction. 
 Machine learning is a set of techniques that lets the computer learn from data to make predictions. 
 The good thing is, that we don't have to find out the exact relationship between the rent and the attributes of the flat, but the computer will. 
 The bad thing is that the computer will not easily tell us the relationships it found out. 
+Now we have the following problem:
+TODO: Insert black box graphic
 
 Except when you use methods from interpretable machine learning, which are presented in this poster. 
 FOOTNOTE: the example is completely made up, don't use for actual life decisions.
 }
 
-\block{Background}{
-\section*{Feature effect}
+\block{Interpretable Models}{
+One approach: Just use machine learning models that only allow relationships with simple structures, like a decision tree, or a weighted sum of the inputs.
+Advantage: Already interpretable
+Disadvantage: Usually you pay with performance of the model.
 
-\section*{Feature importance}
+\section*{Linear regression models}
+\section*{Decision trees}
+\section*{Decision rules}
+
+All of the above techniques can also be used on a more meta level:
+When you alread have a black box machine learning model, you can approximate it with an interpretable model.
+TODO: Visualizaton.
 }
 
 
 
-\column{0.5}
+\column{0.33}
 
-\block{Method}{
-Model-agnostic global permutation feature importance (PFI):
+\block{How do features affect the predictions?}{
+\section*{Individual Conditional Expectation}
+\section*{Partial Dependence Plots}
+\section*{Average Accumulated Effects}
 }
+
+
+\column{0.33}
+\block{Which features were important?}{
+How important was a feature
+}
+
+\block{Why was this prediction made?}
 
 \block{References}{
 \begingroup
