@@ -27,10 +27,10 @@
 \usepackage{xargs}
 \usepackage{subfig}
 
-\definecolorpalette{BlueGrayOrange}{
-    \definecolor{colorOne}{HTML}{C0C0C0}
-    \definecolor{colorTwo}{HTML}{CCCCCC}
-    \definecolor{colorThree}{HTML}{009440}
+\definecolorpalette{GrayOrangeBlue}{
+\definecolor{colorOne}{HTML}{C0C0C0}
+\definecolor{colorTwo}{HTML}{CCCCCC}
+\definecolor{colorThree}{HTML}{009440}
 }
 \usepackage{mathtools}
 \usepackage{hyperref}
@@ -67,9 +67,7 @@ opts_chunk$set(
   concordance = TRUE,
   message     = FALSE,
   warning     = FALSE,
-
   size        = 'scriptsize',
-
   fig.height  = 5.8,
   fig.width   = 8,
   fig.pos     = "h!",
@@ -77,7 +75,7 @@ opts_chunk$set(
   eps         = FALSE,
   crop        = TRUE,
   fig.align   = "center",
-  out.width   = "0.4\\textwidth"
+  out.width   = "0.3\\textwidth"
   # fig.path    = "knit-figure/prada1-"
 )
 
@@ -92,17 +90,17 @@ theme_update(axis.line = element_line(colour = "black"),
 
 \makeatletter
 \renewcommand\section{%
-   \@startsection
-     {section}% name
-     {1}% level
-     {\z@}% indent
-     {0ex \@plus -1ex \@minus -.2ex}% beforeskip, changed!
-     {2.3ex \@plus.2ex}% afterskip
-     {\normalfont\Large\bfseries}% style
+\@startsection
+{section}% name
+{1}% level
+{\z@}% indent
+{0ex \@plus -1ex \@minus -.2ex}% beforeskip, changed!
+{2.3ex \@plus.2ex}% afterskip
+{\normalfont\Large\bfseries}% style
 }
 \makeatother
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%\SweaveOpts{concordance=TRUE}
 \maketitle
 
 \begin{columns}
@@ -110,18 +108,129 @@ theme_update(axis.line = element_line(colour = "black"),
 \column{0.33}
 \block{What did you learn, computer?}{
 Let's predict how much rent you should pay for your flat, based on some data. [footnote]
+This serves as an example for a machine learning task.
+But it could be anything, really, like predicting loan defaults, when some robot will need to be repaired, how good a drug will work and so on.
 We got some data on it, contains rent in Euros, the size of the living area, the location (inner city, outer ring, industry, party area).
 TODO: Create graphic with features and output as icons.
 We use machine learning methods to let the computer learn by itself to prediction. 
+For this example I used random forests, which is the majority vote of hundreds of different decision trees.
+
+<<create-data, echo = FALSE>>=
+set.seed(42)
+n = 500
+df = data.frame(location = sample(c("Inner city", "Outer city", "Industrial"), prob = c(0.2, 0.7, 0.1), size = n, replace = TRUE))
+df$cat.allowed = factor(sample(c("Yes", "No"), size = n, replace = TRUE))
+df$living.area = runif(n, min = 20, max = 100) + (df$location != "Inner city") * abs(round(rnorm(n, sd = 20), 1))
+df$rent = (10 * (df$location == "Industrial") + 13 * (df$location == "Outer city") + 15 * (df$location == "Inner city")) * df$living.area + 100 * (df$cat.allowed == "Yes") + 50 * (df$cat.allowed == "Yes" & df$location == "Inner city")
+df$useless.feature = rnorm(n)
+@
+
+<<train-model, echo=FALSE>>=
+library(randomForest)
+library(mlr)
+library(iml)
+
+tsk = makeRegrTask(data = df, target = "rent")
+lrn = makeLearner("regr.svm")
+rf = train(lrn, tsk)
+pred = Predictor$new(rf, data = df, y = "rent")
+# 
+# 
+# eff = FeatureEffect$new(pred, "living.area", method = "ale")
+# 
+# eff = FeatureEffect$new(pred, "cat.allowed", method = "ale")
+# 
+# eff = FeatureEffect$new(pred, "location", method = "ale")
+# 
+# eff = FeatureEffect$new(pred, "location", method = "pdp")
+# 
+# 
+# 
+# interact = Interaction$new(pred)
+# 
+# interact.la = Interaction$new(pred, "living.area")
+@
+
+
+% \textbf{What is machine learning?}
 Machine learning is a set of techniques that lets the computer learn from data to make predictions. 
+
+% \textbf{Machine learning has a problem.}
 The good thing is, that we don't have to find out the exact relationship between the rent and the attributes of the flat, but the computer will. 
 The bad thing is that the computer will not easily tell us the relationships it found out. 
 Now we have the following problem:
-TODO: Insert black box graphic
+\includegraphics[width=0.25\textwidth]{figure/black-box.png}
 
 Except when you use methods from interpretable machine learning, which are presented in this poster. 
 FOOTNOTE: the example is completely made up, don't use for actual life decisions.
 }
+
+
+
+\block{Which features were important?}{
+Let's start with a simple question: Which are the most important features to know for making predictions?
+The machine learning model usually won't even tell us that.
+We measure importance as the drop in performance of the model if we would not know the features.
+Not knowing the feature can be simulated by shuffling the feature in the data: We break the assocation between the feature and the target.
+If the performance of the model drops a lot, the features was important.
+<<feature-importance>>=
+imp = FeatureImp$new(pred, "mae")
+plot(imp)
+@
+In our little rent example, the most important feature was the size of the living area. 
+
+Caveats: Doesn't work well when the features are highly correlated.
+}
+
+\column{0.33}
+
+\block{How do features affect the predictions?}{
+We want to know what relationships the model learned between the input features and the output.
+In our example, we ask:
+Is the predicted rent higher or lower when cats are allowed?
+How does the relationship between the living area and the predicted rent look like?
+
+Let's start with the most simple technique.
+
+The effect of a feature on the prediction can become complex, depending on the underlying model used.
+But it's rather simple for one data instance (here an appartment).
+We know the prediction for this point, and we can visualize how the prediction changes when we vary the input.
+For example we can vary the size of the living area and observe how the prediction of the model changes. 
+If we do this for all data points and plot this, we get the individual conditional expectation plot.
+When we average those lines, the we get the partial dependence plot:
+
+<<ice>>=
+eff = FeatureEffect$new(pred, "living.area", method = "pdp+ice")
+plot(eff)
+@
+
+Caveat: Has trouble when the inputs are strongly correlated, because ICE and PDP rely on replacing values of the feature with other grid values, and when correlated the new data instances become unrealistic.
+In this case, use Accumulated Local Effects instead.
+
+Accumulated Local Effects work like XXXXXX
+}
+
+\block{Why was this prediction made?}{
+We have a couple of options to explain why a particular prediction was made by a machine learning model.
+
+\begin{itemize}
+\item Create a counterfactual explanation
+\item Fit a local, interpretable model
+\item Use game theory to attribute the prediction to the features
+\end{itemize}
+
+\section*{Counterfactual explanations}
+
+
+\section*{Local surrogate models}
+
+\section*{Shapley Values}
+
+
+
+}
+
+\column{0.33}
 
 \block{Interpretable Models}{
 One approach: Just use machine learning models that only allow relationships with simple structures, like a decision tree, or a weighted sum of the inputs.
@@ -129,38 +238,81 @@ Advantage: Already interpretable
 Disadvantage: Usually you pay with performance of the model.
 
 \section*{Linear regression models}
+The linear regression model models the outcome as a weighted sum:
+
+\[y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p\]
+
+$x_1$ to $x_p$ are the p features that are used to predict the outcome y. 
+The goal is to find the best possible weights, which can be found for example via the least squares algorithm.
+
+In our rent example, the folowing weights are found:
+<<train-model-lm>>=
+mod.lm = lm(rent ~ ., data = df)
+knitr::kable(coef(mod.lm))
+@
+A positive weight means that the feature increases the prediction, negative decreases the prediction.
+An increase of the living area increases the predicted rent by \Sexpr{coef(mod.lm)["living.area"]}.
+Changing the location from the industrial complex (the reference category) to the inner city increases the predicted rent by \Sexpr{coef(mod.lm)["locationInner city"]}.
+Linear models have a huge amount of extensions, like Generalized Linear Models (GLMs) or Generalized Additive Models (GAMs) that allow more flexiblity. CITE and CITE
+
 \section*{Decision trees}
+Decision trees are like the decision trees we know from other areas, except that they are learned based on data in machine learning.
+Decision trees partition the data into smaller subsets, based on 'decisions' made on the input features.
+
+Let's train a decision tree on the rent data:
+<<train-model-tree>>=
+library(partykit)
+mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 3))
+plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
+@
+The living area is selected as the first split feature. 
+
+
+
 \section*{Decision rules}
+<<train-model-rules, eval = FALSE>>=
+
+library("RWeka")
+library(rJava)
+
+extract.rules.jrip = function (rule) {
+rules = scan(text=.jcall(rule$classifier, "S", "toString"), sep="\n", what="")
+# removes text
+rules = rules[-c(1, 2, length(rules))]
+rules = gsub("\\([0-9]*\\.[0-9]\\/[0-9]*\\.[0-9]\\)", "", rules)
+rules = as.matrix(rules)[-c(1:2, 6), ,drop=FALSE]
+rules  = data.frame(rules)
+if (nrow(rules) == 0) {
+return(NULL)
+} else {
+knitr::kable(rules)
+}
+}
+
+df2 = df
+df2$rent = cut(df$rent, breaks = quantile(df$rent, probs = seq(from = 0, to = 1, length.out = 5)))
+df2$living.area = cut(df$living.area, breaks = quantile(df$living.area, probs = seq(from = 0, to = 1, length.out = 5)))
+df2$useless.feature = cut(df$useless.feature, breaks = quantile(df$useless.feature, probs = seq(from = 0, to = 1, length.out = 5)))
+rule = JRip(rent ~ ., data = df2)
+extract.rules.jrip(rule)
+@
+
+Other approaches: 
+RuleFit CITE, SLIM, \ldots
+
+\section*{Surrogate models}
 
 All of the above techniques can also be used on a more meta level:
 When you alread have a black box machine learning model, you can approximate it with an interpretable model.
 TODO: Visualizaton.
 }
 
-
-
-\column{0.33}
-
-\block{How do features affect the predictions?}{
-\section*{Individual Conditional Expectation}
-\section*{Partial Dependence Plots}
-\section*{Average Accumulated Effects}
-}
-
-
-\column{0.33}
-\block{Which features were important?}{
-How important was a feature
-}
-
-\block{Why was this prediction made?}
-
 \block{References}{
 \begingroup
-  \renewcommand{\section}[2]{}%
-  \small
-  \bibliographystyle{plain}
-  \bibliography{Bib}
+\renewcommand{\section}[2]{}%
+\small
+\bibliographystyle{plain}
+\bibliography{Bib}
 \endgroup
 }
 \end{columns}
