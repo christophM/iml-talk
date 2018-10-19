@@ -108,7 +108,7 @@ Machine learning is a set of techniques that lets a computer learn from data to 
 Machine learning can be used to predict credit default, risk for cancer, number of sales in the next week and much more.
 The big disadnvantage of the machine learning approach is that the program now is a black box for us. 
 
-\includegraphics[width=0.25\textwidth]{figure/black-box.png}
+\includegraphics[width=0.25\textwidth]{figure/teaser.png}
 
 This poster presents methods for interpretability that are model-agnostic (i.e. can be applied to any black box model), which help to explain the behaviour of machine learning models and individual predictions.
 It also presents models that are considered intrinsically interpretable.
@@ -143,8 +143,7 @@ pred = Predictor$new(rf, data = df, y = "rent")
 }
 
 \block{Why explain?}{
-We need to explain machine learning models to\cite{adadi2018peeking}:
-TODO: COPY FROM SLIDES
+We need to explain machine learning models to \cite{adadi2018peeking}:
 \begin{itemize}
 \item \textbf{Explain to justify}: Machine learning models make errors, can be unfair (e.g racial bias.) and make unexpected predictions. In those cases, we require a model to justify predictions.
 \item \textbf{Explain to control}: Understand more about the systems vulnerabilities and conditions for failure. e.g. know for what type of data it performs worse. 
@@ -160,13 +159,16 @@ Interpretability methods enable to extract insights from black box models.
 We can measure importance of the inputs as the drop in performance of the model if we would not know the features.
 Not knowing the feature can be simulated by shuffling the feature in the data: We break the assocation between the feature and the target.
 If the performance of the model drops a lot, the features was important.
-<<feature-importance, echo=FALSE>>=
+<<feature-importance, echo=FALSE, fig.width=12, fig.height=3>>=
 imp = FeatureImp$new(pred, "mae")
-plot(imp)
+
+impres = imp$results
+
+ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
+  theme(aspect.ratio=1/4, text = element_text(size=20),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 @
 In our little rent example, the most important feature was the size of the living area. 
-
-Caveats: Doesn't work well when the features are highly correlated.
 }
 
 \column{0.33}
@@ -183,11 +185,14 @@ When we average those lines (black), the we get the partial dependence plot (yel
 We know the prediction for this point, and we can visualize how the prediction changes when we vary the input.
 For example we can vary the size of the living area and observe how the prediction of the model changes. 
 
-<<ice, echo=FALSE>>=
+<<ice, echo=FALSE, fig.width=12, fig.height=3>>=
 eff = FeatureEffect$new(pred, "size", method = "pdp+ice")
 plot(eff, rug = FALSE)  + ggtitle("Effect of size on predicted rent") +
   scale_x_continuous("Size of appartment") + 
-  scale_y_continuous("Predicted rent")
+  scale_y_continuous("Predicted rent") +
+  theme(aspect.ratio=1/4, text = element_text(size=20),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 @
 
 Caveat: ICE and PDP have trouble when the inputs are strongly correlated.
@@ -198,24 +203,24 @@ In this case, use Accumulated Local Effects instead \cite{apley2016visualizing}.
 
 <<appartment, echo=FALSE,include=FALSE>>=
 # Choose appartment
-appartment = df[10,]
+appartment = df[3,]
 pred.rent = round(pred$predict(appartment)$.prediction, 0)
 @
 
 We have a couple of options to explain why a particular prediction was made by a machine learning model.
-Suppose the rent model predicts \Sexpr{pred.rent} Euros rent, for an appartment in the inner city with a living area of 85 $m^2$ and where cats are allowed. 
+Suppose the rent model predicts \Sexpr{pred.rent} Euros rent, for an appartment in the outer city with a living area of 92 $m^2$ and where cats are not allowed. 
 How can we explain this prediction?
 
 
 <<counterfact, echo=FALSE, include = FALSE>>=
 appartment.mod = appartment
-appartment.mod$cat.allowed = factor("No", levels = c("No", "Yes"))
+appartment.mod$cat.allowed = factor("Yes", levels = c("No", "Yes"))
 pred.new = round(pred$predict(appartment.mod[,1:3, drop=FALSE]), 0)
 @
 \textbf{Counterfactual explanations}: 
 A counterfactual explanation of a prediction describes the smallest change to the feature values (inputs) that changes the prediction to a predefined output.
-For example: How does the input have to change so that the prediction changes below 1200 Euros?
-Answer: If cats were not allowed, the predicted rent would be \Sexpr{pred.new} Euros.
+For example: How does the input have to change so that the prediction changes above 1100 Euros?
+Answer (one of many possible ones): If cats were allowed, the predicted rent would be \Sexpr{pred.new} Euros.
 
 
 \textbf{Shapley Values}: 
@@ -225,10 +230,15 @@ We want to fairly distribute the difference of the prediction to the average pre
 Game theory has developed a method called Shapley values that can fairly do this type of distribution.
 For machine learning, it works by repeatedly simulating that only a subset of feature values is known and computing how the prediction would look like.
 
-<<shapley, echo=FALSE>>=
+<<shapley, echo=FALSE, fig.width=12, fig.height=3>>=
 shap = Shapley$new(pred)
 shap$explain(appartment[,1:3])
-plot(shap)
+plot(shap) +
+  theme(aspect.ratio=1/4, text = element_text(size=20),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_y_continuous("Contribution to prediction") +
+  scale_x_discrete("")
+
 @
 
 \textbf{Local surrogate models}: 
@@ -248,25 +258,24 @@ Interpretation depends on the chosen model, see poster box on the top right.
 \column{0.33}
 
 \block{Interpretable Models}{
-Some models are intrinsically interpretable, because they learn simple relationships between input and output like a decision tree or a weighted sum of the inputs.
-The big disadvantage of intrinsically interpretable models is that they often predict the data less well.
+Some models are intrinsically interpretable, because they learn simple relationships between input and output.
+Their big disadvantage is that they often predict the data less well.
 
 \section*{Linear Regression Models}
 The linear regression model models the outcome as a weighted sum:
 
 \[y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p\]
 
-$x_1$ to $x_p$ are the p features that are used to predict the outcome y. 
-The goal is to find the best possible weights, which can be found for example via the least squares algorithm.
-
-In our rent example, the folowing weights are found:
+$x_1$ to $x_p$ are the features that are used to predict the outcome y. 
+The goal is to find the best possible weights $\beta$.
+In our rent example, the best weights are:
 <<train-model-lm, echo=FALSE, include=FALSE>>=
 mod.lm = lm(rent ~ ., data = df)
 cf = round(coef(mod.lm))
 knitr::kable(cf, format = 'latex')
 @
 
-$$rent = \Sexpr{cf["(Intercept)"]} + \Sexpr{cf["size"]} \cdot size  \Sexpr{cf["locationOuter city"]} \cdot I_{\text{outer city}} +  \Sexpr{cf["cat.allowedYes"]} \cdot I_{\text{cats allowed}}$$
+$$\text{rent} = \Sexpr{cf["(Intercept)"]} + \Sexpr{cf["size"]} \cdot \text{size}  \Sexpr{cf["locationOuter city"]} \cdot I_{\text{outer city}} +  \Sexpr{cf["cat.allowedYes"]} \cdot I_{\text{cats allowed}}$$
 
 
 A positive weight means that the feature increases the prediction, negative decreases the prediction.
@@ -288,7 +297,7 @@ The living area is selected as the first split feature.
 
 
 
-\section*{Decision rules}
+\section*{Decision Rules}
 A decision rule is a simple IF-THEN statement consisting of a condition and a prediction.
 For example: IF it rains today AND if it’s April (condition), THEN it will rain tomorrow (prediction).
 A single decision rule or a combination of several rules can be used to make predictions.
@@ -321,9 +330,6 @@ extract.rules.jrip(rule)
 A rule could be: 
 
 IF living area $\in 90 \text{ and } 110 m^2$  AND location $=$ inner city THEN the rent is between 1540 and 1890 EUR
-
-Other approaches: 
-RuleFit CITE, SLIM, \ldots
 
 \section*{Surrogate Models}
 Often these intrinsically interpretable models are much worse than more flexible models, but they can still be used to increase interpretabilit by approximating a complex model with an interpretable model. Predict the predictions of the complex model with an intrinsically interpretable model and interpret the latter. For example, interpret a neural network by approximating its predictions with a decision tree. 
