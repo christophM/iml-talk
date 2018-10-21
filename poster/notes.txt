@@ -21,3 +21,9 @@ Main idea: Present techniques from book.
     - Explaining individual predictions (Shapley, LIME, counterfactual explanations)
     - References
  
+
+TODOS:
+- Adapt black box graphic: Input \n Features , Prediction. also trim top
+- Hand draw decision tree
+- Cite my book
+- Hand draw rent prediction example
