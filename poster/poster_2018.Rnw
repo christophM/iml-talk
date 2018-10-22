@@ -73,7 +73,7 @@ opts_chunk$set(
   eps         = FALSE,
   crop        = TRUE,
   fig.align   = "center",
-  out.width   = "0.3\\textwidth"
+  out.width   = "0.27\\textwidth"
   # fig.path    = "knit-figure/prada1-"
 )
 
@@ -105,14 +105,17 @@ theme_update(axis.line = element_line(colour = "black"),
 \column{0.33}
 \block{Machine learning}{
 Machine learning is a set of methods that let a computer learn from data to make predictions by finding patterns.
-Machine learning can be used to predict credit default, risk for cancer, weekly sales ...
+Can be used to predict credit default, cancer, weekly sales ...
+<<ml>>=
+knitr::include_graphics("figure/ml.png")
+@
 }
 \block{Black Box Problem}{
 The big disadvantage of the machine learning approach is that the  learned program is intransparent to us. 
 
 \includegraphics[width=0.25\textwidth]{figure/teaser.png}
 
-Interpretable machine learning is a set of methods and models that enable to explain the behaviour and predictions of machine learning systems.
+Interpretable machine learning is a set of methods and models that enable to explain the behaviour and predictions of machine learning systems.\cite{molnar}
 }
 
 
@@ -157,20 +160,6 @@ pred = Predictor$new(rf, data = df, y = "rent")
 }
 
 
-\block{Feature importance}{
-The feature importance tells us how much the model accuracy drops when we don't know a feature, which is simulated by shuffling the feature values.
-The bigger the drop, the more important.
-<<feature-importance, echo=FALSE, fig.width=12, fig.height=8>>=
-imp = FeatureImp$new(pred, "mae")
-
-impres = imp$results
-
-ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
-  theme(aspect.ratio=2/4, text = element_text(size=30),
-    panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-@
-In the rent example the most important feature was the size of the living area. 
-}
 
 \column{0.33}
 
@@ -193,7 +182,20 @@ For example we can vary the size of the living area and observe how the predicti
 %Caveat: ICE and PDP have trouble when the inputs are strongly correlated.
 %In this case, use Accumulated Local Effects instead \cite{apley2016visualizing}.
 }
+\block{Feature importance}{
+The feature importance tells us how much the model accuracy drops when we don't know a feature, which is simulated by shuffling the feature values.
+The bigger the drop, the more important.
+<<feature-importance, echo=FALSE, fig.width=12, fig.height=8>>=
+imp = FeatureImp$new(pred, "mae")
 
+impres = imp$results
+
+ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
+  theme(aspect.ratio=2/4, text = element_text(size=30),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+@
+In the rent example the most important feature was the size of the living area. 
+}
 \block{Individual predictions}{
 
 <<appartment, echo=FALSE,include=FALSE>>=
@@ -223,7 +225,7 @@ Answer (one of many possible ones): If cats were allowed, the predicted rent wou
 
 \section*{Shapley Values}
 From a game theoretical perspective, the feature values are like players in a game and cooperate to achieve a game payout, which is the prediction.
-A method called Shapley Values fairly attributes the difference between the prediction and the average prediction among the feature values to explain a prediction.
+A method called Shapley Values TODO:CITE fairly attributes the difference between the prediction and the average prediction among the feature values to explain a prediction.
 
 <<shapley, echo=FALSE, fig.width=12, fig.height=6>>=
 shap = Shapley$new(pred)
@@ -236,17 +238,7 @@ plot(shap) +
 
 @
 
-\section*{Local surrogate models}
-The idea behind local surrogate models is to replace the complex model with an interpretable model (e.g. regression), but only locally. 
-This means we fit an individual interpretable model for the data point for which we want to explain the prediction.
-The closer data points that are to the data point of interest the higher the weight in the model calculation.
-Interpretation depends on the chosen model, see poster box on the top right.
 
-<<lime, echo=FALSE>>=
-# locmod = LocalModel$new(pred, k = 2)
-# locmod$explain(df[1,1:3])
-# plot(locmod)
-@
 
 }
 
@@ -281,10 +273,11 @@ Decision trees partition the data into smaller subsets, based on 'decisions' mad
 The prediction is based on the leaf node we end up in.
 
 A decision tree trained on the rent data:
-<<train-model-tree, echo=FALSE>>=
+<<train-model-tree, echo=FALSE, out.width="0.28\\textwidth">>=
 library(partykit)
 mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 2))
-plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
+#plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
+knitr::include_graphics("figure/tree.png")
 @
 For example, the tree predicts a rent of 1908 Euros for an appartment bigger than 77 $m^2$ in a good location.
 
@@ -326,8 +319,18 @@ IF living area $\in 90 \text{ and } 110 m^2$  AND location $=$ Good THEN the ren
 \section*{Surrogate Models}
 Intrinsically interpretable models can also be used as to increase interpretability of a black box model by approximating its predictions, acting as a surrogate model which can be interpreted. 
 Example: Neural network as black box model, decision tree as surrogate model.
-}
 
+
+\section*{Local surrogate models}
+The idea behind local surrogate models is to replace the complex model with an individual, locally weighted interpretable model (e.g. regression) for the data point for which we want to explain the prediction.
+
+<<lime, echo=FALSE>>=
+# locmod = LocalModel$new(pred, k = 2)
+# locmod$explain(df[1,1:3])
+# plot(locmod)
+knitr::include_graphics("figure/local-surrogate.png")
+@
+}
 
 \block{References}{
 \begingroup
@@ -337,5 +340,7 @@ Example: Neural network as black box model, decision tree as surrogate model.
 \bibliography{Bib}
 \endgroup
 }
+
+
 \end{columns}
 \end{document}

@@ -2,6 +2,14 @@
 
 @Preamble{ " \newcommand{\noop}[1]{} " }
 
+@book{molnar,
+  title = {Interpretable Machine Learning},
+  author = {Christoph Molnar},
+  publisher = {https://christophm.github.io/interpretable-ml-book/},
+  note = {\url{https://christophm.github.io/interpretable-ml-book/}},
+  year = {2018}
+}
+
 @Article{Casalicchio2017,
   author  = {Casalicchio, Giuseppe and Bossek, Jakob and Lang, Michel and Kirchhoff, Dominik and Kerschke, Pascal and Hofner, Benjamin and Seibold, Heidi and Vanschoren, Joaquin and Bischl, Bernd},
   title   = {{OpenML}: An {R} Package to Connect to the Machine Learning Platform {OpenML}},
@@ -210,162 +218,8 @@ opturl = {http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-mo
   publisher  = {Elsevier B.V.},
 }
 
-@Article{Gregorutti2017,
-  author     = {Gregorutti, Baptiste and Michel, Bertrand and Saint-Pierre, Philippe},
-  title      = {Correlation and Variable Importance in Random Forests},
-  journal    = {Stat. Comput.},
-  year       = {2017},
-  volume     = {27},
-  number     = {3},
-  pages      = {659--678},
-  arxivid    = {1310.5726},
-  eprint     = {1310.5726},
-  eprinttype = {arXiv},
-  optdoi     = {10.1007/s11222-016-9646-1},
-  optisbn    = {0960-3174},
-  optissn    = {1573-1375},
-  publisher  = {Springer US},
-}
 
-@Book{Kuhn2013,
-  title     = {Applied Predictive Modeling [hardcover]},
-  publisher = {Springer New York},
-  year      = {2013},
-  author    = {Kuhn, Max and Johnson, Kjell},
-  optdoi    = {10.1007/978-1-4614-6849-3},
-  optisbn   = {1461468485},
-  pages     = {620},
-  pmid      = {17629633},
-}
 
-@Article{Hapfelmeier2014,
-  author  = {Hapfelmeier, Alexander and Hothorn, Torsten and Ulm, Kurt and Strobl, Carolin},
-  title   = {A New Variable Importance Measure for Random Forests with Missing Data},
-  journal = {Stat. Comput.},
-  year    = {2014},
-  volume  = {24},
-  number  = {1},
-  pages   = {21--34},
-  optdoi  = {10.1007/s11222-012-9349-1},
-  optisbn = {0960-3174 1573-1375},
-  optissn = {0960-3174},
-}
-
-@Article{Caruana2015a,
-  author  = {Caruana, Rich and Lou, Yin and Gehrke, Johannes and Koch, Paul and Sturm, Marc and Elhadad, Noemie},
-  title   = {Intelligible Models for Healthcare: Predicting Pneumonia Risk and Hospital 30-day Readmission},
-  journal = {Proceedings of the 21th ACM SIGKDD},
-  year    = {2015},
-  pages   = {1721--1730},
-  optdoi  = {10.1145/2783258.2788613},
-  optisbn = {9781450336642},
-}
-
-@Article{Janitza2016,
-  author    = {Janitza, Silke and Celik, Ender and Boulesteix, Anne Laure},
-  title     = {A Computationally Fast Variable Importance Test for Random Forests for High-dimensional Data},
-  journal   = {Advances in Data Analysis and Classification},
-  year      = {2016},
-  pages     = {1--31},
-  optdoi    = {10.1007/s11634-016-0276-4},
-  optissn   = {1862-5355},
-  publisher = {Springer Berlin Heidelberg},
-}
-
-@Article{owen2014sobol,
-  author    = {Owen, Art B},
-  title     = {Sobol'indices and Shapley Value},
-  journal   = {SIAM/ASA Journal on Uncertainty Quantification},
-  year      = {2014},
-  volume    = {2},
-  number    = {1},
-  pages     = {245--251},
-  publisher = {SIAM},
-}
-
-@Article{JMLR:v17:15-066,
-  author    = {Bischl, Bernd and Lang, Michel and Kotthoff, Lars and Schiffner, Julia and Richter, Jakob and Studerus, Erich and Casalicchio, Giuseppe and Jones, Zachary M.},
-  title     = {{mlr}: Machine Learning in {R}},
-  journal   = {J. Mach. Learn. Res.},
-  year      = {2016},
-  volume    = {17},
-  number    = {170},
-  pages     = {1--5},
-  publisher = {Microtome Publisher},
-  opturl       = {http://jmlr.org/papers/v17/15-066.html},
-}
-
-@Manual{casalicchio17,
-  title  = {{OpenML}: Exploring Machine Learning Better, Together},
-  author = {Giuseppe Casalicchio and Bernd Bischl and Dominik Kirchhoff and Michel Lang and Benjamin Hofner and Jakob Bossek and Pascal Kerschke and Joaquin Vanschoren},
-  year   = {2017},
-  note   = {{R} package version 1.3},
-  url    = {https://CRAN.R-project.org/package=OpenML},
-}
-
-@Article{scikit-learn,
-  author  = {Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, {\'E}douard},
-  title   = {Scikit-learn: Machine Learning in {P}ython},
-  journal = {J. Mach. Learn. Res.},
-  year    = {2011},
-  volume  = {12},
-  pages   = {2825--2830},
-  url     = {http://scikit-learn.org/},
-}
-
-@Manual{r2016,
-  title        = {R: A Language and Environment for Statistical Computing},
-  author       = {{R Core Team}},
-  organization = {R Foundation for Statistical Computing},
-  year         = {2016},
-  location     = {Vienna, Austria},
-  url          = {https://www.R-project.org/},
-}
-
-@Article{schiffner2016mlr,
-  author  = {{Schiffner}, J. and {Bischl}, B. and {Lang}, M. and {Richter}, J. and {Jones}, Z.~M. and {Probst}, P. and {Pfisterer}, F. and {Gallo}, M. and {Kirchhoff}, D. and {K{\"u}hn}, T. and {Thomas}, J. and {Kotthoff}, L.},
-  title   = {Mlr Tutorial},
-  journal = {arXiv preprint arXiv:1609.06146},
-  year    = {2016},
-}
-
-@Book{ggplot2,
-  title     = {Ggplot2: Elegant Graphics for Data Analysis},
-  publisher = {Springer},
-  year      = {2009},
-  author    = {Wickham, Hadley},
-  location  = {New York, NY, USA},
-  url       = {http://ggplot2.org},
-}
-
-@Manual{parallelMap,
-  title  = {Parallelmap: Unified Interface to Parallelization Back-ends},
-  author = {Bernd Bischl and Michel Lang},
-  year   = {2015},
-  note   = {R package version 1.3},
-  url    = {https://CRAN.R-project.org/package=parallelMap},
-}
-
-@Article{batchtools,
-  author    = {Michel Lang and Bernd Bischl and Dirk Surmann},
-  title     = {Batchtools: Tools for {R} to Work on Batch Systems},
-  journal   = {The Journal of Open Source Software},
-  year      = {2017},
-  volume    = {2},
-  number    = {10},
-  publisher = {The Open Journal},
-  url       = {https://optdoi.org/10.21105%2Fjoss.00135},
-}
-
-@Article{BatchJobs2015,
-  author  = {Bischl, Bernd and Lang, Michel and Mersmann, Olaf and Rahnenf{\"u}hrer, J{\"o}rg and Weihs, Claus},
-  title   = {{BatchJobs} and {BatchExperiments}: Abstraction Mechanisms for Using {R} in Batch Environments},
-  journal = {J. Stat. Softw.},
-  year    = {2015},
-  volume  = {64},
-  number  = {11},
-  pages   = {1--25},
-}
 
 @Article{vstrumbelj2014explaining,
   author    = {{\v{S}}trumbelj, Erik and Kononenko, Igor},
@@ -521,193 +375,6 @@ opturl = {http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-mo
   optissn    = {1548-7660},
 }
 
-@Article{Gower1971,
-  author    = {J. C. Gower},
-  title     = {A General Coefficient of Similarity and Some of Its Properties},
-  journal   = {Biometrics},
-  year      = {1971},
-  volume    = {27},
-  number    = {4},
-  pages     = {857--871},
-  optissn      = {0006341X, 15410420},
-  publisher = {[Wiley, International Biometric Society]},
-}
-
-@Misc{Lei2017,
-  author = {Jing Lei and Max G'Sell and Alessandro Rinaldo and Ryan J. Tibshirani and Larry Wasserman},
-  title  = {Distribution-free Predictive Inference for Regression},
-journal = {Journal of the American Statistical Association},
-volume = {0},
-number = {ja},
-pages = {0-0},
-year  = {2017},
-publisher = {Taylor & Francis},
-doi = {10.1080/01621459.2017.1307116},
-URL = {https://doi.org/10.1080/01621459.2017.1307116},
-eprint = {https://doi.org/10.1080/01621459.2017.1307116}
-}
-
-@Article{Breiman2001,
-  author    = {Breiman, Leo},
-  title     = {Random Forests},
-  journal   = {Mach. Learn.},
-  year      = {2001},
-  volume    = {45},
-  number    = {1},
-  pages     = {5--32},
-  optissn      = {0885-6125},
-  acmid     = {570182},
-  optdoi       = {10.1023/A:1010933404324},
-  location  = {Hingham, MA, USA},
-  numpages  = {28},
-  publisher = {Kluwer Academic Publishers},
-}
-
-@Book{box1979robustness,
-  title     = {Robustness in the Strategy of Scientific Model Building},
-  publisher = {Defense Technical Information Center},
-  author    = {Box, G.E.P. and University of Wisconsin--Madison. Mathematics Research Center and WISCONSIN UNIV-MADISON MATHEMATICS RESEARCH CENTER.},
-  series    = {MRC technical summary report},
-  year      = {1979},
-  pages     = {201236},
-}
-
-@Article{fernandez2014we,
-  author  = {Fern{\'a}ndez-Delgado, Manuel and Cernadas, Eva and Barro, Sen{\'e}n and Amorim, Dinani},
-  title   = {Do We Need Hundreds of Classifiers to Solve Real World Classification Problems},
-  journal = {J. Mach. Learn. Res.},
-  year    = {2014},
-  volume  = {15},
-  number  = {1},
-  pages   = {3133--3181},
-}
-
-@InCollection{iooss2015review,
-  author    = {Iooss, Bertrand and Lema{\^\i}tre, Paul},
-  title     = {A Review on Global Sensitivity Analysis Methods},
-  booktitle = {Uncertainty Management in Simulation-Optimization of Complex Systems},
-  publisher = {Springer},
-  year      = {2015},
-  pages     = {101--122},
-}
-
-@Article{Altmann2010pimp,
-  author    = {Andr{\'{e}} Altmann and Laura Tolo{\c{s}}i and Oliver Sander and Thomas Lengauer},
-  title     = {Permutation Importance: A Corrected Feature Importance Measure},
-  journal   = {Bioinformatics},
-  year      = {2010},
-  volume    = {26},
-  number    = {10},
-  pages     = {1340--1347},
-  optdoi    = {10.1093/bioinformatics/btq134},
-  publisher = {Oxford University Press ({OUP})},
-}
-
-@InProceedings{kim2016examples,
-  author    = {Kim, Been and Khanna, Rajiv and Koyejo, Oluwasanmi O},
-  title     = {Examples Are Not Enough, Learn to Criticize! Criticism for Interpretability},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2016},
-  pages     = {2280--2288},
-}
-
-@Article{kroll2016accountable,
-  author    = {Kroll, Joshua A and Barocas, Solon and Felten, Edward W and Reidenberg, Joel R and Robinson, David G and Yu, Harlan},
-  title     = {Accountable Algorithms},
-  journal   = {U. Pa. L. Rev.},
-  year      = {2016},
-  volume    = {165},
-  pages     = {633},
-  publisher = {HeinOnline},
-}
-
-@InProceedings{vstrumbelj2011general,
-  author       = {{\v{S}}trumbelj, Erik and Kononenko, Igor},
-  title        = {A General Method for Visualizing and Explaining Black-box Regression Models},
-  booktitle    = {Int. Conf. on Adaptive and Natural Computing Algorithms},
-  year         = {2011},
-  pages        = {21--30},
-  organization = {Springer},
-}
-
-@Article{sobol1993sensitivity,
-  author  = {Sobol, Ilya M},
-  title   = {Sensitivity Estimates for Nonlinear Mathematical Models},
-  journal = {Mathematical Modelling and Computational Experiments},
-  year    = {1993},
-  volume  = {1},
-  number  = {4},
-  pages   = {407--414},
-}
-
-@Article{song2016shapley,
-  author    = {Song, Eunhye and Nelson, Barry L and Staum, Jeremy},
-  title     = {Shapley Effects for Global Sensitivity Analysis: Theory and Computation},
-  journal   = {SIAM/ASA Journal on Uncertainty Quantification},
-  year      = {2016},
-  volume    = {4},
-  number    = {1},
-  pages     = {1060--1083},
-  publisher = {SIAM},
-}
-
-@InProceedings{hooker2004discovering,
-  author       = {Hooker, Giles},
-  title        = {Discovering Additive Structure in Black Box Functions},
-  booktitle    = {Proceedings of the tenth ACM SIGKDD international conference on Knowledge discovery and data mining},
-  year         = {2004},
-  pages        = {575--580},
-  organization = {ACM},
-}
-
-@Article{hooker2007generalized,
-  author  = {Hooker, Giles},
-  title   = {Generalized Functional Anova Diagnostics for High-dimensional Functions of Dependent Variables},
-  journal = {J. Comput. Graph. Stat.},
-  year    = {2007},
-  volume  = {16},
-  number  = {3},
-}
-
-@Article{chastaing2012generalized,
-  author    = {Chastaing, Ga{\"e}lle and Gamboa, Fabrice and Prieur, Cl{\'e}mentine and others},
-  title     = {Generalized Hoeffding-sobol Decomposition for Dependent Variables-application to Sensitivity Analysis},
-  journal   = {Electronic Journal of Statistics},
-  year      = {2012},
-  volume    = {6},
-  pages     = {2420--2448},
-  publisher = {The Institute of Mathematical Statistics and the Bernoulli Society},
-}
-
-@Article{guyon2003introduction,
-  author  = {Guyon, Isabelle and Elisseeff, Andr{\'e}},
-  title   = {An Introduction to Variable and Feature Selection},
-  journal = {J. Mach. Learn. Res.},
-  year    = {2003},
-  volume  = {3},
-  number  = {Mar},
-  pages   = {1157--1182},
-}
-
-@Article{kursa2010feature,
-  author  = {Kursa, Miron B and Rudnicki, Witold R and others},
-  title   = {Feature Selection with the Boruta Package},
-  journal = {J. Stat. Softw.},
-  year    = {2010},
-  volume  = {36},
-  number  = {11},
-  pages   = {1--13},
-}
-
-@Article{nilsson2007consistent,
-  author  = {Nilsson, Roland and Pe{\~n}a, Jos{\'e} M and Bj{\"o}rkegren, Johan and Tegn{\'e}r, Jesper},
-  title   = {Consistent Feature Selection for Pattern Recognition in Polynomial Time},
-  journal = {J. Mach. Learn. Res.},
-  year    = {2007},
-  volume  = {8},
-  number  = {Mar},
-  pages   = {589--612},
-}
 
 @Article{miller2017explanation,
   author  = {Miller, Tim},
@@ -716,18 +383,7 @@ eprint = {https://doi.org/10.1080/01621459.2017.1307116}
   year    = {2017},
 }
 
-@Article{lundberg2016unexpected,
-  author     = {Lundberg, Scott and Lee, Su-In},
-  title      = {An Unexpected Unity among Methods for Interpreting Model Predictions},
-  journal    = {arXiv preprint \href{http://arxiv.org/abs/1611.07478}{arXiv:1611.07478}},
-  year       = {2016},
-  optnumber     = {NIPS 2016},
-  optpages      = {1--6},
-  arxivid    = {1611.07478},
-  eprint     = {1611.07478},
-  eprinttype = {arXiv},
-  opturl        = {http://arxiv.org/abs/1611.07478},
-}
+
 
 @Article{kononenko2010efficient,
   author  = {{\v{S}}trumbelj, Eri and Kononenko, Igor and Wrobel, Stefan},
@@ -741,84 +397,13 @@ eprint = {https://doi.org/10.1080/01621459.2017.1307116}
   optissn = {1532-4435},
 }
 
-@Article{Cohen2005,
-  author  = {Cohen, Shay and Ruppin, Eytan and Dror, Gideon},
-  title   = {Feature Selection Based on the Shapley Value},
-  journal = {In other words},
-  year    = {2005},
-  volume  = {1},
-  pages   = {665--670},
-  optissn = {10450823},
+
+@article{adadi2018peeking,
+  title={Peeking inside the black-box: A survey on Explainable Artificial Intelligence (XAI)},
+  author={Adadi, Amina and Berrada, Mohammed},
+  journal={IEEE Access},
+  year={2018},
+  publisher={IEEE}
 }
 
-@Article{Cohen2007,
-  author  = {Cohen, Shay and Dror, Gideon and Ruppin, Eytan},
-  title   = {Feature Selection Via Coalitional Game Theory},
-  journal = {Neural Comput.},
-  year    = {2007},
-  volume  = {19},
-  number  = {7},
-  pages   = {1939--1961},
-  optdoi  = {10.1162/neco.2007.19.7.1939},
-  optisbn = {0899-7667 (Print)$\backslash$n0899-7667 (Linking)},
-  optissn = {0899-7667},
-  pmid    = {17521285},
-}
 
-@Article{shapley1953value,
-  author  = {Shapley, Lloyd S},
-  title   = {A Value for N-person Games},
-  journal = {Contributions to the Theory of Games},
-  year    = {1953},
-  volume  = {2},
-  number  = {28},
-  pages   = {307--317},
-}
-
-@Article{Saeys2007,
-  author      = {Saeys, Yvan and Inza, I{\~n}aki and Larra{\~n}aga, Pedro},
-  title       = {A Review of Feature Selection Techniques in Bioinformatics},
-  journal     = {Bioinformatics},
-  year        = {2007},
-  volume      = {23},
-  number      = {19},
-  pages       = {2507--2517},
-  eprint      = {bioinformatics/btm344},
-  eprintclass = {10.1093},
-  eprinttype  = {arXiv},
-  optdoi      = {10.1093/bioinformatics/btm344},
-  optisbn     = {1367-4811 (Electronic)$\backslash$r1367-4803 (Linking)},
-  optissn     = {1367-4803},
-  pmid        = {17720704},
-  publisher   = {Oxford University Press},
-}
-
-@incollection{Cutler2012,
-  title={Random forests},
-  author={Cutler, Adele and Cutler, D Richard and Stevens, John R},
-  booktitle={Ensemble Machine Learning},
-  pages={157--175},
-  year={2012},
-  publisher={Springer}
-}
-
-@Article{Ciss2015,
-  author = {Ciss, Sa{\"{i}}p},
-  title  = {Variable Importance in Random Uniform Forests an Overview of Random Uniform Forests},
-  year   = {2015},
-  pages  = {1--22},
-}
-
-@Article{vanschoren2014openml,
-  author    = {Vanschoren, Joaquin and Van Rijn, Jan N and Bischl, Bernd and Torgo, Luis},
-  title     = {{OpenML}: Networked Science in Machine Learning},
-  journal   = {ACM SIGKDD Explor. Newsl.},
-  year      = {2014},
-  volume    = {15},
-  number    = {2},
-  pages     = {49--60},
-  location  = {New York, NY, USA},
-  publisher = {ACM},
-}
-
-@Comment{jabref-meta: databaseType:bibtex;}
