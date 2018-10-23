@@ -145,7 +145,7 @@ df$rent = (12 * (df$location == "Bad") + 17 * (df$location == "Good")) * df$size
 @
 
 <<rent>>=
-knitr::include_graphics("figure/rent.png")
+knitr::include_graphics("figure/rent-ml.png")
 @
 
 <<train-model, echo=FALSE>>=
@@ -176,7 +176,7 @@ ggplot(eff.res)  + geom_line(aes(x=size, y = .y.hat), size = 3) +
   theme(aspect.ratio=2/4, text = element_text(size=35),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 @
-For example we can vary the size of the living area and observe how the prediction of the model changes. 
+\textit{For example we can vary the size of the living area and observe how the prediction of the model changes.}
 
 
 %Caveat: ICE and PDP have trouble when the inputs are strongly correlated.
@@ -196,7 +196,7 @@ ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
   scale_x_discrete("") +
   scale_y_continuous("Feature Importance")
 @
-In the rent example the most important feature was the size of the living area. 
+\textit{In the rent example the most important feature was the size of the living area. }
 }
 \block{Individual predictions}{
 
@@ -210,7 +210,7 @@ pred.rent = round(pred$predict(appartment)$.prediction, 0)
 
 We have a couple of options to explain why a particular prediction was made by a machine learning model.
 Suppose we want to explain the prediction of the following appartment. 
-<<rent2>>=
+<<rent2, out.width="0.2\\textwidth">>=
 knitr::include_graphics("figure/rent.png")
 @
 
@@ -219,14 +219,14 @@ appartment.mod = appartment
 appartment.mod$cats = factor("No", levels = c("No", "Yes"))
 pred.new = round(pred$predict(appartment.mod[,1:3, drop=FALSE]), 0)
 @
-\vspace{1cm}
-\section*{Counterfactual explanations}
-A counterfactual explanation of a prediction describes the smallest change to the feature values (inputs) that changes the prediction to a predefined output.
+\\ \\
+\textbf{Counterfactual explanations} \\
+A counterfactual explanation of a prediction describes the smallest changes to the feature values (inputs) that change the prediction to a predefined output.
 For example: How does the inputs have to change so that the prediction changes below 900 Euros?
-Answer (one of many possible ones): If cats were allowed, the predicted rent would be \Sexpr{pred.new} Euros.
-
-
-\section*{Shapley Values}
+Answer (one of many possible ones): \\
+\textit{If cats were allowed, the predicted rent would be \Sexpr{pred.new} Euros.}
+\\ \\
+\textbf{Shapley Values} \\
 From a game theoretical perspective, the feature values can be seen as players in a game that cooperate to achieve the prediction as a payout.
 The Shapley Values method \cite{vstrumbelj2014explaining} fairly attributes the difference between the prediction and the average prediction among the feature values.
 
@@ -236,7 +236,7 @@ shap$explain(appartment)
 plot(shap) +
   theme(aspect.ratio=2/4, text = element_text(size=30),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_y_continuous("Contribution to prediction minus avg. prediction") +
+  scale_y_continuous("Contribution to difference of \nprediction minus avg. prediction") +
   scale_x_discrete("")
 
 @
@@ -250,8 +250,8 @@ plot(shap) +
 \block{Interpretable Models}{
 Intrinsically interpretable models learn simple relationships between input and output,
 but often predict the data less well than flexible, yet less interpretable, models.
-
-\section*{Linear Regression Models}
+\\ \\
+\textbf{Linear Regression Models}\\
 %The linear regression model models the outcome y as a weighted sum of the input features.
 
 %\[y = \beta_0 + \beta_1 \cdot \text{Feature}_1 + \ldots + \beta_p \cdot \text{Feature}_p\]
@@ -260,23 +260,19 @@ but often predict the data less well than flexible, yet less interpretable, mode
 <<lm>>=
 knitr::include_graphics("figure/lm.png")
 @
-
-
-In the rent example, the following model is learned.
+\textit{In the rent example, the following weights were learned:}
 <<train-model-lm, echo=FALSE, include=FALSE>>=
 mod.lm = lm(rent ~ ., data = df)
 cf = round(coef(mod.lm))
 knitr::kable(cf, format = 'latex')
 @
 
-$$\text{rent} = \Sexpr{cf["(Intercept)"]} + \Sexpr{cf["size"]} \cdot \text{size}  + \Sexpr{cf["locationGood"]} \cdot I_{\text{good location}} +  \Sexpr{cf["catsYes"]} \cdot I_{\text{cats allowed}}$$
-
-
-An increase of the living area increases the predicted rent by \Sexpr{coef(mod.lm)["size"]}.
-Changing the location from "Bad" to the "Good" increases the predicted rent by \Sexpr{coef(mod.lm)["locationGood"]}.
+$\text{rent} = \Sexpr{cf["(Intercept)"]} + \Sexpr{cf["size"]} \cdot \text{size}  + \Sexpr{cf["locationGood"]} \cdot I_{\text{good location}} +  \Sexpr{cf["catsYes"]} \cdot I_{\text{cats allowed}}$
+\textit{The predicted rent increases by \Sexpr{cf["size"]} Euros per each $m^2$.}
+%Changing the location from "Bad" to the "Good" increases the predicted rent by \Sexpr{coef(mod.lm)["locationGood"]}.
 %Linear models have many extensions, like Generalized Linear Models (GLMs) or Generalized Additive Models (GAMs) that allow more flexiblity.
-
-\section*{Decision Trees}
+\\ \\
+\textbf{Decision Trees}\\
 Decision trees partition the data into smaller subsets, based on 'decisions' made on the input features. 
 
 <<train-model-tree, echo=FALSE, out.width="0.28\\textwidth">>=
@@ -285,12 +281,11 @@ mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 2))
 #plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
 knitr::include_graphics("figure/tree.png")
 @
-For example, the tree predicts a rent of 1908 Euros for an appartment bigger than 77 $m^2$ in a good location.
-
-
-\section*{Decision Rules}
-A decision rule is a simple IF-THEN statement consisting of a condition and a prediction.
-One or many rules can be used to make predictions.
+\textit{The tree predicts a rent of 1908 Euros for an appartment bigger than 77 $m^2$ in a good location.}
+\\ \\
+\textbf{Decision Rules} \\
+Decision rules are IF-THEN statements consisting of a condition and a prediction.
+One or many rules can be used to make predictions. For example:
 
 <<train-model-rules, echo=FALSE, includee=FALSE, eval=FALSE>>=
 
@@ -318,19 +313,22 @@ rule = JRip(rent ~ ., data = df2)
 extract.rules.jrip(rule)
 @
 
-One decision rule learned for the rent prediction is:
 
-IF living area $\in 90 \text{ and } 110 m^2$  AND location $=$ Good THEN the rent is between 1540 and 1890 EUR
+\textit{
+IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ Good THEN the rent is between 1540 and 1890 EUR}
 
-\section*{Global Surrogate Models}
-Intrinsically interpretable models can also be used as to increase interpretability of a black box model by approximating its predictions, acting as a surrogate model which can be interpreted. 
-Example: Neural network as black box model, decision tree as surrogate model.
+}
+\block{Surrogate Models}{
+\textbf{Global Surrogate Models} \\
+Intrinsically interpretable models (e.g. tree)  can also be used as to increase interpretability of a black box model (e.g. neural network) by approximating its predictions, acting as a surrogate model which can be interpreted. 
+<<surrogate>>=
+knitr::include_graphics("figure/global-surrogate.png")
+@
+\\ \\
+\textbf{Local Surrogate Models}\cite{ribeiro2016should} \\
+Replace a  complex model with an individual, locally weighted interpretable model (e.g. decision tree) for the data point for which we want to explain the prediction.
 
-
-\section*{Local Surrogate Models}
-The idea behind local surrogate models \cite{ribeiro2016should} is to replace the complex model with an individual, locally weighted interpretable model (e.g. decision tree) for the data point for which we want to explain the prediction.
-
-<<lime, echo=FALSE>>=
+<<lime, echo=FALSE, out.width="0.2\\textwidth">>=
 # locmod = LocalModel$new(pred, k = 2)
 # locmod$explain(df[1,1:3])
 # plot(locmod)

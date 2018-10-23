@@ -4,11 +4,6 @@ Main idea: Present techniques from book.
 
 
 TODOS:
-- Adapt black box graphic: Input \n Features , Prediction. also trim top
-- Adapt black box rent model
-- Cite: PDP, Shapley value, feature importance, LIME
 - Draw global surrogate model
-- Draw: black box comic
-- Draw: linear model equation?
 - Integrate QR codes for software and book (one QR code per block?)
 
