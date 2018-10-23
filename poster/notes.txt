@@ -1,9 +1,3 @@
 # Poster for Symposium
 
 Main idea: Present techniques from book. 
-
-
-TODOS:
-- Draw global surrogate model
-- Integrate QR codes for software and book (one QR code per block?)
-

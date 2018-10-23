@@ -26,24 +26,18 @@
 \usepackage{xargs}
 \usepackage{subfig}
 
-\definecolorpalette{GrayOrangeBlue}{
-\definecolor{colorOne}{HTML}{C0C0C0}
-\definecolor{colorTwo}{HTML}{CCCCCC}
-\definecolor{colorThree}{HTML}{009440}
-}
 \usepackage{hyperref}
-%\usetheme{Desert}
-%\usecolorstyle[colorPalette=BlueGrayOrange]{Russia}
-\usebackgroundstyle{Rays}
+\usetheme{Board}
+\usecolorstyle[colorPalette=PurpleGrayBlue]{Germany}
+
+\usebackgroundstyle{Default}
 \title{Interpretable Machine Learning}
-\author{Christoph Molnar \\ }
-\institute{
-LMU Munich / Department of Statistics/ \url{christoph.molnar@stat.uni-muenchen.de} \\
-Prof. Dr. Bernd Bischl}
-%\titlegraphic{\hspace{-3200px}\includegraphics[scale=0.3]{figures/logo.png}}
+\author{Christoph Molnar  \url{christoph.molnar@stat.uni-muenchen.de}}
+\institute{LMU Munich / Department of Statistics / Prof. Dr. Bernd Bischl}
+%\titlegraphic{\includegraphics[scale=0.1]{figure/logo.png}}
 \usetitlestyle{Empty}
-\colorlet{titlefgcolor}{black}
-\colorlet{titlebgcolor}{colorOne}
+% \colorlet{titlefgcolor}{black}
+% \colorlet{titlebgcolor}{colorOne}
 
 <<setup-child, include = FALSE, echo=FALSE>>=
 library(mlr)
@@ -86,25 +80,14 @@ theme_update(axis.line = element_line(colour = "black"),
 @
 
 
-\makeatletter
-\renewcommand\section{%
-\@startsection
-{section}% name
-{1}% level
-{\z@}% indent
-{0ex \@plus -1ex \@minus -.2ex}% beforeskip, changed!
-{2.3ex \@plus.2ex}% afterskip
-{\normalfont\Large\bfseries}% style
-}
-\makeatother
 \begin{document}
 \maketitle
 
 \begin{columns}
 
 \column{0.33}
-\block{Machine learning}{
-Machine learning is a set of methods that let a computer learn from data to make predictions (e.g. cancer, weekly sales, credit default) by finding patterns.
+\block{Machine Learning}{
+Machine learning is a set of methods that allow computers to learn from data to make and improve predictions (e.g. cancer, weekly sales, credit default).
 <<ml>>=
 knitr::include_graphics("figure/programing-ml.png")
 @
@@ -114,12 +97,12 @@ knitr::include_graphics("figure/programing-ml.png")
 knitr::include_graphics("figure/iml.png")
 @
 
-Solution: \textbf{Interpretable machine learning} is a set of methods and models that enable to explain the behaviour and predictions of machine learning systems.\cite{molnar}
+Solution: \textbf{Interpretable Machine Learning} is a set of methods and models that make it possible to explain the behaviour and predictions of machine learning systems.\cite{molnar}
 }
 
 
-\block{Why explain?}{
-We need to explain machine learning models to \cite{adadi2018peeking}:
+\block{Why Explain?}{
+We need to explain machine learning models to ... \cite{adadi2018peeking}:
 % \begin{itemize}
 % \item \textbf{Explain to justify}: Machine learning models make errors, can be unfair (e.g racial bias.) and make unexpected predictions. In those cases, we require a model to justify predictions.
 % \item \textbf{Explain to control}: Understand more about the systems vulnerabilities and conditions for failure. e.g. know for what type of data it performs worse. 
@@ -133,7 +116,8 @@ knitr::include_graphics("figure/explain.png")
 }
 
 \block{Example: Predict Rent}{
-As example we train a machine learning model (here a random forest) that predicts the rent of an appartment given the size of its living area, the location ("Good or "Bad") and if cats are allowed.
+
+As an application example we train a machine learning model (here a random forest), which predicts the rent of an apartment based on the size of the living space, the location ("good" or "bad") and whether cats are allowed.
 
 <<create-data, echo = FALSE>>=
 set.seed(42)
@@ -165,8 +149,10 @@ pred = Predictor$new(rf, data = df, y = "rent")
 
 \column{0.33}
 
-\block{Feature effects}{
-The feature effect describe how changing a features changes the prediction of all data points on average. \cite{friedman2001greedy}
+\block{Feature Effect}{
+
+The feature effect describes how changing a feature changes on average the prediction of all data points. \cite{friedman2001greedy}
+
 <<ice, echo=FALSE, fig.width=12, fig.height=6>>=
 eff = FeatureEffect$new(pred, "size", method = "pdp")
 eff.res = eff$results
@@ -176,15 +162,16 @@ ggplot(eff.res)  + geom_line(aes(x=size, y = .y.hat), size = 3) +
   theme(aspect.ratio=2/4, text = element_text(size=35),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 @
-\textit{For example we can vary the size of the living area and observe how the prediction of the model changes.}
+
+\textit{If we vary the size of the living area, we observe how the predicted rente increases with increasing size.}
 
 
 %Caveat: ICE and PDP have trouble when the inputs are strongly correlated.
 %In this case, use Accumulated Local Effects instead \cite{apley2016visualizing}.
 }
-\block{Feature importance}{
-The feature importance \cite{Fisher2018} tells us how much the model accuracy drops when we don't know a feature, which is simulated by shuffling the feature values.
-The bigger the drop, the more important.
+\block{Feature Importance}{
+Feature importance \cite{Fisher2018} tells us how much model error increases when we shuffle its values in the data (= "destroying" the relationship between the feature and the outcome).
+The greater the increase in error, the more important the feature is.
 <<feature-importance, echo=FALSE, fig.width=12, fig.height=8>>=
 imp = FeatureImp$new(pred, "mae")
 
@@ -196,43 +183,41 @@ ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
   scale_x_discrete("") +
   scale_y_continuous("Feature Importance")
 @
-\textit{In the rent example the most important feature was the size of the living area. }
+\textit{In the rent example the most important feature was the size of the living area. Shuffling the size feature increases the model error by a factor of 2.5.}
 }
-\block{Individual predictions}{
-
-<<appartment, echo=FALSE,include=FALSE>>=
-# Choose appartment
-appartment = data.frame(location = factor("Good", levels = c("Bad", "Good")),
-    cats = factor("Yes", levels = c("No", "Yes")),
+<<apartment, echo=FALSE,include=FALSE>>=
+# Choose apartment
+apartment = data.frame(location = factor("Good", levels = c("Bad", "Good")),
+    cats = factor("No", levels = c("No", "Yes")),
   size = 50)
-pred.rent = round(pred$predict(appartment)$.prediction, 0)
+pred.rent = round(pred$predict(apartment)$.prediction, 0)
 @
-
-We have a couple of options to explain why a particular prediction was made by a machine learning model.
-Suppose we want to explain the prediction of the following appartment. 
+\block{Individual Predictions}{
+Sometimes we want to explain why a certain prediction was made by a machine learning model.
+\textit{Suppose we want to explain the 989Euro rent prediction for a $50m^2$ apartment in a good location and where cats are forbidden.}
 <<rent2, out.width="0.2\\textwidth">>=
 knitr::include_graphics("figure/rent.png")
 @
 
 <<counterfact, echo=FALSE, include = FALSE>>=
-appartment.mod = appartment
-appartment.mod$cats = factor("No", levels = c("No", "Yes"))
-pred.new = round(pred$predict(appartment.mod[,1:3, drop=FALSE]), 0)
+apartment.mod = apartment
+apartment.mod$cats = factor("Yes", levels = c("No", "Yes"))
+pred.new = round(pred$predict(apartment.mod[,1:3, drop=FALSE]), 0)
 @
-\\ \\
-\textbf{Counterfactual explanations} \\
-A counterfactual explanation of a prediction describes the smallest changes to the feature values (inputs) that change the prediction to a predefined output.
-For example: How does the inputs have to change so that the prediction changes below 900 Euros?
-Answer (one of many possible ones): \\
-\textit{If cats were allowed, the predicted rent would be \Sexpr{pred.new} Euros.}
+
+\textbf{Counterfactual Explanation} \\
+A counterfactual explanation of a prediction describes the smallest changes to the feature values (inputs) that change the prediction to a predefined output. \\
+\textit{How do the inputs for the 989 Euro apartment have to change so that the predicted rent is over 1100 Euros?
+Answer (one of many possible ones): If cats were allowed, the predicted rent would be \Sexpr{pred.new} Euros.}
 \\ \\
 \textbf{Shapley Values} \\
-From a game theoretical perspective, the feature values can be seen as players in a game that cooperate to achieve the prediction as a payout.
-The Shapley Values method \cite{vstrumbelj2014explaining} fairly attributes the difference between the prediction and the average prediction among the feature values.
+From a game theory point of view, the feature values are players in a cooperative game who receive the value of the prediction as a payout.
+The Shapley Values method \cite{vstrumbelj2014explaining} splits the difference between the prediction and the average prediction fairly among the feature values.
 
 <<shapley, echo=FALSE, fig.width=12, fig.height=6>>=
 shap = Shapley$new(pred)
-shap$explain(appartment)
+shap$explain(apartment)
+avg.pred  = round(mean(pred$predict(df)[[1]]))
 plot(shap) +
   theme(aspect.ratio=2/4, text = element_text(size=30),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
@@ -240,16 +225,14 @@ plot(shap) +
   scale_x_discrete("")
 
 @
-
-
+\textit{The predicted value of the apartment is 989Euros, the average prediction of all apartments is \Sexpr{avg.pred}. The negative difference is explained by its small size and the ban on cats. The good location has a positive effect on the predicted rent.}
 
 }
 
 \column{0.33}
 
 \block{Interpretable Models}{
-Intrinsically interpretable models learn simple relationships between input and output,
-but often predict the data less well than flexible, yet less interpretable, models.
+Intrinsically interpretable models learn simple relationships between input and output.
 \\ \\
 \textbf{Linear Regression Models}\\
 %The linear regression model models the outcome y as a weighted sum of the input features.
@@ -273,7 +256,7 @@ $\text{rent} = \Sexpr{cf["(Intercept)"]} + \Sexpr{cf["size"]} \cdot \text{size} 
 %Linear models have many extensions, like Generalized Linear Models (GLMs) or Generalized Additive Models (GAMs) that allow more flexiblity.
 \\ \\
 \textbf{Decision Trees}\\
-Decision trees partition the data into smaller subsets, based on 'decisions' made on the input features. 
+Decision trees divide the data into smaller subsets based on 'decisions' made on input features. 
 
 <<train-model-tree, echo=FALSE, out.width="0.28\\textwidth">>=
 library(partykit)
@@ -281,12 +264,11 @@ mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 2))
 #plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
 knitr::include_graphics("figure/tree.png")
 @
-\textit{The tree predicts a rent of 1908 Euros for an appartment bigger than 77 $m^2$ in a good location.}
+\textit{The tree predicts a rent of 1908 Euros for an apartment larger than 77 $m^2$ in a good location.}
 \\ \\
 \textbf{Decision Rules} \\
-Decision rules are IF-THEN statements consisting of a condition and a prediction.
-One or many rules can be used to make predictions. For example:
-
+Decision rules are IF-THEN statements that consist of a condition and a prediction.
+One or more rules can be used to make predictions. For example:
 <<train-model-rules, echo=FALSE, includee=FALSE, eval=FALSE>>=
 
 library("RWeka")
@@ -312,23 +294,23 @@ df2$size = cut(df$size, breaks = quantile(df$size, probs = seq(from = 0, to = 1,
 rule = JRip(rent ~ ., data = df2)
 extract.rules.jrip(rule)
 @
-
-
 \textit{
 IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ Good THEN the rent is between 1540 and 1890 EUR}
 
 }
 \block{Surrogate Models}{
 \textbf{Global Surrogate Models} \\
-Intrinsically interpretable models (e.g. tree)  can also be used as to increase interpretability of a black box model (e.g. neural network) by approximating its predictions, acting as a surrogate model which can be interpreted. 
+%Flexible but less interpretable models often predict the data better than interpretable models.
+Intrinsically interpretable models (e.g. a tree) can be used to increase interpretability of a black box model (e.g. a neural network) by approximating its predictions by acting as a surrogate model that can be interpreted. 
 <<surrogate>>=
 knitr::include_graphics("figure/global-surrogate.png")
 @
-\\ \\
-\textbf{Local Surrogate Models}\cite{ribeiro2016should} \\
-Replace a  complex model with an individual, locally weighted interpretable model (e.g. decision tree) for the data point for which we want to explain the prediction.
 
-<<lime, echo=FALSE, out.width="0.2\\textwidth">>=
+\textbf{Local Surrogate Models}\cite{ribeiro2016should} \\
+To explain an individual prediction, replace a  complex model with a locally weighted, interpretable model (e.g. decision tree).
+Data points that are close to the data point of interest get a high weight.
+
+<<lime, echo=FALSE>>=
 # locmod = LocalModel$new(pred, k = 2)
 # locmod$explain(df[1,1:3])
 # plot(locmod)
