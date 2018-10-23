@@ -2,28 +2,13 @@
 
 Main idea: Present techniques from book. 
 
-- Use template from Giuseppe
-- Light on theory, many graphics
-- One example dataset (can be simulated and funny) that is used all through poster
-- Integrate QR codes for software and book (one QR code per block?)
-- INtegrate graphice from book somewhere?
-- Add black box graphic with the "?"
-- Data: 3 features (1 cat, 2 num), numerical outcome, relatable, rent, non-linear, interactions.
-- data house value: features living area and location (cat) and cats are allowed (interaction with living area).
-- do little diagram for taks: symbols for living area, cats allowed and location influence rent.
-- Boxes
-    - Introduction: What is ML, why interpretability
-    - Data: Explain data and model. Idea: fuse intro and data, make more tangible through application focus
-    - white box models (linear models+, decision tree, rules)
-    - feature effects (PDP, ICE, ALE)
-    - feature importance (permutation importance)
-    - Global surrogate models (idea: integrate into white box as additional possibility)
-    - Explaining individual predictions (Shapley, LIME, counterfactual explanations)
-    - References
- 
 
 TODOS:
 - Adapt black box graphic: Input \n Features , Prediction. also trim top
-- Hand draw decision tree
-- Cite my book
-- Hand draw rent prediction example
+- Adapt black box rent model
+- Cite: PDP, Shapley value, feature importance, LIME
+- Draw global surrogate model
+- Draw: black box comic
+- Draw: linear model equation?
+- Integrate QR codes for software and book (one QR code per block?)
+

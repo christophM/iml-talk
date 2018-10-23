@@ -104,34 +104,36 @@ theme_update(axis.line = element_line(colour = "black"),
 
 \column{0.33}
 \block{Machine learning}{
-Machine learning is a set of methods that let a computer learn from data to make predictions by finding patterns.
-Can be used to predict credit default, cancer, weekly sales ...
+Machine learning is a set of methods that let a computer learn from data to make predictions (e.g. cancer, weekly sales, credit default) by finding patterns.
 <<ml>>=
-knitr::include_graphics("figure/ml.png")
+knitr::include_graphics("figure/programing-ml.png")
 @
 }
 \block{Black Box Problem}{
-The big disadvantage of the machine learning approach is that the  learned program is intransparent to us. 
+<<iml>>=
+knitr::include_graphics("figure/iml.png")
+@
 
-\includegraphics[width=0.25\textwidth]{figure/teaser.png}
-
-Interpretable machine learning is a set of methods and models that enable to explain the behaviour and predictions of machine learning systems.\cite{molnar}
+Solution: \textbf{Interpretable machine learning} is a set of methods and models that enable to explain the behaviour and predictions of machine learning systems.\cite{molnar}
 }
 
 
 \block{Why explain?}{
 We need to explain machine learning models to \cite{adadi2018peeking}:
-\begin{itemize}
-\item \textbf{Explain to justify}: Machine learning models make errors, can be unfair (e.g racial bias.) and make unexpected predictions. In those cases, we require a model to justify predictions.
-\item \textbf{Explain to control}: Understand more about the systems vulnerabilities and conditions for failure. e.g. know for what type of data it performs worse. 
-\item \textbf{Explain to improve}: Insights about model behaviour helps to improve the model.
-\item \textbf{Explain to discover}: A black box model is optimized to make predictions, not to give insights.
-Interpretability methods enable to extract insights from black box models.
-\end{itemize}
+% \begin{itemize}
+% \item \textbf{Explain to justify}: Machine learning models make errors, can be unfair (e.g racial bias.) and make unexpected predictions. In those cases, we require a model to justify predictions.
+% \item \textbf{Explain to control}: Understand more about the systems vulnerabilities and conditions for failure. e.g. know for what type of data it performs worse. 
+% \item \textbf{Explain to improve}: Insights about model behaviour helps to improve the model.
+% \item \textbf{Explain to discover}: A black box model is optimized to make predictions, not to give insights.
+% Interpretability methods enable to extract insights from black box models.
+% \end{itemize}
+<<explain-to>>=
+knitr::include_graphics("figure/explain.png")
+@
 }
 
 \block{Example: Predict Rent}{
-As example we use a machine learning model that predicts the rent of an appartment given the size of its living area, whether the location is good or bad and if cats are allowed.
+As example we train a machine learning model (here a random forest) that predicts the rent of an appartment given the size of its living area, the location ("Good or "Bad") and if cats are allowed.
 
 <<create-data, echo = FALSE>>=
 set.seed(42)
@@ -164,14 +166,12 @@ pred = Predictor$new(rf, data = df, y = "rent")
 \column{0.33}
 
 \block{Feature effects}{
-The feature effects describe how changing one of the features (on average) changes the prediction.
-The effects can be visualized for individual data points (called Individual Conditional Expectations \cite{goldstein2015peeking}) or as an averaged curve (called Partial Dependence Plots \cite{friedman2001greedy}).
-
+The feature effect describe how changing a features changes the prediction of all data points on average. \cite{friedman2001greedy}
 <<ice, echo=FALSE, fig.width=12, fig.height=6>>=
-eff = FeatureEffect$new(pred, "size", method = "ale")
+eff = FeatureEffect$new(pred, "size", method = "pdp")
 eff.res = eff$results
-ggplot(eff.res)  + geom_line(aes(x=size, y = .ale), size = 3) +
-  scale_x_continuous("Feature Effect") + 
+ggplot(eff.res)  + geom_line(aes(x=size, y = .y.hat), size = 3) +
+  scale_x_continuous("Size of living area") + 
   scale_y_continuous("Predicted rent") +
   theme(aspect.ratio=2/4, text = element_text(size=35),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank())
@@ -183,7 +183,7 @@ For example we can vary the size of the living area and observe how the predicti
 %In this case, use Accumulated Local Effects instead \cite{apley2016visualizing}.
 }
 \block{Feature importance}{
-The feature importance tells us how much the model accuracy drops when we don't know a feature, which is simulated by shuffling the feature values.
+The feature importance \cite{Fisher2018} tells us how much the model accuracy drops when we don't know a feature, which is simulated by shuffling the feature values.
 The bigger the drop, the more important.
 <<feature-importance, echo=FALSE, fig.width=12, fig.height=8>>=
 imp = FeatureImp$new(pred, "mae")
@@ -192,7 +192,9 @@ impres = imp$results
 
 ggplot(impres) + geom_col(aes(y = importance, x = feature)) + coord_flip() +
   theme(aspect.ratio=2/4, text = element_text(size=30),
-    panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  scale_x_discrete("") +
+  scale_y_continuous("Feature Importance")
 @
 In the rent example the most important feature was the size of the living area. 
 }
@@ -217,6 +219,7 @@ appartment.mod = appartment
 appartment.mod$cats = factor("No", levels = c("No", "Yes"))
 pred.new = round(pred$predict(appartment.mod[,1:3, drop=FALSE]), 0)
 @
+\vspace{1cm}
 \section*{Counterfactual explanations}
 A counterfactual explanation of a prediction describes the smallest change to the feature values (inputs) that changes the prediction to a predefined output.
 For example: How does the inputs have to change so that the prediction changes below 900 Euros?
@@ -224,8 +227,8 @@ Answer (one of many possible ones): If cats were allowed, the predicted rent wou
 
 
 \section*{Shapley Values}
-From a game theoretical perspective, the feature values are like players in a game and cooperate to achieve a game payout, which is the prediction.
-A method called Shapley Values TODO:CITE fairly attributes the difference between the prediction and the average prediction among the feature values to explain a prediction.
+From a game theoretical perspective, the feature values can be seen as players in a game that cooperate to achieve the prediction as a payout.
+The Shapley Values method \cite{vstrumbelj2014explaining} fairly attributes the difference between the prediction and the average prediction among the feature values.
 
 <<shapley, echo=FALSE, fig.width=12, fig.height=6>>=
 shap = Shapley$new(pred)
@@ -233,7 +236,7 @@ shap$explain(appartment)
 plot(shap) +
   theme(aspect.ratio=2/4, text = element_text(size=30),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  scale_y_continuous("Contribution to prediction") +
+  scale_y_continuous("Contribution to prediction minus avg. prediction") +
   scale_x_discrete("")
 
 @
@@ -246,14 +249,19 @@ plot(shap) +
 
 \block{Interpretable Models}{
 Intrinsically interpretable models learn simple relationships between input and output,
-but they often predict the data less well.
+but often predict the data less well than flexible, yet less interpretable, models.
 
 \section*{Linear Regression Models}
-The linear regression model models the outcome y as a weighted sum of the input features.
+%The linear regression model models the outcome y as a weighted sum of the input features.
 
-\[y = \beta_0 + \beta_1 \cdot \text{Feature}_1 + \ldots + \beta_p \cdot \text{Feature}_p\]
+%\[y = \beta_0 + \beta_1 \cdot \text{Feature}_1 + \ldots + \beta_p \cdot \text{Feature}_p\]
 
-The goal is to find the best possible weights $\beta$.
+%The goal is to find the best possible weights $\beta$.
+<<lm>>=
+knitr::include_graphics("figure/lm.png")
+@
+
+
 In the rent example, the following model is learned.
 <<train-model-lm, echo=FALSE, include=FALSE>>=
 mod.lm = lm(rent ~ ., data = df)
@@ -270,9 +278,7 @@ Changing the location from "Bad" to the "Good" increases the predicted rent by \
 
 \section*{Decision Trees}
 Decision trees partition the data into smaller subsets, based on 'decisions' made on the input features. 
-The prediction is based on the leaf node we end up in.
 
-A decision tree trained on the rent data:
 <<train-model-tree, echo=FALSE, out.width="0.28\\textwidth">>=
 library(partykit)
 mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 2))
@@ -316,13 +322,13 @@ One decision rule learned for the rent prediction is:
 
 IF living area $\in 90 \text{ and } 110 m^2$  AND location $=$ Good THEN the rent is between 1540 and 1890 EUR
 
-\section*{Surrogate Models}
+\section*{Global Surrogate Models}
 Intrinsically interpretable models can also be used as to increase interpretability of a black box model by approximating its predictions, acting as a surrogate model which can be interpreted. 
 Example: Neural network as black box model, decision tree as surrogate model.
 
 
-\section*{Local surrogate models}
-The idea behind local surrogate models is to replace the complex model with an individual, locally weighted interpretable model (e.g. regression) for the data point for which we want to explain the prediction.
+\section*{Local Surrogate Models}
+The idea behind local surrogate models \cite{ribeiro2016should} is to replace the complex model with an individual, locally weighted interpretable model (e.g. decision tree) for the data point for which we want to explain the prediction.
 
 <<lime, echo=FALSE>>=
 # locmod = LocalModel$new(pred, k = 2)
