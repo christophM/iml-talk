@@ -101,12 +101,12 @@ theme_update(axis.line = element_line(colour = "black"),
 \block{Machine Learning}{
 Machine learning is a set of methods that allow computers to learn from data to make and improve predictions (e.g. cancer, weekly sales, credit default).
 <<ml>>=
-knitr::include_graphics("figure/programing-ml.png")
+knitr::include_graphics("../images/programing-ml.png")
 @
 }
 \block{Black Box Problem}{
 <<iml>>=
-knitr::include_graphics("figure/iml.png")
+knitr::include_graphics("../images/iml.png")
 @
 
 Solution: \textbf{Interpretable Machine Learning} is a set of methods and models that make it possible to explain the behaviour and predictions of machine learning systems.\cite{molnar}
@@ -123,7 +123,7 @@ We need to explain machine learning models to ... \cite{adadi2018peeking}:
 % Interpretability methods enable to extract insights from black box models.
 % \end{itemize}
 <<explain-to>>=
-knitr::include_graphics("figure/explain.png")
+knitr::include_graphics("../images/explain.png")
 @
 }
 
@@ -141,7 +141,7 @@ df$rent = (12 * (df$location == "Bad") + 17 * (df$location == "Good")) * df$size
 @
 
 <<rent>>=
-knitr::include_graphics("figure/rent-ml.png")
+knitr::include_graphics("../images/rent-ml.png")
 @
 
 <<train-model, echo=FALSE>>=
@@ -208,7 +208,7 @@ pred.rent = round(pred$predict(apartment)$.prediction, 0)
 Sometimes we want to explain why a certain prediction was made by a machine learning model.
 \textit{Suppose we want to explain the 989Euro rent prediction for a $50m^2$ apartment in a good location and where cats are forbidden.}
 <<rent2, out.width="0.2\\textwidth">>=
-knitr::include_graphics("figure/rent.png")
+knitr::include_graphics("../images/rent.png")
 @
 
 <<counterfact, echo=FALSE, include = FALSE>>=
@@ -253,7 +253,7 @@ Intrinsically interpretable models learn simple relationships between input and 
 
 %The goal is to find the best possible weights $\beta$.
 <<lm>>=
-knitr::include_graphics("figure/lm.png")
+knitr::include_graphics("../images/lm.png")
 @
 \textit{In the rent example, the following weights were learned:}
 <<train-model-lm, echo=FALSE, include=FALSE>>=
@@ -274,7 +274,7 @@ Decision trees divide the data into smaller subsets based on 'decisions' made on
 library(partykit)
 mod.tree = ctree(rent ~ ., data = df, control = ctree_control(maxdepth = 2))
 #plot(mod.tree, inner_panel = node_inner(mod.tree, pval = FALSE), type='simple')
-knitr::include_graphics("figure/tree.png")
+knitr::include_graphics("../images/tree.png")
 @
 \textit{The tree predicts a rent of 1908 Euros for an apartment larger than 77 $m^2$ in a good location.}
 \\ \\
@@ -315,7 +315,7 @@ IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ "good" THEN rent is betwee
 %Flexible but less interpretable models often predict the data better than interpretable models.
 Intrinsically interpretable models (e.g. a tree) can be used to increase interpretability of a black box model (e.g. a neural network) by approximating its predictions by acting as a surrogate model that can be interpreted. 
 <<surrogate>>=
-knitr::include_graphics("figure/global-surrogate.png")
+knitr::include_graphics("../images/global-surrogate.png")
 @
 
 \textbf{Local Surrogate Models}\cite{ribeiro2016should} \\
@@ -326,7 +326,7 @@ Data points that are close to the data point of interest get a high weight.
 # locmod = LocalModel$new(pred, k = 2)
 # locmod$explain(df[1,1:3])
 # plot(locmod)
-knitr::include_graphics("figure/local-surrogate.png")
+knitr::include_graphics("../images/local-surrogate.png")
 @
 }
 
