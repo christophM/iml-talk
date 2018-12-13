@@ -1,13 +1,11 @@
 ---
-title: "Interpretable Machine Learning and Causality  "
+title: "Interpretable Machine Learning"
 author: "Christoph Molnar"
 date: "2018-12-14"
 output:
   ioslides_presentation:
     css: ../styles.css
 ---
-
-# Interpretable Machine Learning
 
 ## Machine Learning vs Programing {.center data-background=../images/programing-ml.png data-background-size=contain}
 
@@ -67,14 +65,19 @@ IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ "good" THEN rent is betwee
 ## Only Association
 
 Without further assumptions for the model, the presented interpretability techniques only have rung one on Pearl's causality ladder (for real world ).
-When model is seen in isolation, we can make causal statements.
 
 - Rung 1: Association
 - Rung 2: Intervention
 - Rung 3: Counterfactual
 
-But: Do-calculus only for linear models?
 
+## Some thoughts on causality
+
+- do-calculus for non-linear models?
+- PDP shows causal feature effects (intervention) if ML model is causal
+- Correlation problematic for permutation importance / PDP / ... $\Rightarrow$ causal models the solution?
+
+<!--
 ## Example
 
 - ML model predicts shoe size
@@ -85,6 +88,7 @@ But: Do-calculus only for linear models?
 - Always measures direct effect, but not total (bc. excludes indirect effect)
 - Model not causal DAG
 
+-->
 
 ## Further readings   
 More on interpretable machine learning in my book [http://christophm.github.io/interpretable-ml-book/](http://christophm.github.io/interpretable-ml-book/).
