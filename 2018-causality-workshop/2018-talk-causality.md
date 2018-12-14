@@ -64,14 +64,9 @@ IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ "good" THEN rent is betwee
 ## Machine Learning Model  {.center data-background=../images/graph.png data-background-size=contain}
 
 
-## Only Association
+##   {.center data-background=../images/ladder-causality.png data-background-size=contain}
 
-Without further assumptions for the model, the presented interpretability techniques only have rung one on Pearl's causality ladder (for real world ).
-
-- Rung 1: Association
-- Rung 2: Intervention
-- Rung 3: Counterfactual
-
+## {.center data-background=../images/ladder-causality-0.png data-background-size=contain}
 
 ## Some thoughts on causality
 
