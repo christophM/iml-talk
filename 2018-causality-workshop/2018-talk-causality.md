@@ -75,7 +75,8 @@ Without further assumptions for the model, the presented interpretability techni
 
 - do-calculus for non-linear models?
 - PDP shows causal feature effects (intervention) if ML model is causal
-- Correlation problematic for permutation importance / PDP / ... $\Rightarrow$ causal models the solution?
+- Inherent conflict between predictive performance and causality (e.g. add confounders to improve performance)
+
 
 <!--
 ## Example
