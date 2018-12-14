@@ -18,6 +18,8 @@ additive $\Rightarrow$ interactions
 
 theory-driven $\Rightarrow$ optimization-driven
 
+## Machine Learning Model  {.center data-background=../images/graph.png data-background-size=contain}
+
 ## Black Box Problem
 
 ![](../images/iml-ml.png)
@@ -73,6 +75,9 @@ Without further assumptions for the model, the presented interpretability techni
 
 ## Some thoughts on causality
 
+- "All other variables are held constant" $\Rightarrow$ same for interpretation methods
+- Interpretation methods suffer from correlation
+- Interpretability as building block for causality? (e.g. PDP is equivalent of linear model weights)
 - do-calculus for non-linear models?
 - PDP shows causal feature effects (intervention) if ML model is causal
 - Inherent conflict between predictive performance and causality (e.g. add confounders to improve performance)
