@@ -15,7 +15,7 @@ A client wants you to predict data scientist salaries with machine learning.
 Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
 </div>
 
-## {data-background=../../images/magic.jpg data-background-size=contain}
+## {data-background=../images/magic.jpg data-background-size=contain}
 
 
 
