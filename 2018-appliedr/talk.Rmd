@@ -1,0 +1,46 @@
+---
+title: "Interpretable Machine Learning"
+author: "Christoph Molnar"
+date: "December 4, 2017"
+output:
+  ioslides_presentation:
+    css: ../styles.css
+---
+
+##  {.emphasizedabit}
+Scenario: A company approaches you to predict data scientist salaries with machine learning.  
+
+##
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/wow.jpg")
+```
+
+# Let's predict data scientist salaries
+
+
+
+## What is Machine Learning
+
+Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("images/magic.jpg")
+```
+
+
+```{r child = "../chunks/story-salaries.Rmd"}
+```
+
+## Interested in learning more?
+
+Read my book about "Interpretable Machine Learning"
+https://christophm.github.io/interpretable-ml-book/
+
+```{r, echo=FALSE, fig.align='center', out.width='80%'}
+knitr::include_graphics("images/book.png")
+```
+
+```{r child = "../chunks/book.Rmd"}
+```
+

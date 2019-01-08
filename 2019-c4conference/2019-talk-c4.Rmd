@@ -1,0 +1,52 @@
+---
+title: "Interpretable Machine Learning"
+author: "Christoph Molnar"
+date: "January 17, 2018"
+output: 
+  ioslides_presentation:
+    widescreen: false
+    smaller: false
+css: ../styles.css
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+  warning = FALSE,
+  message = FALSE, 
+  fig.align='center', 
+  out.width = '100%')
+```
+
+
+
+## Machine Learning vs Programing {.center data-background=../images/programing-ml.png data-background-size=contain}
+
+
+## Machine Learning vs Statistics  {.emphasizedabit}
+
+linear $\Rightarrow$ non-linear
+
+additive $\Rightarrow$ interactions
+
+theory-driven $\Rightarrow$ optimization-driven
+
+## Machine Learning Model  {.center data-background=../images/graph.png data-background-size=contain}
+
+## Black Box Problem
+
+![](../images/iml-ml.png)
+
+
+```{r, child="../chunks/story-salaries.Rmd"}
+```
+
+
+## {.center data-background=../images/explain.png data-background-size=contain}
+
+```{r, child="../chunks/tools.Rmd"}
+```
+
+```{r child = "../chunks/book.Rmd"}
+```
+

@@ -1,0 +1,191 @@
+##  {.emphasizedabit}
+A client wants you to predict data scientist salaries with machine learning.  
+
+## {.center data-background=../images/wow.jpg data-background-size=contain}
+
+
+
+# Let's predict data scientist salaries
+
+
+
+# What is Machine Learning?
+
+<div class="notes">
+Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+</div>
+
+## {data-background=../../images/magic.jpg data-background-size=contain}
+
+
+
+# Step 1: Find some data
+
+
+## Step 1: Find some data
+
+Kaggle conducted an industry-wide survey of data scientists. 
+https://www.kaggle.com/kaggle/kaggle-survey-2017
+
+Information asked:  
+
+- Compensation
+- Demographics
+- Job title
+- Experience
+- ...
+
+
+<font size="2">Contains information from Kaggle ML and Data Science Survey, 2017, which is made available here under the Open Database License (ODbL).</font>
+
+
+
+```{r load-data,include=FALSE}
+library('mlr')
+library('ggplot2')
+library('tidyr')
+library('lime')
+source('../code/prepare-kaggle-data.R')
+```
+
+
+
+# Step 2: Throw ML on your data
+
+```{r learn}
+library('mlr')
+set.seed(42)
+task = makeRegrTask(data = survey.dat, target = 'CompensationAmount')
+lrn = makeLearner('regr.randomForest')
+mod = train(lrn, task)
+```
+
+
+## {.center data-background=../images/comp-dog.gif data-background-size=contain}
+
+<div class="notes">
+- Random Forest
+- Target: Compensation
+- All features that you found in the data
+- Train, test, ship
+</div>
+
+# Step 3: Profit {.center}
+
+## {data-background=../images/done-here.gif data-background-size=contain}
+```{r, echo=FALSE, out.width='80%', include = FALSE}
+knitr::include_graphics("../images/done-here.gif" )
+```
+
+##  {.emphasizedabit}
+
+Client: "There is a problem with the model!"
+
+##  {.emphasizedabit .center data-background=../images/Hide-the-pain-harold-phone.jpg data-background-size=cover}
+
+"What problem?"
+
+```{r, echo=FALSE, out.height='50%', include=FALSE}
+knitr::include_graphics("../images/Hide-the-pain-harold-phone.jpg")
+```
+
+
+## {.emphasizedabit}
+
+Client: "The older the candidates, the higher the predicted salaries."
+
+```{r, echo=FALSE, fig.width=16, include=FALSE}
+knitr::include_graphics("../images/age.jpeg")
+```
+
+##  {.emphasizedabit .center data-background=../images/black-box.gif data-background-size=cover}
+
+<div class="white">
+Looking inside the black box
+</div>
+
+# How do the features influence my predictions?
+
+## Partial Dependence Plot
+
+```{r out.width="80%"}
+library("iml")
+X = survey.dat[-which(names(survey.dat) == "CompensationAmount")]
+predictor = Predictor$new(mod, data = X, y = getTaskTargets(task))
+pd = Partial$new(predictor, feature ='Age')
+pd$plot() 
+```
+
+
+<font size="2">Goldstein, A., Kapelner, A., Bleich, J., & Pitkin, E. (2013). Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation, 1–22. https://doi.org/10.1080/10618600.2014.907095 </font>
+
+<font size="2">Friedman, J. H. (1999). Greedy Function Approximation : A Gradient Boosting Machine. North, 1(3), 1–10. https://doi.org/10.2307/2699986 </font>
+
+<div class="notes">
+- PDP answers: How does the prediction change when a feature input changes?
+- Average of ICE curves
+</div>
+
+
+##  {.emphasizedabit}
+
+Client: "We want to understand the model better!"
+
+# What are the most important features?
+
+## Permutation feature importance
+
+```{r, warning=FALSE}
+feat.imp = FeatureImp$new(predictor, loss = 'mae')
+feat.imp$plot()
+```
+
+<font size="2">Breiman, Leo. "Random forests." Machine learning 45.1 (2001): 5-32. </font>
+
+## Gender?! {.emphasizedabit .center data-background=../images/big-mistake.png data-background-size=contain}
+
+```{r, echo=FALSE, out.width='80%', include=FALSE}
+knitr::include_graphics("../images/big-mistake.png")
+```
+
+## What's the influence of gender on the prediction?
+
+```{r}
+pdp = Partial$new(predictor, feature="Gender", ice = FALSE)
+knitr::kable(pdp$results[c("Gender", ".y.hat")])
+```
+
+
+## {.center data-background=../images/hidden-pain-bias.jpg data-background-size=contain}
+
+```{r, echo=FALSE, include = FALSE}
+knitr::include_graphics("../images/hidden-pain-bias.jpg")
+```
+
+## {.center data-background=../images/angry.gif data-background-size=contain}
+
+```{r, echo=FALSE, out.width='40%', include = FALSE}
+knitr::include_graphics("../images/angry.gif")
+```
+
+# Explaining individual predictions
+
+
+# Local Models (LIME)
+
+## {.center data-background=../images/lime-fitting-1.png data-background-size=contain}
+
+## 
+```{r, echo=FALSE}
+set.seed(44)
+```
+
+
+```{r}
+explanation = LocalModel$new(predictor)
+explanation$explain(X[15, ])
+explanation$plot()
+```
+
+
+<font size="2">Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). “Why Should I Trust You?”: Explaining the Predictions of Any Classifier. Retrieved from http://arxiv.org/abs/1602.04938</font>

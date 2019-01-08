@@ -1,0 +1,4 @@
+## Interested in learning more?
+More on interpretable machine learning in my book [http://christophm.github.io/interpretable-ml-book/](http://christophm.github.io/interpretable-ml-book/).
+
+<img src="../images/cover-bordered.jpg" width=300/>

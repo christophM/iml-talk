@@ -1,7 +1,8 @@
 ## Prepare survey data
 library('dplyr')
 library('mlr')
-data.dir = 'data/'
+
+data.dir = '../data/'
 
 survey.raw = read.csv(sprintf('%smultipleChoiceResponses.csv', data.dir), na.strings = c('NA', '-1', '-99', ''))
 exchange = read.csv(sprintf('%sconversionRates.csv', data.dir), row.names = 1)
