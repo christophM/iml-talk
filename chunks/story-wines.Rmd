@@ -1,0 +1,242 @@
+TODO: Add wine csv and R script
+
+
+##  {.emphasizedabit}
+A startup wants you to predict wine quality from its chemical composition.
+
+# Let's predict wine quality
+
+
+# What is Machine Learning?
+
+<div class="notes">
+Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
+</div>
+
+## {data-background=../images/magic.jpg data-background-size=contain}
+
+
+## Step 1: Find data
+
+Red and white variants of the Portuguese "Vinho Verde" wine.
+
+Target: Quality from 1 to 10
+Features: Acidity, alcohol ...
+
+<font size="2">P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
+Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
+
+## Step 1: Find data
+
+
+TODO: Draw image with features.
+
+
+
+## Step 1: Find data
+
+TODO: Show distribution of target
+
+
+```{r load-data,include=FALSE}
+library('mlr')
+library('ggplot2')
+library('tidyr')
+library('lime')
+source('../code/prepare-wine-data.R')
+```
+
+
+# Step 2: Throw ML on your data
+
+
+TODO: Benchmark some models, report error
+
+```{r learn}
+library("mlr")
+lrn.ranger = makeLearner("regr.ranger")
+lrn.lm = makeLearner("regr.lm")
+lrn.rpart = makeLearner("regr.rpart")
+
+rdesc = makeResampleDesc("Holdout")
+
+lrns = list(lrn.ranger, lrn.lm, lrn.rpart)
+
+tsk = makeRegrTask(data = wine, target = "quality")
+
+
+bmr = benchmark(lrns, tsk, rdesc)
+
+mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
+preds = predict(mod, task = tsk, subset = seq(2, n, 2))
+performance(preds, measures = list(mae, mse))
+pred  = Predictor$new(mod, data = wdat, y = "quality")
+
+n_segs(pred)
+ale_fanova(pred)
+
+plot_all_ale = function(pred) {
+  pls = lapply(setdiff(colnames(wdat), c("quality")), function(fname) {
+    fe = FeatureEffect$new(pred, fname, method = "ale")
+    res = fe$results
+    colnames(res)[colnames(res) == fname] = ".feature"
+    res$.feature.name = fname
+    res$.feature = as.numeric(res$.feature)
+    res$.feature.type = fe$feature.type
+    res
+  })
+  
+  res  = rbindlist(pls, use.names = TRUE)
+  res$.feature = as.numeric(res$.feature)
+  
+  ggplot(res, aes(x = as.numeric(.feature), y= .ale)) +
+    geom_line(aes(alpha = .feature.type)) +
+    geom_point() +
+    facet_wrap(".feature.name", scales = "free_x") +
+    scale_alpha_discrete(guide = "none")
+}
+
+plot_all_ale(pred)
+
+fi = FeatureImp$new(pred, loss = "mae", n.repetitions = 10)
+fi$plot()
+
+x.interest = wdat[20,]
+sh = Shapley$new(pred, x.interest = x.interest)
+plot(sh)
+
+
+
+## Simpler model
+
+
+lrn = makeLearner("regr.rpart", maxdepth = 2)
+tsk = makeRegrTask(data = wdat, target = "quality")
+mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
+preds = predict(mod, task = tsk, subset = seq(2, n, 2))
+performance(preds, measures = list(mae, mse))
+pred.tree  = Predictor$new(mod, data = wdat, y = "quality")
+
+n_segs(pred.tree)
+ale_fanova(pred.tree)
+
+plot_all_ale(pred.tree)
+
+mod$learner.model
+
+
+fi = FeatureImp$new(pred, loss = "mae", n.repetitions = 10)
+plot(fi)
+
+plot_segs_feature(pred, feature.name = "alcohol", cat.mode = FALSE)
+plot_segs_feature(pred, feature.name = "volatile.acidity", cat.mode = FALSE)
+n_segs_feature(pred, "alcohol", cat.mode = TRUE)
+n_segs_feature(pred, "sulphates", cat.mode = FALSE)
+sh = Shapley$new(pred, x.interest = x.interest)
+plot(sh)
+li = LocalModel$new(pred, x.interest = x.interest)
+plot(li)
+
+lrn = makeLearner("regr.lm")
+tsk = makeRegrTask(data = wdat, target = "quality")
+mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
+preds = predict(mod, task = tsk, subset = seq(2, n, 2))
+performance(preds, measures = list(mae, mse))
+pred  = Predictor$new(mod, data = wdat, y = "quality")
+
+
+
+library('mlr')
+set.seed(42)
+task = makeRegrTask(data = wine, target = 'quality')
+lrn = makeLearner('regr.randomForest')
+mod = train(lrn, task)
+```
+
+
+## {.center data-background=../images/comp-dog.gif data-background-size=contain}
+
+<div class="notes">
+- Random Forest
+- Target: Compensation
+- All features that you found in the data
+- Train, test, ship
+</div>
+
+## Step 2: Throw ML on your data
+
+
+TODO: Benchmark some models, report error
+
+Test: linear model, BRL, xgboost
+Show table
+
+## Step 2: Throw ML on your data
+
+TODO: Benchmark some models, report error
+
+Test: linear model, BRL, xgboost
+Show table
+
+## Step 2: Throw ML on your data
+
+TODO: Show correlation between  predictions and true for test data
+
+## {data-background=../images/delivery.gif data-background-size=contain}
+
+
+# Step 3: Profit {.center}
+
+## {data-background=../images/done-here.gif data-background-size=contain}
+```{r, echo=FALSE, out.width='80%', include = FALSE}
+knitr::include_graphics("../images/done-here.gif" )
+```
+
+##  {.emphasizedabit}
+
+Client: "We would love to learn some insights."
+
+
+
+##  {.emphasizedabit .center data-background=../images/black-box.gif data-background-size=cover}
+
+<div class="white">
+Looking inside the black box
+</div>
+
+## What are the most important features?
+
+TODO: Feature importances
+
+
+## How do features affect predictions?
+
+TODO: All effects
+
+## How do features affect predictions?
+
+TODO: Effect of alcohol
+
+
+## Customers want to have individual explanations
+
+TODO: Image where customers checks wine?
+
+
+## Shapley
+
+TODO: Explain with Shapley
+
+
+## LIME
+
+TODO: Explain with LIME
+
+
+
+
+
+
+
+
+

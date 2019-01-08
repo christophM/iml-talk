@@ -31,7 +31,6 @@ additive $\Rightarrow$ interactions
 
 theory-driven $\Rightarrow$ optimization-driven
 
-## Machine Learning Model  {.center data-background=../images/graph.png data-background-size=contain}
 
 ## Black Box Problem
 
@@ -49,4 +48,6 @@ theory-driven $\Rightarrow$ optimization-driven
 
 ```{r child = "../chunks/book.Rmd"}
 ```
+
+
 

@@ -33,7 +33,7 @@ knitr::include_graphics("../images/white-box.png")
 
 ## Interpretable Model: Decision Rules {.emphasizedabit}
 
-IF $90m^2\
+IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ "good" THEN rent is between 1540 and 1890 EUR
 
 
 
@@ -49,6 +49,14 @@ knitr::include_graphics("../images/black-box.png")
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/specific-black-box.png")
 ```
+
+## Model-specific methods
+
+TODO: Example for CNNs
+
+## Model-specific methods
+
+TODO: Example for text (RNNs and attention?)
 
 <div class="notes">
 - Visualizing activations of neural networks
@@ -77,9 +85,20 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 - ...
 </div>
 
+## Model-agnostic Methods
+
+TODO: PDP gif
+
+## Model-agnostic methods
+
+TODO: Feature importance figure
 
 
-## Example-based methods
+## Model-agnostic methods: Global Surrogate {.center data-background=../images/global-surrogate.png data-background-size=contain}
+
+## Model-agnostic methods: Local Surrogate {.center data-background=../images/local-surrogate.png data-background-size=contain}
+
+## Example-based Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/black-box.png")
@@ -88,7 +107,7 @@ knitr::include_graphics("../images/black-box.png")
 
 
 
-## Example-focused methods
+## Example-focused Methods
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/data-box.png")
 ```
@@ -100,3 +119,11 @@ knitr::include_graphics("../images/data-box.png")
 - Anchors: What features do I have to anchor to keep prediction the same?
 </div>
 
+## Example-focused Methods
+
+TODO: Graphic for counterfactuals
+
+
+## Example-focused Methods
+
+TODO: Graphic for prototypes
