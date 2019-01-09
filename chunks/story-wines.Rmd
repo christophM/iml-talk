@@ -31,11 +31,25 @@ Modeling wine preferences by data mining from physicochemical properties. In Dec
 
 TODO: Draw image with features.
 
+1 - fixed acidity
+2 - volatile acidity
+3 - citric acid
+4 - residual sugar
+5 - chlorides
+6 - free sulfur dioxide
+7 - total sulfur dioxide
+8 - density
+9 - pH
+10 - sulphates
+11 - alcohol
+Output variable (based on sensory data):
+12 - quality (score between 0 and 10)
 
+Draw:
+Volatile acidity as polish remover, pH as pH paper, alchohol as liqour bottle, chlorides as salt prinkler, citric acid as lemon, 
+sulfur as mushroom?, 
 
 ## Step 1: Find data
-
-TODO: Show distribution of target
 
 
 ```{r load-data,include=FALSE}
@@ -43,144 +57,76 @@ library('mlr')
 library('ggplot2')
 library('tidyr')
 library('lime')
+devtools::install_github("christophM/iml", ref = "feature-effects")
+library('iml')
 source('../code/prepare-wine-data.R')
 ```
 
+```{r show-dist}
+ggplot(wine) + 
+  geom_bar(aes(x = quality)) + 
+  scale_x_continuous("Wine Quality", labels = 1:10, breaks = 1:10)
+```
 
 # Step 2: Throw ML on your data
 
+##
 
-TODO: Benchmark some models, report error
+10x CV
+Test linear regression model, decision tree, random forest
 
-```{r learn}
+
+## {.center data-background=../images/comp-dog.gif data-background-size=contain}
+
+
+## Step 2: Throw ML on your data
+
+```{r benchmark}
 library("mlr")
 lrn.ranger = makeLearner("regr.ranger")
 lrn.lm = makeLearner("regr.lm")
 lrn.rpart = makeLearner("regr.rpart")
 
-rdesc = makeResampleDesc("Holdout")
+rdesc = cv5
 
 lrns = list(lrn.ranger, lrn.lm, lrn.rpart)
 
 tsk = makeRegrTask(data = wine, target = "quality")
 
+bmr = benchmark(lrns, tsk, rdesc, measures = list(mae))
+bmr_tab = getBMRAggrPerformances(bmr, as.df = TRUE)
+knitr::kable(bmr_tab[-1])
+```
 
-bmr = benchmark(lrns, tsk, rdesc)
-
-mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
-preds = predict(mod, task = tsk, subset = seq(2, n, 2))
-performance(preds, measures = list(mae, mse))
-pred  = Predictor$new(mod, data = wdat, y = "quality")
-
-n_segs(pred)
-ale_fanova(pred)
-
-plot_all_ale = function(pred) {
-  pls = lapply(setdiff(colnames(wdat), c("quality")), function(fname) {
-    fe = FeatureEffect$new(pred, fname, method = "ale")
-    res = fe$results
-    colnames(res)[colnames(res) == fname] = ".feature"
-    res$.feature.name = fname
-    res$.feature = as.numeric(res$.feature)
-    res$.feature.type = fe$feature.type
-    res
-  })
-  
-  res  = rbindlist(pls, use.names = TRUE)
-  res$.feature = as.numeric(res$.feature)
-  
-  ggplot(res, aes(x = as.numeric(.feature), y= .ale)) +
-    geom_line(aes(alpha = .feature.type)) +
-    geom_point() +
-    facet_wrap(".feature.name", scales = "free_x") +
-    scale_alpha_discrete(guide = "none")
-}
-
-plot_all_ale(pred)
-
-fi = FeatureImp$new(pred, loss = "mae", n.repetitions = 10)
-fi$plot()
-
-x.interest = wdat[20,]
-sh = Shapley$new(pred, x.interest = x.interest)
-plot(sh)
+=> The random forest (ranger) is the best model.
 
 
 
-## Simpler model
+```{r final-model}
+mod = train(lrn.ranger, tsk)
 
-
-lrn = makeLearner("regr.rpart", maxdepth = 2)
-tsk = makeRegrTask(data = wdat, target = "quality")
-mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
-preds = predict(mod, task = tsk, subset = seq(2, n, 2))
-performance(preds, measures = list(mae, mse))
-pred.tree  = Predictor$new(mod, data = wdat, y = "quality")
-
-n_segs(pred.tree)
-ale_fanova(pred.tree)
-
-plot_all_ale(pred.tree)
-
-mod$learner.model
-
-
-fi = FeatureImp$new(pred, loss = "mae", n.repetitions = 10)
-plot(fi)
-
-plot_segs_feature(pred, feature.name = "alcohol", cat.mode = FALSE)
-plot_segs_feature(pred, feature.name = "volatile.acidity", cat.mode = FALSE)
-n_segs_feature(pred, "alcohol", cat.mode = TRUE)
-n_segs_feature(pred, "sulphates", cat.mode = FALSE)
-sh = Shapley$new(pred, x.interest = x.interest)
-plot(sh)
-li = LocalModel$new(pred, x.interest = x.interest)
-plot(li)
-
-lrn = makeLearner("regr.lm")
-tsk = makeRegrTask(data = wdat, target = "quality")
-mod = mlr::train(lrn, tsk,  subset = seq(1, n, 2))
-preds = predict(mod, task = tsk, subset = seq(2, n, 2))
-performance(preds, measures = list(mae, mse))
-pred  = Predictor$new(mod, data = wdat, y = "quality")
-
-
-
-library('mlr')
 set.seed(42)
-task = makeRegrTask(data = wine, target = 'quality')
-lrn = makeLearner('regr.randomForest')
-mod = train(lrn, task)
+sample_size = 500
+wine_subset = wine[sample(1:nrow(wine), size = sample_size),]
+
+pred = Predictor$new(mod, data = wine_subset, y = "quality")
 ```
 
 
-## {.center data-background=../images/comp-dog.gif data-background-size=contain}
-
-<div class="notes">
-- Random Forest
-- Target: Compensation
-- All features that you found in the data
-- Train, test, ship
-</div>
-
 ## Step 2: Throw ML on your data
 
+```{r check-model}
 
-TODO: Benchmark some models, report error
+preds = pred$predict(wine)
+preds$actual = wine$quality
+ggplot(preds, aes(x = actual, y = .prediction, group = actual)) + 
+  geom_violin(aes(fill = ..n..)) +
+  scale_x_continuous("Actual quality (jittered)", 
+    labels = 1:10, breaks = 1:10) + 
+  scale_y_continuous("Predicted quality", labels = 1:10, breaks = 1:10) + 
+  scale_fill_gradient(low = "white", high = "darkblue", guide = "none")
+```
 
-Test: linear model, BRL, xgboost
-Show table
-
-## Step 2: Throw ML on your data
-
-TODO: Benchmark some models, report error
-
-Test: linear model, BRL, xgboost
-Show table
-
-## Step 2: Throw ML on your data
-
-TODO: Show correlation between  predictions and true for test data
 
 ## {data-background=../images/delivery.gif data-background-size=contain}
 
@@ -206,16 +152,32 @@ Looking inside the black box
 
 ## What are the most important features?
 
-TODO: Feature importances
-
-
-## How do features affect predictions?
-
-TODO: All effects
+```{r feature-importance}
+imp = FeatureImp$new(pred, loss = "mae")
+plot(imp)
+```
 
 ## How do features affect predictions?
 
-TODO: Effect of alcohol
+```{r feature-effects}
+effs = FeatureEffects$new(pred)
+plot(effs, ncols = 4)
+```
+
+## How do features affect predictions?
+
+```{r feature-effect-alcohol}
+eff = FeatureEffect$new(pred, "alcohol")
+plot(eff)
+```
+
+## Rule of thumb what makes wine good?
+
+```{r surrogate}
+sbrl()
+tree = TreeSurrogate$new(pred, maxdepth  = 2)
+plot(tree)
+```
 
 
 ## Customers want to have individual explanations
@@ -223,10 +185,67 @@ TODO: Effect of alcohol
 TODO: Image where customers checks wine?
 
 
-## Shapley
+## Exceptionally bad wine
 
-TODO: Explain with Shapley
+```{r bad-wine}
+# find bad wine in data
+predictions = pred$predict(wine)
 
+min_pred = min(predictions)
+worst = wine[which(predictions == min_pred),]
+
+# explain with shapley
+knitr::kable(t(worst))
+# explain with cf?
+
+min_pred
+
+```
+
+## Shapley Value
+
+TODO: Draw features as players and within coalitions
+
+## Shapley Value
+
+```{r shapley}
+shap = Shapley$new(pred, x.interest = worst)
+plot(shap)
+```
+
+## Volatile Acidity
+
+```{r volatile-acidity}
+eff = FeatureEffect$new(pred, "volatile.acidity", method = "pdp+ice")
+plot(eff)
+```
+## Volatile Acidity
+
+‘Although the presence of high amounts of VA is considered undesirable, in some cases a touch of volatility is no bad thing,’ said Natasha Hughes MW in her guide to wine ‘flaws’.
+
+
+```{r volatile-acidity}
+
+# Get wines with low volatile acidity
+predictions = pred$predict(wine_subset)
+
+wine2 = wine_subset
+wine2$volatile.acidity = wine2$volatile.acidity + 0.2
+predictions2 = pred$predict(wine2)
+
+plot(hist(predictions2$.prediction - predictions$.prediction))
+
+wine_improve = which(predictions2$.prediction - predictions$.prediction > 0.3)
+
+eff = FeatureEffect$new(pred, "volatile.acidity", method = "ice")
+
+res = eff$results
+res$improves = res$.id %in% wine_improve
+
+ggplot(res) + 
+  geom_line(aes(x = volatile.acidity, y = .y.hat, group = .id), alpha = 0.1) + 
+  facet_wrap("improves")
+```
 
 ## LIME
 
@@ -235,7 +254,12 @@ TODO: Explain with LIME
 
 
 
+## Sulfur
 
+At low levels reduction causes truffle, mushroom, radish, and green olive-like smells to wine. These have been accepted as positive traits and increase complexity in the wine. At higher levels, reduction is turns into a fault, giving wines a pungent smell of rotten egg, onion, garlic, cooked cabbage, canned corn, or even burnt rubber. 
+
+```{r sulfur}
+```
 
 
 

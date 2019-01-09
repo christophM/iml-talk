@@ -37,7 +37,7 @@ theory-driven $\Rightarrow$ optimization-driven
 ![](../images/iml-ml.png)
 
 
-```{r, child="../chunks/story-salaries.Rmd"}
+```{r, child="../chunks/story-wines.Rmd"}
 ```
 
 
