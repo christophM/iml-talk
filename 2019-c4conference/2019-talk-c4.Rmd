@@ -40,6 +40,7 @@ theory-driven $\Rightarrow$ optimization-driven
 ```{r, child="../chunks/story-wines.Rmd"}
 ```
 
+## Why interpretability?
 
 ## {.center data-background=../images/explain.png data-background-size=contain}
 

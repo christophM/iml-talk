@@ -1,24 +1,11 @@
-TODO: Add wine csv and R script
-
-
 ##  {.emphasizedabit}
 A startup wants you to predict wine quality from its chemical composition.
 
 # Let's predict wine quality
 
-
-# What is Machine Learning?
-
-<div class="notes">
-Machine learning is a method for teaching computers to make and improve predictions or behaviours based on data.
-</div>
-
-## {data-background=../images/magic.jpg data-background-size=contain}
-
-
 ## Step 1: Find data
 
-Red and white variants of the Portuguese "Vinho Verde" wine.
+Free online dataset about red and white variants of the Portuguese "Vinho Verde" wine.
 
 Target: Quality from 1 to 10
 Features: Acidity, alcohol ...
@@ -28,26 +15,22 @@ Modeling wine preferences by data mining from physicochemical properties. In Dec
 
 ## Step 1: Find data
 
+- fixed acidity
+- volatile acidity
+- citric acid
+- residual sugar
+- chlorides
+- free sulfur dioxide
+- total sulfur dioxide
+- density
+- pH
+- sulphates
+- alcohol
+- quality based on sensory data (0-10)
 
-TODO: Draw image with features.
-
-1 - fixed acidity
-2 - volatile acidity
-3 - citric acid
-4 - residual sugar
-5 - chlorides
-6 - free sulfur dioxide
-7 - total sulfur dioxide
-8 - density
-9 - pH
-10 - sulphates
-11 - alcohol
-Output variable (based on sensory data):
-12 - quality (score between 0 and 10)
-
-Draw:
-Volatile acidity as polish remover, pH as pH paper, alchohol as liqour bottle, chlorides as salt prinkler, citric acid as lemon, 
-sulfur as mushroom?, 
+<!-- Draw: -->
+<!-- Volatile acidity as polish remover, pH as pH paper, alchohol as liqour bottle, chlorides as salt prinkler, citric acid as lemon,  -->
+<!-- sulfur as mushroom?,  -->
 
 ## Step 1: Find data
 
@@ -99,8 +82,6 @@ knitr::kable(bmr_tab[-1])
 ```
 
 => The random forest (ranger) is the best model.
-
-
 
 ```{r final-model}
 mod = train(lrn.ranger, tsk)
@@ -159,33 +140,47 @@ plot(imp)
 
 ## How do features affect predictions?
 
-```{r feature-effects}
+```{r}
 effs = FeatureEffects$new(pred)
 plot(effs, ncols = 4)
 ```
 
 ## How do features affect predictions?
-
-```{r feature-effect-alcohol}
-eff = FeatureEffect$new(pred, "alcohol")
+Method: Partial dependence plot, individual conditional expectation curves
+```{r}
+eff = FeatureEffect$new(pred, "alcohol", method = 'pdp+ice')
 plot(eff)
 ```
 
-## Rule of thumb what makes wine good?
+## Interactions with type of wine?
+Method: H-statistic for interactions
 
-```{r surrogate}
-sbrl()
-tree = TreeSurrogate$new(pred, maxdepth  = 2)
-plot(tree)
+```{r}
+inter = Interaction$new(pred)
+plot(inter)
+```
+
+## Interactions of alcohol?
+Method: H-statistic for interactions
+
+```{r}
+inter.a = Interaction$new(pred, "alcohol")
+plot(inter.a)
 ```
 
 
-## Customers want to have individual explanations
+## Rule of thumb for wine quality?
+Method: Surrogate Model
 
-TODO: Image where customers checks wine?
+```{r surrogate}
+tree = TreeSurrogate$new(pred, maxdepth  = 2)
+plot(tree$tree)
+```
 
 
 ## Exceptionally bad wine
+
+A customer gets a really bad prediction. What was the reason?
 
 ```{r bad-wine}
 # find bad wine in data
@@ -204,63 +199,32 @@ min_pred
 
 ## Shapley Value
 
-TODO: Draw features as players and within coalitions
-
-## Shapley Value
-
-```{r shapley}
+```{r}
 shap = Shapley$new(pred, x.interest = worst)
 plot(shap)
 ```
 
-## Volatile Acidity
+## The best wine
 
-```{r volatile-acidity}
-eff = FeatureEffect$new(pred, "volatile.acidity", method = "pdp+ice")
-plot(eff)
-```
-## Volatile Acidity
+```{r best-wine}
+# find bad wine in data
+max_pred = max(predictions)
+best = wine[which(predictions == max_pred),]
 
-‘Although the presence of high amounts of VA is considered undesirable, in some cases a touch of volatility is no bad thing,’ said Natasha Hughes MW in her guide to wine ‘flaws’.
+# explain with shapley
+knitr::kable(t(best))
+# explain with cf?
 
+max_pred
 
-```{r volatile-acidity}
-
-# Get wines with low volatile acidity
-predictions = pred$predict(wine_subset)
-
-wine2 = wine_subset
-wine2$volatile.acidity = wine2$volatile.acidity + 0.2
-predictions2 = pred$predict(wine2)
-
-plot(hist(predictions2$.prediction - predictions$.prediction))
-
-wine_improve = which(predictions2$.prediction - predictions$.prediction > 0.3)
-
-eff = FeatureEffect$new(pred, "volatile.acidity", method = "ice")
-
-res = eff$results
-res$improves = res$.id %in% wine_improve
-
-ggplot(res) + 
-  geom_line(aes(x = volatile.acidity, y = .y.hat, group = .id), alpha = 0.1) + 
-  facet_wrap("improves")
 ```
 
-## LIME
+## The best wine
+Technique: Shapley Values
 
-TODO: Explain with LIME
-
-
-
-
-## Sulfur
-
-At low levels reduction causes truffle, mushroom, radish, and green olive-like smells to wine. These have been accepted as positive traits and increase complexity in the wine. At higher levels, reduction is turns into a fault, giving wines a pungent smell of rotten egg, onion, garlic, cooked cabbage, canned corn, or even burnt rubber. 
-
-```{r sulfur}
+```{r}
+shap = Shapley$new(pred, x.interest = best)
+plot(shap)
 ```
-
-
 
 
