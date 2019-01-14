@@ -47,24 +47,24 @@ IF $90m^2\leq \text{size} < 110m^2$  AND location $=$ "good" THEN rent is betwee
 
 
 
-## Model-specific methods
+## Model-specific Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/black-box.png")
 ```
 
 
-## Model-specific methods
+## Model-specific Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/specific-black-box.png")
 ```
 
-## Model-specific methods
+## Model-specific Methods
 
 TODO: Example for CNNs
 
-## Model-specific methods
+## Model-specific Methods
 
 TODO: Example for text (RNNs and attention?)
 
@@ -76,37 +76,31 @@ TODO: Example for text (RNNs and attention?)
 </div>
 
 
-## Model-agnostic methods
+## Model-agnostic Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/black-box.png")
 ```
 
 
-## Model-agnostic methods
+## Model-agnostic Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/agnostic-black-box.png")
 ```
 
-<div class="notes">
-- Partial dependence plots
-- LIME
-- ...
-</div>
-
 ## Model-agnostic Methods
 
 TODO: Drawing of feature effect
 
-## Model-agnostic methods
+## Model-agnostic Methods
 
 TODO: Drawing of importance
 
 
-## Model-agnostic methods: Global Surrogate {.center data-background=../images/global-surrogate.png data-background-size=contain}
+## Model-agnostic Methods: Global Surrogate {.center data-background=../images/global-surrogate.png data-background-size=contain}
 
-## Model-agnostic methods: Local Surrogate {.center data-background=../images/local-surrogate.png data-background-size=contain}
+## Model-agnostic Methods: Local Surrogate {.center data-background=../images/local-surrogate.png data-background-size=contain}
 
 
 ## Example-focused Methods

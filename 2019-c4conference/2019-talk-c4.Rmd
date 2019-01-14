@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE,
   warning = FALSE,
   message = FALSE, 
   fig.align='center', 
-  out.width = '95%')
+  out.width = '90%')
 ```
 
 ## Machine Learning (supervised)
@@ -44,7 +44,7 @@ theory-driven $\Rightarrow$ optimization-driven
 ```{r, child="../chunks/story-wines.Rmd"}
 ```
 
-## Why interpretability? 
+# Why interpretability? 
 
 ## {.center data-background=../images/explain.png data-background-size=contain}
 
@@ -55,7 +55,7 @@ theory-driven $\Rightarrow$ optimization-driven
 ```
 
 
-# Backup slides
+# Backup
 
 ## LRP
 
@@ -76,4 +76,3 @@ theory-driven $\Rightarrow$ optimization-driven
 - pH
 - sulphates: g(postassium sulphate) / dm^3^
 - alcohol vol.%
-- quality based on sensory data (0-10)

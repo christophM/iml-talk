@@ -1,26 +1,23 @@
 ##  {.emphasizedabit}
-You want to predict wine quality from its physicochemical properties.
+Predict wine quality from its physicochemical properties.
 
 ## {.center data-background=../images/wine-features.jpg data-background-size=contain}
 
-## Step 1: Find data
-Free dataset of red and white "Vinho Verde" wine.
+# Step 1: Find data
 
-```{r}
-knitr::include_graphics("../images/minho.png")
-```
 
-Three sensory assessors (using blind tastes), which graded the wine in a scale that ranges from
-0 (very bad) to 10 (excellent)
+## {.center data-background=../images/minho.png data-background-size=contain}
+
+## Wine Dataset
+
+- ~6500 red and white Portuguese "Vinho Verde" wines
+- Features: physiochemical properties
+- Quality assessed by blind tasting, from 0 (very bad) to 10 (excellent)
 
 <font size="2">P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
 
-<!-- Draw: -->
-<!-- Volatile acidity as polish remover, pH as pH paper, alchohol as liqour bottle, chlorides as salt prinkler, citric acid as lemon,  -->
-<!-- sulfur as mushroom?,  -->
-
-## Step 1: Find data
+## Quality Distribution
 
 
 ```{r load-data,include=FALSE}
@@ -39,20 +36,16 @@ ggplot(wine) +
   scale_x_continuous("Wine Quality", labels = 1:10, breaks = 1:10)
 ```
 
-# Step 2: Throw ML on your data
+# Step 2: Apply Machine Learning
 
-##
 
-Compare different models with 10x CV
-- Linear regression model
+## Compare Models with 10x CV {.emphasizedabit}
+
+- Linear regression
 - Decision tree
 - Random forest
 
-
 ## {.center data-background=../images/comp-dog.gif data-background-size=contain}
-
-
-## Step 2: Throw ML on your data
 
 ```{r benchmark}
 library("mlr")
@@ -68,10 +61,9 @@ tsk = makeRegrTask(data = wine, target = "quality")
 
 bmr = benchmark(lrns, tsk, rdesc, measures = list(mae))
 bmr_tab = getBMRAggrPerformances(bmr, as.df = TRUE)
-knitr::kable(bmr_tab[-1])
+#knitr::kable(bmr_tab[-1])
 ```
 
-=> The random forest (ranger) is the best model.
 
 ```{r final-model}
 mod = train(lrn.ranger, tsk)
@@ -84,7 +76,15 @@ pred = Predictor$new(mod, data = wine_subset, y = "quality")
 ```
 
 
-## Step 2: Throw ML on your data
+## Compare Models with 10x CV {.emphasizedabit}
+
+- Linear regression (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.lm"])`)
+- Decision tree (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.rpart"])`)
+- Random forest (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.ranger"])`)
+
+=> The random forest is the best model.
+
+## Prediction vs. Actual Quality
 
 ```{r check-model}
 
@@ -99,8 +99,6 @@ ggplot(preds, aes(x = actual, y = .prediction, group = actual)) +
 ```
 
 
-## {data-background=../images/delivery.gif data-background-size=contain}
-
 
 # Step 3: Profit {.center}
 
@@ -109,9 +107,8 @@ ggplot(preds, aes(x = actual, y = .prediction, group = actual)) +
 knitr::include_graphics("../images/done-here.gif" )
 ```
 
-##  {.emphasizedabit}
+##  {.emphasizedabit .center data-background=../images/no-idea.gif data-background-size=cover}
 
-Client: "We would love to learn some insights."
 
 
 
@@ -124,7 +121,11 @@ Looking inside the black box
 
 ## What are the most important features?
 
-TODO: Slide explaining permutation feature importance
+## What are the most important features?
+
+```{r}
+knitr::include_graphics("../images/permimp-shuffle.png")
+```
 
 ## What are the most important features?
 
@@ -135,17 +136,19 @@ plot(imp)
 
 ## How do features affect predictions?
 
-TODO: Slide explaining ALE plots
+## How do features affect predictions?
+
+```{r}
+knitr::include_graphics("../images/pdp-rent.png")
+```s
 
 ## How do features affect predictions?
-Method: Accumulated Local Effects
 ```{r}
 eff = FeatureEffect$new(pred, "alcohol", method = 'ale')
 plot(eff)
 ```
 
 ## How do features affect predictions?
-Method: Accumulated Local Effects
 ```{r}
 eff = FeatureEffect$new(pred, "volatile.acidity", method = 'ale')
 plot(eff)
@@ -159,15 +162,16 @@ effs = FeatureEffects$new(pred)
 plot(effs, ncols = 4)
 ```
 
-## Interactions between alcohol and volatile acidity?
+## Interaction: Alcohol + volatile acidity
 
 ```{r}
 inter = FeatureEffect$new(pred, feature = c("alcohol", "volatile.acidity"))
 plot(inter)
 ```
 
-## Rule of thumb for wine quality? 
+## Rule of thumb for wine quality? {.center data-background=../images/global-surrogate.png data-background-size=contain}
 
+## Rule of thumb for wine quality? 
 ```{r surrogate}
 library(partykit)
 tree = TreeSurrogate$new(pred, maxdepth  = 2)
@@ -178,10 +182,10 @@ plot(tree$tree, inner_panel = node_inner2, terminal_panel = node_terminal2)
 rsquared = tree$r.squared
 ```
 
-The tree explains `r sprintf("%.2f%s", 100 *  rsquared, "%")` of the black box prediction variance.
+Tree explains `r sprintf("%.2f%s", 100 *  rsquared, "%")` of black box prediction variance.
 
 
-## Exceptionally bad wine
+## Explain individual prediction (e.g. worst wine)
 
 ```{r bad-wine}
 # find bad wine in data
@@ -191,9 +195,12 @@ min_pred = min(predictions)
 worst = wine[which(predictions == min_pred),]
 ```
 
-TODO: Image of really bad wine
 
-Predicted quality: `r predictions[which(predictions == min_pred),]`  
+
+
+##  {.center data-background=../images/bad-wine.gif data-background-size=contain}
+
+
 
 ## Shapley Value
 
@@ -225,18 +232,12 @@ worst2 = function(){
   w
 }
 
-pred$predict(worst2())[[1]]
-
-
-
 worst3 = function(){
   w = worst
   w$alcohol = 13
   w$volatile.acidity = 1
   w
 }
-
-pred$predict(worst3())[[1]]
 ```
 
 
