@@ -8,6 +8,16 @@
 </div>
 
 
+##
+
+TODO: Overview (drawing)
+
+- global vs. local
+- interpretable model vs. post-hoc
+- model-specific vs. model-agnostic
+- data type image vs. text vs. tabular
+
+
 ## Interpretable Models
 
 ```{r, echo = FALSE}
@@ -87,37 +97,17 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 
 ## Model-agnostic Methods
 
-TODO: PDP gif
+TODO: Drawing of feature effect
 
 ## Model-agnostic methods
 
-TODO: Feature importance figure
+TODO: Drawing of importance
 
 
 ## Model-agnostic methods: Global Surrogate {.center data-background=../images/global-surrogate.png data-background-size=contain}
 
 ## Model-agnostic methods: Local Surrogate {.center data-background=../images/local-surrogate.png data-background-size=contain}
 
-## Example-based Methods
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/black-box.png")
-```
-
-
-
-
-## Example-focused Methods
-```{r, echo=FALSE}
-knitr::include_graphics("../images/data-box.png")
-```
-
-<div class="notes">
-- Prototypes: What is the prototype of a certain class
-- Criticisms: Which data points are unusual for a certain class. 
-- Counterfactuals: What do I need to change for an instance to change the prediction?
-- Anchors: What features do I have to anchor to keep prediction the same?
-</div>
 
 ## Example-focused Methods
 

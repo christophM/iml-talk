@@ -1,32 +1,20 @@
 ##  {.emphasizedabit}
-A startup wants you to predict wine quality from its chemical composition.
+You want to predict wine quality from its physicochemical properties.
 
-# Let's predict wine quality
+## {.center data-background=../images/wine-features.jpg data-background-size=contain}
 
 ## Step 1: Find data
+Free dataset of red and white "Vinho Verde" wine.
 
-Free online dataset about red and white variants of the Portuguese "Vinho Verde" wine.
+```{r}
+knitr::include_graphics("../images/minho.png")
+```
 
-Target: Quality from 1 to 10
-Features: Acidity, alcohol ...
+Three sensory assessors (using blind tastes), which graded the wine in a scale that ranges from
+0 (very bad) to 10 (excellent)
 
 <font size="2">P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
-
-## Step 1: Find data
-
-- fixed acidity
-- volatile acidity
-- citric acid
-- residual sugar
-- chlorides
-- free sulfur dioxide
-- total sulfur dioxide
-- density
-- pH
-- sulphates
-- alcohol
-- quality based on sensory data (0-10)
 
 <!-- Draw: -->
 <!-- Volatile acidity as polish remover, pH as pH paper, alchohol as liqour bottle, chlorides as salt prinkler, citric acid as lemon,  -->
@@ -55,8 +43,10 @@ ggplot(wine) +
 
 ##
 
-10x CV
-Test linear regression model, decision tree, random forest
+Compare different models with 10x CV
+- Linear regression model
+- Decision tree
+- Random forest
 
 
 ## {.center data-background=../images/comp-dog.gif data-background-size=contain}
@@ -102,7 +92,7 @@ preds = pred$predict(wine)
 preds$actual = wine$quality
 ggplot(preds, aes(x = actual, y = .prediction, group = actual)) + 
   geom_violin(aes(fill = ..n..)) +
-  scale_x_continuous("Actual quality (jittered)", 
+  scale_x_continuous("Actual quality", 
     labels = 1:10, breaks = 1:10) + 
   scale_y_continuous("Predicted quality", labels = 1:10, breaks = 1:10) + 
   scale_fill_gradient(low = "white", high = "darkblue", guide = "none")
@@ -131,6 +121,11 @@ Client: "We would love to learn some insights."
 Looking inside the black box
 </div>
 
+
+## What are the most important features?
+
+TODO: Slide explaining permutation feature importance
+
 ## What are the most important features?
 
 ```{r feature-importance}
@@ -140,47 +135,53 @@ plot(imp)
 
 ## How do features affect predictions?
 
+TODO: Slide explaining ALE plots
+
+## How do features affect predictions?
+Method: Accumulated Local Effects
+```{r}
+eff = FeatureEffect$new(pred, "alcohol", method = 'ale')
+plot(eff)
+```
+
+## How do features affect predictions?
+Method: Accumulated Local Effects
+```{r}
+eff = FeatureEffect$new(pred, "volatile.acidity", method = 'ale')
+plot(eff)
+```
+
+
+## How do features affect predictions?
+
 ```{r}
 effs = FeatureEffects$new(pred)
 plot(effs, ncols = 4)
 ```
 
-## How do features affect predictions?
-Method: Partial dependence plot, individual conditional expectation curves
-```{r}
-eff = FeatureEffect$new(pred, "alcohol", method = 'pdp+ice')
-plot(eff)
-```
-
-## Interactions with type of wine?
-Method: H-statistic for interactions
+## Interactions between alcohol and volatile acidity?
 
 ```{r}
-inter = Interaction$new(pred)
+inter = FeatureEffect$new(pred, feature = c("alcohol", "volatile.acidity"))
 plot(inter)
 ```
 
-## Interactions of alcohol?
-Method: H-statistic for interactions
-
-```{r}
-inter.a = Interaction$new(pred, "alcohol")
-plot(inter.a)
-```
-
-
-## Rule of thumb for wine quality?
-Method: Surrogate Model
+## Rule of thumb for wine quality? 
 
 ```{r surrogate}
+library(partykit)
 tree = TreeSurrogate$new(pred, maxdepth  = 2)
-plot(tree$tree)
+node_inner2 = node_inner(tree$tree, pval = FALSE, id=FALSE)
+node_terminal2 = node_boxplot(tree$tree, id = FALSE)
+plot(tree$tree, inner_panel = node_inner2, terminal_panel = node_terminal2)
+
+rsquared = tree$r.squared
 ```
+
+The tree explains `r sprintf("%.2f%s", 100 *  rsquared, "%")` of the black box prediction variance.
 
 
 ## Exceptionally bad wine
-
-A customer gets a really bad prediction. What was the reason?
 
 ```{r bad-wine}
 # find bad wine in data
@@ -188,14 +189,16 @@ predictions = pred$predict(wine)
 
 min_pred = min(predictions)
 worst = wine[which(predictions == min_pred),]
-
-# explain with shapley
-knitr::kable(t(worst))
-# explain with cf?
-
-min_pred
-
 ```
+
+TODO: Image of really bad wine
+
+Predicted quality: `r predictions[which(predictions == min_pred),]`  
+
+## Shapley Value
+
+TODO: Slide to explain Shapley value
+
 
 ## Shapley Value
 
@@ -204,27 +207,49 @@ shap = Shapley$new(pred, x.interest = worst)
 plot(shap)
 ```
 
-## The best wine
+## What needs to change?
 
-```{r best-wine}
-# find bad wine in data
-max_pred = max(predictions)
-best = wine[which(predictions == max_pred),]
+TODO: Slide to explain counterfactuals
 
-# explain with shapley
-knitr::kable(t(best))
-# explain with cf?
 
-max_pred
+## Counterfactual explanation
 
-```
-
-## The best wine
-Technique: Shapley Values
+How do we get the wine above predicted quality of 5?
 
 ```{r}
-shap = Shapley$new(pred, x.interest = best)
-plot(shap)
+worst
+
+worst2 = function(){
+  w = worst
+  w$volatile.acidity = 0.2
+  w
+}
+
+pred$predict(worst2())[[1]]
+
+
+
+worst3 = function(){
+  w = worst
+  w$alcohol = 13
+  w$volatile.acidity = 1
+  w
+}
+
+pred$predict(worst3())[[1]]
 ```
+
+
+TODO: Image 
+
+- Decreasing volatile acidity to 0.2 yields predicted quality of `r sprintf('%.2f', pred$predict(worst2())[[1]])`
+- Decreasing volatile acidity to 1.0 and increasing alcohol to 13% yields predicted quality of `r sprintf('%.2f', pred$predict(worst3())[[1]])`
+
+
+
+
+
+
+
 
 
