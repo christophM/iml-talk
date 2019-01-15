@@ -1,8 +1,6 @@
 ##  {.emphasizedabit}
 Predict wine quality from its physicochemical properties.
 
-## {.center data-background=../images/wine-features.jpg data-background-size=contain}
-
 # Step 1: Find data
 
 
@@ -11,11 +9,14 @@ Predict wine quality from its physicochemical properties.
 ## Wine Dataset
 
 - ~6500 red and white Portuguese "Vinho Verde" wines
-- Features: physiochemical properties
+- Features: Physiochemical properties
 - Quality assessed by blind tasting, from 0 (very bad) to 10 (excellent)
 
 <font size="2">P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
+
+
+## {.center data-background=../images/wine-features.jpg data-background-size=contain}
 
 ## Quality Distribution
 
@@ -82,7 +83,7 @@ pred = Predictor$new(mod, data = wine_subset, y = "quality")
 - Decision tree (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.rpart"])`)
 - Random forest (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.ranger"])`)
 
-=> The random forest is the best model.
+=> Random forest has lowest Mean Absolute Error 
 
 ## Prediction vs. Actual Quality
 
@@ -102,10 +103,7 @@ ggplot(preds, aes(x = actual, y = .prediction, group = actual)) +
 
 # Step 3: Profit {.center}
 
-## {data-background=../images/done-here.gif data-background-size=contain}
-```{r, echo=FALSE, out.width='80%', include = FALSE}
-knitr::include_graphics("../images/done-here.gif" )
-```
+## {data-background=../images/dog-car.gif data-background-size=contain}
 
 ##  {.emphasizedabit .center data-background=../images/no-idea.gif data-background-size=cover}
 
@@ -119,15 +117,15 @@ Looking inside the black box
 </div>
 
 
-## What are the most important features?
+## Which features are important?
 
-## What are the most important features?
+## Which features are important?
 
 ```{r}
 knitr::include_graphics("../images/permimp-shuffle.png")
 ```
 
-## What are the most important features?
+## Which features are important?
 
 ```{r feature-importance}
 imp = FeatureImp$new(pred, loss = "mae")
@@ -137,18 +135,38 @@ plot(imp)
 ## How do features affect predictions?
 
 ## How do features affect predictions?
-
 ```{r}
-knitr::include_graphics("../images/pdp-rent.png")
-```s
+knitr::include_graphics("../images/ale-intuition-1.jpg")
+```
 
 ## How do features affect predictions?
+```{r}
+knitr::include_graphics("../images/ale-intuition-2.jpg")
+```
+
+## How do features affect predictions?
+```{r}
+knitr::include_graphics("../images/ale-intuition-3.jpg")
+```
+
+## How do features affect predictions?
+```{r}
+knitr::include_graphics("../images/ale-intuition-4.jpg")
+```
+
+## How do features affect predictions?
+```{r}
+knitr::include_graphics("../images/ale-intuition-5.jpg")
+```
+
+
+## Effect of Alchohol
 ```{r}
 eff = FeatureEffect$new(pred, "alcohol", method = 'ale')
 plot(eff)
 ```
 
-## How do features affect predictions?
+## Effect of Volatile Aciditys
 ```{r}
 eff = FeatureEffect$new(pred, "volatile.acidity", method = 'ale')
 plot(eff)
@@ -166,8 +184,11 @@ plot(effs, ncols = 4)
 
 ```{r}
 inter = FeatureEffect$new(pred, feature = c("alcohol", "volatile.acidity"))
-plot(inter)
+plot(inter, show.data = TRUE)
 ```
+
+## Rule of thumb for wine quality? 
+
 
 ## Rule of thumb for wine quality? {.center data-background=../images/global-surrogate.png data-background-size=contain}
 
@@ -211,7 +232,9 @@ TODO: Slide to explain Shapley value
 
 ```{r}
 shap = Shapley$new(pred, x.interest = worst)
-plot(shap)
+plot(shap) + 
+  scale_y_discrete("") + 
+  scale_x_continuous("Feature contribution")
 ```
 
 ## What needs to change?
@@ -224,8 +247,6 @@ TODO: Slide to explain counterfactuals
 How do we get the wine above predicted quality of 5?
 
 ```{r}
-worst
-
 worst2 = function(){
   w = worst
   w$volatile.acidity = 0.2

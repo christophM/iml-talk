@@ -15,14 +15,13 @@ knitr::opts_chunk$set(echo = FALSE,
   warning = FALSE,
   message = FALSE, 
   fig.align='center', 
-  out.width = '90%')
+  out.width = '90%',
+  dev = "CairoPNG")
+
+ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
-## Machine Learning (supervised)
 
-```{r, echo=FALSE}
-knitr::include_graphics("../images/black-box.png")
-```
 
 ## Machine Learning vs Programing {.center data-background=../images/programing-ml.png data-background-size=contain}
 
@@ -35,6 +34,24 @@ additive $\Rightarrow$ interactions
 
 theory-driven $\Rightarrow$ optimization-driven
 
+
+## Machine Learning (supervised)
+
+```{r, echo=FALSE}
+knitr::include_graphics("../images/ml-box.png")
+```
+
+## Machine Learning (supervised)
+
+```{r, echo=FALSE}
+knitr::include_graphics("../images/magic-box.png")
+```
+
+## Machine Learning (supervised)
+
+```{r, echo=FALSE}
+knitr::include_graphics("../images/black-box.png")
+```
 
 ## Black Box Problem
 
