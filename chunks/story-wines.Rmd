@@ -233,8 +233,8 @@ TODO: Slide to explain Shapley value
 ```{r}
 shap = Shapley$new(pred, x.interest = worst)
 plot(shap) + 
-  scale_y_discrete("") + 
-  scale_x_continuous("Feature contribution")
+  scale_x_discrete("") + 
+  scale_y_continuous("Feature contribution")
 ```
 
 ## What needs to change?
