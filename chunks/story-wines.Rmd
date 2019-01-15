@@ -225,8 +225,17 @@ worst = wine[which(predictions == min_pred),]
 
 ## Shapley Value
 
-TODO: Slide to explain Shapley value
+## Shapley Value  
 
+```{r}
+knitr::include_graphics("../images/shapley-intuition-1.png")
+```
+
+## Shapley Value  
+
+```{r}
+knitr::include_graphics("../images/shapley-intuition-2.png")
+```
 
 ## Shapley Value
 
@@ -264,8 +273,6 @@ worst3 = function(){
 }
 ```
 
-
-TODO: Image 
 
 - Decreasing volatile acidity to 0.2 yields predicted quality of `r sprintf('%.2f', pred$predict(worst2())[[1]])`
 - Decreasing volatile acidity to 1.0 and increasing alcohol to 13% yields predicted quality of `r sprintf('%.2f', pred$predict(worst3())[[1]])`
