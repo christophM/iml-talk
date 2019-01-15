@@ -237,10 +237,13 @@ plot(shap) +
   scale_y_continuous("Feature contribution")
 ```
 
-## What needs to change?
+## Counterfactual Explanations  {.center data-background=../images/counterfactual-intuition-1.png data-background-size=contain}
 
-TODO: Slide to explain counterfactuals
 
+## Counterfactual Explanations  {.center data-background=../images/counterfactual-intuition-2.png data-background-size=contain}
+
+
+## Counterfactual Explanations  {.center data-background=../images/counterfactual-intuition-3.png data-background-size=contain}
 
 ## Counterfactual explanation
 
