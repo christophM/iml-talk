@@ -22,42 +22,6 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
 
-
-## Machine Learning vs Programing {.center data-background=../images/programing-ml.png data-background-size=contain}
-
-
-## Machine Learning vs Statistics  {.emphasizedabit}
-
-linear $\Rightarrow$ non-linear
-
-additive $\Rightarrow$ interactions
-
-theory-driven $\Rightarrow$ optimization-driven
-
-
-## Machine Learning (supervised)
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/ml-box.png")
-```
-
-## Machine Learning (supervised)
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/magic-box.png")
-```
-
-## Machine Learning (supervised)
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/black-box.png")
-```
-
-## Black Box Problem
-
-![](../images/iml-ml.png)
-
-
 ```{r, child="../chunks/story-wines.Rmd"}
 ```
 
@@ -65,20 +29,12 @@ knitr::include_graphics("../images/black-box.png")
 
 ## {.center data-background=../images/explain.png data-background-size=contain}
 
-```{r, child="../chunks/tools.Rmd"}
-```
 
 ```{r child = "../chunks/book.Rmd"}
 ```
 
 
 # Backup
-
-## LRP
-
-## LIME for images
-
-## LIME for text
 
 ## Units in Wine dataset
 
@@ -93,3 +49,7 @@ knitr::include_graphics("../images/black-box.png")
 - pH
 - sulphates: g(postassium sulphate) / dm^3^
 - alcohol vol.%
+
+
+```{r, child="../chunks/tools.Rmd"}
+```

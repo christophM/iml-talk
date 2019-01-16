@@ -1,18 +1,20 @@
 ##  {.emphasizedabit}
 Predict wine quality from its physicochemical properties.
 
-# Step 1: Find data
-
-
 ## {.center data-background=../images/minho.png data-background-size=contain}
 
 ## Wine Dataset
 
-- ~6500 red and white Portuguese "Vinho Verde" wines
-- Features: Physiochemical properties
+- 6500 red and white Portuguese "Vinho Verde" wines
+- Features: Physicochemical properties
 - Quality assessed by blind tasting, from 0 (very bad) to 10 (excellent)
 
-<font size="2">P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
+```{r, out.width= "30%"}
+knitr::include_graphics("../images/judges.png")
+```
+
+<font size="2">
+P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
 
 
@@ -37,14 +39,36 @@ ggplot(wine) +
   scale_x_continuous("Wine Quality", labels = 1:10, breaks = 1:10)
 ```
 
+## How can we solve this problem? {.emphasizedabit}
+
+- Hand-written rules
+- Statistical Model
+- Machine Learning
+
+
+```{r, child="../chunks/what-is-ml.Rmd"}
+```
+
+# Step 1: Find data
+
+## 
+```{r}
+knitr::include_graphics("../images/checkmark.png")
+```
+
+
+
+
 # Step 2: Apply Machine Learning
 
+## Random Forest
 
-## Compare Models with 10x CV {.emphasizedabit}
+![](../images/random-forest.jpg)
 
-- Linear regression
-- Decision tree
-- Random forest
+<font size="2">
+Image: 
+http://www.hallwaymathlete.com/2016/05/introduction-to-machine-learning-with.html
+</font>
 
 ## {.center data-background=../images/comp-dog.gif data-background-size=contain}
 
@@ -77,26 +101,22 @@ pred = Predictor$new(mod, data = wine_subset, y = "quality")
 ```
 
 
-## Compare Models with 10x CV {.emphasizedabit}
+## Train Random Forest to Predict Quality {.emphasizedabit}
 
-- Linear regression (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.lm"])`)
-- Decision tree (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.rpart"])`)
-- Random forest (`r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.ranger"])`)
-
-=> Random forest has lowest Mean Absolute Error 
+Mean absolute error on test data (cross-validated): `r sprintf('%.2f', bmr_tab$mae.test.mean[bmr_tab$learner.id == "regr.ranger"])`
 
 ## Prediction vs. Actual Quality
 
 ```{r check-model}
-
 preds = pred$predict(wine)
 preds$actual = wine$quality
 ggplot(preds, aes(x = actual, y = .prediction, group = actual)) + 
-  geom_violin(aes(fill = ..n..)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2) +
+  geom_violin() +
   scale_x_continuous("Actual quality", 
-    labels = 1:10, breaks = 1:10) + 
-  scale_y_continuous("Predicted quality", labels = 1:10, breaks = 1:10) + 
-  scale_fill_gradient(low = "white", high = "darkblue", guide = "none")
+    labels = 1:10, breaks = 1:10, limit = c(2.5,9.5)) + 
+  scale_y_continuous("Predicted quality", labels = 1:10, breaks = 1:10, limits = c(2.5,9.5)) 
+#scale_fill_gradient(low = "white", high = "darkblue") + 
 ```
 
 
@@ -108,6 +128,13 @@ ggplot(preds, aes(x = actual, y = .prediction, group = actual)) +
 ##  {.emphasizedabit .center data-background=../images/no-idea.gif data-background-size=cover}
 
 
+## We want to know:
+
+- Which wine properties are the most predictive for quality?
+- How does a property affect the predicted wine quality?
+- Can we extract a "Rule of Thumb" from the black box?
+- Why did a wine get a certain prediction?
+- How do we have to change a wine to achieve a different prediction?
 
 
 ##  {.emphasizedabit .center data-background=../images/black-box.gif data-background-size=cover}
@@ -119,7 +146,7 @@ Looking inside the black box
 
 ## Which features are important?
 
-## Which features are important?
+## Permutation Feature Importance
 
 ```{r}
 knitr::include_graphics("../images/permimp-shuffle.png")
@@ -134,39 +161,42 @@ plot(imp)
 
 ## How do features affect predictions?
 
-## How do features affect predictions?
-```{r}
+## Accumulated Local Effects
+
+```{r,  out.width = '78%'}
 knitr::include_graphics("../images/ale-intuition-1.jpg")
 ```
 
-## How do features affect predictions?
-```{r}
+## Accumulated Local Effects
+
+```{r,  out.width = '78%'}
 knitr::include_graphics("../images/ale-intuition-2.jpg")
 ```
 
-## How do features affect predictions?
-```{r}
+## Accumulated Local Effects
+
+```{r,  out.width = '78%'}
 knitr::include_graphics("../images/ale-intuition-3.jpg")
 ```
 
-## How do features affect predictions?
-```{r}
+## Accumulated Local Effects
+```{r,  out.width = '78%'}
 knitr::include_graphics("../images/ale-intuition-4.jpg")
 ```
 
-## How do features affect predictions?
-```{r}
+## Accumulated Local Effects
+```{r,  out.width = '78%'}
 knitr::include_graphics("../images/ale-intuition-5.jpg")
 ```
 
 
-## Effect of Alchohol
+## Effect of Alcohol
 ```{r}
 eff = FeatureEffect$new(pred, "alcohol", method = 'ale')
 plot(eff)
 ```
 
-## Effect of Volatile Aciditys
+## Effect of Volatile Acidity
 ```{r}
 eff = FeatureEffect$new(pred, "volatile.acidity", method = 'ale')
 plot(eff)
@@ -180,19 +210,13 @@ effs = FeatureEffects$new(pred)
 plot(effs, ncols = 4)
 ```
 
-## Interaction: Alcohol + volatile acidity
-
-```{r}
-inter = FeatureEffect$new(pred, feature = c("alcohol", "volatile.acidity"))
-plot(inter, show.data = TRUE)
-```
 
 ## Rule of thumb for wine quality? 
 
 
-## Rule of thumb for wine quality? {.center data-background=../images/global-surrogate.png data-background-size=contain}
+## Surrogate Model {.center data-background=../images/global-surrogate.png data-background-size=contain}
 
-## Rule of thumb for wine quality? 
+## Surrogate Model
 ```{r surrogate}
 library(partykit)
 tree = TreeSurrogate$new(pred, maxdepth  = 2)
@@ -206,24 +230,18 @@ rsquared = tree$r.squared
 Tree explains `r sprintf("%.2f%s", 100 *  rsquared, "%")` of black box prediction variance.
 
 
-## Explain individual prediction (e.g. worst wine)
+## Explain individual predictions
 
 ```{r bad-wine}
 # find bad wine in data
 predictions = pred$predict(wine)
 
 min_pred = min(predictions)
+max_pred = max(predictions)
 worst = wine[which(predictions == min_pred),]
+best = wine[which(predictions == max_pred),]
 ```
 
-
-
-
-##  {.center data-background=../images/bad-wine.gif data-background-size=contain}
-
-
-
-## Shapley Value
 
 ## Shapley Value  
 
@@ -231,13 +249,21 @@ worst = wine[which(predictions == min_pred),]
 knitr::include_graphics("../images/shapley-intuition-1.png")
 ```
 
-## Shapley Value  
+
+## Explain best wine
 
 ```{r}
-knitr::include_graphics("../images/shapley-intuition-2.png")
+shap = Shapley$new(pred, x.interest = best)
+plot(shap) + 
+  scale_x_discrete("") + 
+  scale_y_continuous("Feature contribution")
 ```
 
-## Shapley Value
+
+##  {.center data-background=../images/bad-wine.gif data-background-size=contain}
+
+
+## Explain worst wine
 
 ```{r}
 shap = Shapley$new(pred, x.interest = worst)
@@ -245,6 +271,8 @@ plot(shap) +
   scale_x_discrete("") + 
   scale_y_continuous("Feature contribution")
 ```
+
+## Improve worst wine?
 
 ## Counterfactual Explanations  {.center data-background=../images/counterfactual-intuition-1.png data-background-size=contain}
 
@@ -254,7 +282,7 @@ plot(shap) +
 
 ## Counterfactual Explanations  {.center data-background=../images/counterfactual-intuition-3.png data-background-size=contain}
 
-## Counterfactual explanation
+## Improve worst wine?
 
 How do we get the wine above predicted quality of 5?
 
