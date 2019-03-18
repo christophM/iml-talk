@@ -3,7 +3,9 @@ title: "Measuring and optimizing machine learning interpretability"
 author: "Christoph Molnar, Giuseppe Casalicchio, Bernd Bischl"
 date: "2019-03-21"
 output: 
-    beamer_presentation
+  beamer_presentation:
+    includes:
+      in_header: "header_pagenrs.tex"
 ---
 
 
@@ -62,48 +64,81 @@ $$
 
 
 ## Functional Decomposition
-
 $$f(x)  = \overbrace{f_0}^\text{Intercept} + \overbrace{\sum_{j=1}^p f_j(x_j)}^\text{1st order effects} + \overbrace{\sum_{S \subseteq \{1,\ldots,p\},|S| \geq 2} f_{S}(x_S)}^{\text{Higher order effects}}
 $$
 
 ## Functional Decomposition 
 
-$$f(x)  = \underbrace{f_0 + \sum_{j=1}^p \overbrace{f_j(x_j)}^\text{How complex?} + \overbrace{IA(x)}^{\text{How much interaction?}}}_{\text{How many feature used?}}
-$$
+$$f(x)  = \underbrace{f_0 + \sum_{j=1}^p \overbrace{f_j(x_j)}^\text{How complex?} + \overbrace{IA(x)}^{\text{How much interaction?}}}_{\text{How many feature used?}}$$
 
 ## Accumulated Local Effects (ALE)
 
-TODO: Use all plots
+```{r}
+knitr::include_graphics("../images/ale-intuition-1.jpg")
+```
+## Accumulated Local Effects (ALE)
+
+```{r}
+knitr::include_graphics("../images/ale-intuition-2.jpg")
+```
+
+## Accumulated Local Effects (ALE)
 
 ```{r}
 knitr::include_graphics("../images/ale-intuition-3.jpg")
 ```
-## Measure: Main effect complexity
 
-TODO: Plot of single ALE plot with complexity (from paper)
+## Accumulated Local Effects (ALE)
 
-Plus formula how to average those for all plots
+```{r}
+knitr::include_graphics("../images/ale-intuition-4.jpg")
+```
+## Accumulated Local Effects (ALE)
 
-## Measure: Interaction Strength
+```{r}
+knitr::include_graphics("../images/ale-intuition-5.jpg")
+```
 
-Measure main effect model with proportion of error explained (pre):
+
+## Main effect complexity
+
+- Approximate ALE plot with linear segments
+- Count number of non-zero coefficients
+- Average over all features, weight with variance
+
+```{r}
+knitr::include_graphics("../images/c-demo-1.jpeg")
+```
+## Interaction Strength
+
+Measure main effect model with proportion of error explained:
 
 
-$$\text{Interaction Strength} =  \frac{\mathbb{E}(L(\hat{f}, f_{ALE}))}{\mathbb{E}(L(\hat{f}, c))}$$
+$$\text{Interaction Strength} =  \frac{\mathbb{E}(L(\hat{f}, f_0 + \sum_{j=1}^p f_j)}{\mathbb{E}(L(\hat{f}, c))}$$
 
 ## Application: Multi-Objective Optimization
 
-TODO: Wine plot
-TODO: List of models 
+- Predict wine quality from phsicochemical properties
+- Minimize MAE, number of features, interaction strength, main effect complexity
+- Search across different model classes and hyperparameter settings  
+
+```{r, out.width = "70%"}
+knitr::include_graphics("../images/wine-features.jpg")
+```
+
 
 ## Application: Multi-Objective Optimization
 
-TODO: Show Interpretability vs. Performance Tradeoff
+```{r}
+knitr::include_graphics("../images/perf-interpret-tradeoff-1.jpeg")
+```
+
 
 ## Application: Multi-Objective Optimization
 
 TODO: Show result graphics
 
+# The End
 
 # Backup
 
