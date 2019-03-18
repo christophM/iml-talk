@@ -1,12 +1,9 @@
 ---
 title: "Measuring and optimizing machine learning interpretability"
-author: "Christoph Molnar"
+author: "Christoph Molnar, Giuseppe Casalicchio, Bernd Bischl"
 date: "2019-03-21"
 output: 
-  ioslides_presentation:
-    widescreen: false
-    smaller: false
-css: ../styles.css
+    beamer_presentation
 ---
 
 
@@ -23,86 +20,76 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 
 ## Black Box problem
 
-
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/black-box.png")
 ```
+## Problem: Tradeoff interpretability and performance
+Use only interpretable models (e.g. linear model)! $\Rightarrow$ Pay with loss in performance.
 
-## Solution 1: Interpretable Model
-
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 knitr::include_graphics("../images/white-box.png")
 ```
-
-## But: Peformance low and how to compare interpretability?
-
-```{r}
-knitr::include_graphics("../images/simple-models.png")
-```
-
-## Solution 2: Post-Hoc Analysis
+## Problem: Tradeoff interpretability and performance
+Just use post-hoc interpretation methods (e.g. feature importance)! $\Rightarrow$ Works better for less complex models.
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/agnostic-black-box.png")
 ```
 
-## But: Verbose and unreliable {.center data-background=../images/pdp-multiple.png}
+## What's interpretability anyway?
 
-```{r, eval=FALSE}
-library('iml')
-dat = data.frame(matrix(rnorm(1800), ncol = 180))
-pred.fun = function(newdata, object){
-	data.frame(y = sin(rowSums(newdata)) + rnorm(nrow(newdata), sd = 0.1))
-}
-pred = Predictor$new(data = dat, predict.fun = pred.fun)
-fes = FeatureEffects$new(pred)
-fes$plot(ncol = 20)
-```
-```{r eval=FALSE}
-knitr::include_graphics("../images/pdp-multiple.png")
-```
+TODO of fuzzy animal which dodges touch of hand
+Or use image of cat that doges hand
+
+## We propose
+
+TODO: Replace text with image: Black box in the middle, three properties attached to it
+
+Measure model complexity in a model-agnostic way: number of features, interaction strength, main effect complexity
+
+$\Rightarrow$ Allows model comparision
+
+$\Rightarrow$ Allows direct optimization for interpretability
+
+$\Rightarrow$ Makes claims of interpretability more explicit ("Model A uses less features than B and has less interactions)
 
 
-## Solution 3: Compare models with interpretability / complexity measures
-
-TODO: Image with 3 black boxes and numbers attached to it
-
-## Desiderata
-
-- Few features (Sparsity)
-- Few interactions (Additivity)
-- Simple relationships (Simplicity)
-  
-## Measure: Number of features heuristic
-
-TODO: Visualisation of algorithm
 
 ## Functional Decomposition
 
-TODO: Formula with decomposition
+$$f(x) = \overbrace{f_0}^\text{Intercept} + \overbrace{\sum_{j=1}^p f_j(x_j)}^\text{1st order effects} + \overbrace{\sum_{j\neq k}^p f_{jk}(x_j, x_k)}^\text{2nd order effects} + \ldots + \overbrace{f_{1,\ldots,p}(x_1, \ldots, x_p)}^\text{p-th order effect}
+$$
+
+
+## Functional Decomposition
+
+$$f(x)  = \overbrace{f_0}^\text{Intercept} + \overbrace{\sum_{j=1}^p f_j(x_j)}^\text{1st order effects} + \overbrace{\sum_{S \subseteq \{1,\ldots,p\},|S| \geq 2} f_{S}(x_S)}^{\text{Higher order effects}}
+$$
+
+## Functional Decomposition 
+
+$$f(x)  = \underbrace{f_0 + \sum_{j=1}^p \overbrace{f_j(x_j)}^\text{How complex?} + \overbrace{IA(x)}^{\text{How much interaction?}}}_{\text{How many feature used?}}
+$$
 
 ## Accumulated Local Effects (ALE)
+
+TODO: Use all plots
 
 ```{r}
 knitr::include_graphics("../images/ale-intuition-3.jpg")
 ```
+## Measure: Main effect complexity
 
+TODO: Plot of single ALE plot with complexity (from paper)
 
-## Functional Decomposition with ALE
-
-TODO: copy paste new decomposition
+Plus formula how to average those for all plots
 
 ## Measure: Interaction Strength
 
-TODO: PRL formula with R2 and SSQ and so on
+Measure main effect model with proportion of error explained (pre):
 
-## Measure: Complexity
 
-TODO: AleNumApprox plot
-
-## Measure: Complexity cont.
-
-TODO: Multiple AleNumApprox plots with averaging formula
+$$\text{Interaction Strength} =  \frac{\mathbb{E}(L(\hat{f}, f_{ALE}))}{\mathbb{E}(L(\hat{f}, c))}$$
 
 ## Application: Multi-Objective Optimization
 
@@ -111,14 +98,11 @@ TODO: List of models
 
 ## Application: Multi-Objective Optimization
 
-TODO: Show result graphics
+TODO: Show Interpretability vs. Performance Tradeoff
 
 ## Application: Multi-Objective Optimization
 
-TODO: Show Interpretability vs. Performance Tradeoff
-
-```{r child = "../chunks/book.Rmd"}
-```
+TODO: Show result graphics
 
 
 # Backup
