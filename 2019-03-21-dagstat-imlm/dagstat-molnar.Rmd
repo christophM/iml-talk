@@ -1,7 +1,8 @@
 ---
 title: "Measuring and optimizing machine learning interpretability"
 author: "Christoph Molnar, Giuseppe Casalicchio, Bernd Bischl"
-date: "2019-03-21"
+date: "DagStat 2019-03-21"
+institute: "LMU Munich"
 output: 
   beamer_presentation:
     includes:
@@ -20,19 +21,23 @@ knitr::opts_chunk$set(echo = FALSE,
 ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
-## Black Box problem
+## Black Box Problem
 
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/black-box.png")
 ```
 ## Problem: Tradeoff interpretability and performance
-Use only interpretable models (e.g. linear model)! $\Rightarrow$ Pay with loss in performance.
+Use only interpretable models (e.g. linear model)! 
+
+$\Rightarrow$ Pay with loss in performance.
 
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/white-box.png")
 ```
 ## Problem: Tradeoff interpretability and performance
-Just use post-hoc interpretation methods (e.g. feature importance)! $\Rightarrow$ Works better for less complex models.
+Just use post-hoc interpretation methods (e.g. feature importance)! 
+
+$\Rightarrow$ Works better for less complex models.
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/agnostic-black-box.png")
@@ -40,8 +45,9 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 
 ## What's interpretability anyway?
 
-TODO of fuzzy animal which dodges touch of hand
-Or use image of cat that doges hand
+```{r}
+knitr::include_graphics("../images/spirit-board.jpg")
+```
 
 ## We propose
 
@@ -138,21 +144,10 @@ knitr::include_graphics("../images/perf-interpret-tradeoff-1.jpeg")
 
 TODO: Show result graphics
 
-# The End
+## Interested in interpretable machine learning?
+More on interpretable machine learning in my book [http://christophm.github.io/interpretable-ml-book/](http://christophm.github.io/interpretable-ml-book/).
 
-# Backup
-
-## Units in Wine dataset
-
-- fixed acidity g(tartaric acid)/dm^3^
-- volatile acidity: g(acetric acid/dm^3^)
-- citric acid: g/dm^3^
-- residual sugar: g/dm^3^
-- chlorides: g(sodium chloride)/dm^3^
-- free sulfur dioxide: mg/dm^3^
-- total sulfur dioxide: mg/dm^3^
-- density> g/cm^3^
-- pH
-- sulphates: g(postassium sulphate) / dm^3^
-- alcohol vol.%
+```{r, out.width="5cm"}
+knitr::include_graphics("../images/cover-bordered.jpg")
+```
 
