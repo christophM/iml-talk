@@ -49,9 +49,7 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 knitr::include_graphics("../images/spirit-board.jpg")
 ```
 
-## We propose
-
-TODO: Replace text with image: Black box in the middle, three properties attached to it
+## We propose measures of model complexity
 
 Measure model complexity in a model-agnostic way: number of features, interaction strength, main effect complexity
 
@@ -59,7 +57,7 @@ $\Rightarrow$ Allows model comparision
 
 $\Rightarrow$ Allows direct optimization for interpretability
 
-$\Rightarrow$ Makes claims of interpretability more explicit ("Model A uses less features than B and has less interactions)
+$\Rightarrow$ Makes claims of interpretability more explicit ("Model A uses less features than B and has less interactions")
 
 
 
@@ -142,7 +140,10 @@ knitr::include_graphics("../images/perf-interpret-tradeoff-1.jpeg")
 
 ## Application: Multi-Objective Optimization
 
-TODO: Show result graphics
+```{r, out.width='70%'}
+knitr::include_graphics("../images/multi-obj-selection.png")
+```
+
 
 ## Interested in interpretable machine learning?
 More on interpretable machine learning in my book [http://christophm.github.io/interpretable-ml-book/](http://christophm.github.io/interpretable-ml-book/).
