@@ -26,30 +26,28 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/black-box.png")
 ```
-## Problem: Tradeoff interpretability and performance
-Use only interpretable models (e.g. linear model)! 
+## Solution: Interpretable Models?
 
-$\Rightarrow$ Pay with loss in performance.
+$\Rightarrow$ Pay with loss in performance; Unclear how to compare models
 
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/white-box.png")
 ```
-## Problem: Tradeoff interpretability and performance
-Just use post-hoc interpretation methods (e.g. feature importance)! 
+## Solution: Post-hoc Interpretation? 
 
-$\Rightarrow$ Works better for less complex models.
+$\Rightarrow$ Post-hoc interpretation (e.g. feature importance, partial dependence plots) works better for less complex models.
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/agnostic-black-box.png")
 ```
 
-## What's interpretability anyway?
+## Is Interpretability Unscientific?
 
 ```{r}
 knitr::include_graphics("../images/spirit-board.jpg")
 ```
 
-## We propose measures of model complexity
+## We Propose Measures of Model Complexity
 
 Measure model complexity in a model-agnostic way: number of features, interaction strength, main effect complexity
 
@@ -118,11 +116,11 @@ knitr::include_graphics("../images/c-demo-1.jpeg")
 Measure main effect model with proportion of error explained:
 
 
-$$\text{Interaction Strength} =  \frac{\mathbb{E}(L(\hat{f}, f_0 + \sum_{j=1}^p f_j)}{\mathbb{E}(L(\hat{f}, c))}$$
+$$\text{Interaction Strength} =  \frac{\mathbb{E}(L(\hat{f}, f_0 + \sum_{j=1}^p f_j))}{\mathbb{E}(L(\hat{f}, c))}$$
 
 ## Application: Multi-Objective Optimization
 
-- Predict wine quality from phsicochemical properties
+- Predict wine quality from physicochemical properties
 - Minimize MAE, number of features, interaction strength, main effect complexity
 - Search across different model classes and hyperparameter settings  
 
