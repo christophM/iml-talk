@@ -21,6 +21,13 @@ knitr::opts_chunk$set(echo = FALSE,
 ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
+## Outline
+
+- Why measure interpretability?
+- Functional Decomposition with Accumulated Local Effects
+- Measures
+- Application
+
 ## Black Box Problem
 
 ```{r, echo = FALSE}
@@ -51,7 +58,7 @@ knitr::include_graphics("../images/spirit-board.jpg")
 
 Measure model complexity in a model-agnostic way: number of features, interaction strength, main effect complexity
 
-$\Rightarrow$ Allows model comparision
+$\Rightarrow$ Allows model comparison
 
 $\Rightarrow$ Allows direct optimization for interpretability
 
@@ -141,6 +148,15 @@ knitr::include_graphics("../images/perf-interpret-tradeoff-1.jpeg")
 ```{r, out.width='70%'}
 knitr::include_graphics("../images/multi-obj-selection.png")
 ```
+
+## Summary
+
+- Model-agnostic interpretability measures: number of features, interaction strength, main effect complexity
+- Use: model comparison and optimization metric
+ 
+
+- Implementation: \url{https://github.com/compstat-lmu/paper_2019_iml_measures}
+- Paper:[https://arxiv.org/abs/1904.03867]()
 
 # The End
 
