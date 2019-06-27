@@ -44,15 +44,31 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 
 ## Sparsity Improves Interpretation
 
-TODO: Image of 3 vs 100 feature in importance
+```{r, echo=FALSE, out.width = '\\textwidth'} 
+knitr::include_graphics("../images/pdp-multiple.png")
+```
 
 ## Additivity Improves Interpretation
 
-TODO: Image from paper with PDP and increasing interactions
+```{r, echo=FALSE}
+knitr::include_graphics("../images/pdp-interactions.jpeg")
+```
 
 ## Linearity Improves Interpretation
 
-TODO: Image with increasing MEC
+```{r}
+set.seed(2)
+x = seq(from = -1, to = 1, length.out = 50)
+y1 = x
+y2 = x * (x < 0.3) + 0.4 * (x > 0.3)
+y3 = x + sin(8 * x) 
+y3 = y2 + cumsum(rt(50, df = 1)) / 50 - 1
+
+dat = data.frame(x = rep(x, times = 3), y = c(y1, y2, y3), situation = rep(c(1,2,3), each = 50))
+library(ggplot2)
+ggplot(dat) + geom_line(aes(x = x, y = y)) + facet_grid(. ~ situation)
+
+```
 
 ## We Propose Measures of Model Complexity
 
