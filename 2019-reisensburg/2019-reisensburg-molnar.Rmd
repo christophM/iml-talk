@@ -48,12 +48,6 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 knitr::include_graphics("../images/pdp-multiple.png")
 ```
 
-## Additivity Improves Interpretation
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/pdp-interactions.jpeg")
-```
-
 ## Linearity Improves Interpretation
 
 ```{r}
@@ -69,6 +63,12 @@ library(ggplot2)
 ggplot(dat) + geom_line(aes(x = x, y = y)) + facet_grid(. ~ situation)
 
 ```
+ ## Additivity Improves Interpretation
+
+```{r, echo=FALSE}
+knitr::include_graphics("../images/pdp-interactions.jpeg")
+```
+
 
 ## We Propose Measures of Model Complexity
 
