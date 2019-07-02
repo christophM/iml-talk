@@ -1,5 +1,5 @@
 ---
-title: "Measuring and optimizing machine learning interpretability"
+title: "Quantifying Interpretability of Arbitrary Machine Learning Models Through Functional Decomposition"
 author: "Christoph Molnar, Giuseppe Casalicchio, Bernd Bischl"
 date: "Statistical Computing 2019-07-03"
 institute: "LMU Munich"
