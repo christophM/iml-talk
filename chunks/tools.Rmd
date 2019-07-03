@@ -91,7 +91,4 @@ knitr::include_graphics("../images/pdp-rent.png")
 ## Model-agnostic Methods: Local Surrogate {.center data-background=../images/local-surrogate.png data-background-size=contain}
 
 
-## Example-focused Methods
-
-TODO: Graphic for counterfactuals
 

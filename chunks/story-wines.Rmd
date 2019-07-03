@@ -20,6 +20,14 @@ Modeling wine preferences by data mining from physicochemical properties. In Dec
 
 ## {.center data-background=../images/wine-features.jpg data-background-size=contain}
 
+## Disclaimer: I am NOT a wine expert!
+
+```{r, out.width = "50%"}
+knitr::include_graphics("../images/wine-expert.png")
+```
+
+
+
 ## Quality Distribution
 
 
@@ -39,12 +47,7 @@ ggplot(wine) +
   scale_x_continuous("Wine Quality", labels = 1:10, breaks = 1:10)
 ```
 
-## How can we solve this problem? {.emphasizedabit}
-
-- Hand-written rules
-- Statistical Model
-- Machine Learning
-
+# How can we solve this problem?
 
 ```{r, child="../chunks/what-is-ml.Rmd"}
 ```
@@ -55,9 +58,6 @@ ggplot(wine) +
 ```{r}
 knitr::include_graphics("../images/checkmark.png")
 ```
-
-
-
 
 # Step 2: Apply Machine Learning
 
@@ -123,7 +123,7 @@ ggplot(preds, aes(x = actual, y = .prediction, group = actual)) +
 
 # Step 3: Profit {.center}
 
-## {data-background=../images/dog-car.gif data-background-size=contain}
+## {data-background=../images/make-it-rain.gif data-background-size=contain}
 
 ##  {.emphasizedabit .center data-background=../images/no-idea.gif data-background-size=cover}
 
