@@ -1,7 +1,23 @@
-##  {.emphasizedabit}
-Predict wine quality from its physicochemical properties.
+# Let's Predict Wine Quality 
 
-## {.center data-background=../images/minho.png data-background-size=contain}
+
+## 
+```{r, out.width = "100%"}
+knitr::include_graphics("../images/wine-features.jpg")
+```
+
+## Disclaimer: I am NOT a wine expert!
+
+```{r, out.width = "50%"}
+knitr::include_graphics("../images/wine-expert.png")
+```
+
+# How can we develop a wine quality prediction program? 
+
+```{r, child="../chunks/what-is-ml.Rmd"}
+```
+
+# Step 1: Find data
 
 ## Wine Dataset
 
@@ -17,19 +33,7 @@ knitr::include_graphics("../images/judges.png")
 P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.</font>
 
-
-## {.center data-background=../images/wine-features.jpg data-background-size=contain}
-
-## Disclaimer: I am NOT a wine expert!
-
-```{r, out.width = "50%"}
-knitr::include_graphics("../images/wine-expert.png")
-```
-
-
-
-## Quality Distribution
-
+## Wine Quality Distribution
 
 ```{r load-data,include=FALSE}
 library('mlr')
@@ -47,17 +51,6 @@ ggplot(wine) +
   scale_x_continuous("Wine Quality", labels = 1:10, breaks = 1:10)
 ```
 
-# How can we solve this problem?
-
-```{r, child="../chunks/what-is-ml.Rmd"}
-```
-
-# Step 1: Find data
-
-## 
-```{r}
-knitr::include_graphics("../images/checkmark.png")
-```
 
 # Step 2: Apply Machine Learning
 

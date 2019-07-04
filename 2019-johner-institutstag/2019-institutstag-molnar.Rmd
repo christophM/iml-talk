@@ -1,7 +1,7 @@
 ---
 title: "Explainable AI (XAI)"
 author: "Christoph Molnar"
-date: "July 05, 2019"
+date: "13. Institutstag - July 05, 2019"
 output: 
   ioslides_presentation:
     widescreen: false
