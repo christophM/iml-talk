@@ -1,0 +1,266 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\begin{document}
+%
+\title{Interpretable Machine Learning -- State of the Art and Challenges\thanks{This project is funded by the Bavarian State Ministry of Science and the Arts and coordinated by the Bavarian Research Institute for Digital Transformation (bidt) and supported by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
+The authors of this work take full responsibilities for its content.
+}}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Christoph Molnar\inst{1}\orcidID{0000-0003-2331-868X}}
+%\and
+%Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
+%Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+%
+\authorrunning{Molnar}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{LMU Munich, Ludwigstr. 33, 80539 Munich, Germany
+\email{christoph.molnar@gmail.com}\\
+\url{https://www.slds.stat.uni-muenchen.de/people/molnar/}}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+I present a very short history of the field of interpretable machine learning, give an overview of popular methods and discuss challenges when interpreting machine learning models.
+
+When machine learning (ML) is used, be it in a product, in a process or in research, interpretability of the model is often a deciding factor.
+Interpretable machine learning (IML) is not an entirely new field, as rule-based ML started already in the 1950s and linear regression models go even back to the 1800s.
+But I argue that it gained widespread attention in the formative last years starting around 2015.
+In this paper which accompanies a talk, I give a brief overview of the developments in IML, popular IML methods and discuss challenges the field faces.
+
+
+
+\keywords{First keyword  \and Second keyword \and Another keyword.}
+\end{abstract}
+%
+%
+%
+\section{Background}
+Today, ML is being used for knowledge discovery.
+Scientists that would have used some (interpretable) statistical model with carefully crafted features and assumptions about the data distribution switched to the machine learning approach which select the model that fits the data best, even if that means that the model is not interpretable.
+However, while this approach can yield much more accurate models, it became less obvious how to derive knowledge from the model.
+Today, ML is used in many products, such as drones, games, object detection and so on.
+To get a good product, the ML model is evaluated, usually using performance evaluation on test data.
+But this might not be enough, since this can hide more severe modeling errors such as overlooking some structure in the training data.
+Examples are Amazons hiring tool which made mysognyst decisions or an hospital system that wrongly assigns lower lung problem probability to asthma patients.
+These examples have in common that the performance on test data was not affected and would go unnoticed without further looking into the model.
+Today, ML is used in decision making in processes.
+For example for pre-sorting fraudulent insurance claims.
+Once a claim is flagged, it goes to a case worker.
+A claim that is not only flagged, but that comes in with some explanations why it was flagged is much more useful to the case worker.
+
+All these cases have in common that they have two goals: High predictive performance AND interpretability.
+This was also recognized by the researcher community who is now very busy producing research and tools for intepreting ML models.
+Learning interpretable prediction models from data -- that is not new and has been focus of, e.g. statistical learning and rule learning for a long time.
+I would still argue that the field has reached a new form, as evidenced by new keywords "Interpretable Machine Learning" and "Explainable Artificial Intelligence", but also by bringing in new ideas from other fields, pulling many unconnected research fields together and an additional focus on model-agnostic ML interpretation methods.
+I will shortly review how we got where we are, which methods are available and what the challenges are still.
+
+
+
+\section{A Very Short History}
+When we go back to the roots, I think this would be linear models and decision rules.
+Things like cybernetics and expert systems are not of interest here, as we focus on a subset of AI technologies that learn from data, so only machine learning.
+
+Linear models are very old, starting with Gauss and legegegegeg who used it for solar system equations.
+qtetetetet then later popularized it for learning from data in the social sciences.
+
+Until 1950s mostly statistical methods available, so I guess we can't speak yet of interpretable machine learning.
+A side note: I don't want to distinguish too sharply between statistics and machine learning.
+But for this context, I would say in statistical modeling the focus is on finding a suitable linear model using in-sample metrics such as R squared and AIC.
+In machine learning we use an external test set to minimize the generalization loss and the model itself does not matter as long as the loss is low.
+
+From 1950s on there is some first research on ML, with an AI winter following in the 1970s.
+Again in 1980s / 1990s research picked up for SVMs, neural networks and so on.
+Very interesting milestone is random forest in 1995, which comes with some built-in interpretability tools, 1995, and extended and popularized in 2001 by Breiman.
+Still used to this day in many sciences such as medicine and psychology.
+
+In 2010s then came the deep learning hype.
+
+The big leap came in the mid 2010's, visible in Google Search trends [link] and Web of Science statistics when searching for 'Explainable AI' and 'Interpretable Machine Learning'.
+These figures look like there has not been much research on explaining prediction models before, which would be a wrong conclusion.
+Research was done, big time in statistics for regression models in its various extensions, rule based stuff in computer science, random forest and its many extensions and interpretation.
+What has changed is that Interpretable Machine Learning or Explainable Artificial Intelligence has become a field that now ties all these topics together.
+Especially model-agnostic methods that work for any type of model have grown a lot in this new field.
+
+\section{Where Do We Stand Today in 2020?}
+
+We have software, big companies that offer solutions and many startups.
+Research is heavily underway and people are already using the solutions.
+
+\section{What Methods do We Have?}
+
+There are many overview papers with categorizations of all these methods.
+Here are the properties I find the most useful to categorize the various methods and allow a user to understand when to use which.
+
+An interesting distinction is how the methods work:
+They either explain individual 'parts' of the model, examples are the weights in a linear model, the structure of a tree.
+This can be very straightforward such as the interpretation of a linear regression weight, which directly tells us how a feature influences the response.
+Or this can be more complex, when we want to understand what the role of individual neurons in a convolutional neural network is.
+Here we can do activation maximization which tells us to which image the neuron most strongly reacts to and interpret this neuron as, e.g., a detector of a certain pattern.
+Methods that require to look at certain parts of the model are by definition model-specific, i.e. they cannot be applied to any model.
+Methods that mostly observe the input - output behavior are often model-agnostic, i.e. they ignore whether the model is a neural network, linear model or random forest.
+
+A second distinction is about whether a method explains an individual data point or the global model behavior.
+Methods such as Shapley Values and LIME compute explanations for points, while there are many feature importance methods that quantify the importance of a feature globally for the model, meaning across all data points.
+
+\subsection{Linear Models and Rule-based ML}
+
+Linear models and rule can be seen as building blocks for many types of explanations and explanation methods.
+Interpretations are often presented as a weighted sum of the inputs, such as LIME, Shapley Values, and many of the attribution methods for convolutional neural networks.
+Even the entire model can -- in theory -- be deconstructed into and additive sum of components reaching from first-order effects to all interactions (cite functional ANOVA).
+But also rule based explanations are very common types of explanations.
+There are many new tree algorithms, such as XXX and XXX.
+
+\paragraph{Linear Models}
+Linear models have been around since 1800s.
+The beauty of them is that they are additive, meaning that the influences of each feature on the target can be added together to give the full effect.
+That makes estimation and interpretation simple.
+But this is often not adequate since in the real world the effects are usually not linear.
+Many extensions exists, such as non-linear transformations for the case that the target follows a different distribtuion (GLMs, logistic regression).
+Other extensions allow for non-linear effect of a feature, by using splines.
+Also interactions can be integrated.
+All these extensions make the model more difficult to interpret, but also allow to more flexible model the target.
+
+\paragraph{Rule-based ML}
+There are different approaches.
+They all have in common that they find decision rules in the form of conditions combined with AND conjunctions leading to some prediction if all conditions are matched.
+There are different ways to find this rules and if they are allowed to overlap and so on.
+Differences in how they are optimized and so on.
+
+\subsection{Explain Individual Predictions}
+
+\paragraph{Counterfactual Explanations}
+Counterfactual explanations are rather simple explanations for individual predictions.
+A counterfactual explanation tells you how the features should be changed to get to a different prediction or classification.
+But when you look closer at how you find them, it gets more difficult.
+There are many tradeoffs to make.
+First, you want to get as close as possible to the desired outcome.
+At the same time you don't want to change too many features, and the features that are changed should not be changed too much.
+Also these changes should not create unrealistic combinations of feature values, think of a 2m person for which the weight was changed to 30kg.
+The reason that there are many papers on the topic is that the search for counterfatuals can be expensive.
+Some methods are only for specific types of models, and they all trade-off the various objectives in different ways.
+We argued that it is necessary to treat this as a multi-objective problem and the result should be not one but many counterfactual explanations.
+
+\paragraph{LIME}
+
+\paragraph{Shapley Values}
+
+
+\subsection{Global Model Interpretation}
+
+\paragraph{Feature Effects}
+
+\paragraph{Feature Importance}
+
+
+\subsection{Other Methods}
+
+\paragraph{Heatmaps}
+
+\section{Challenges}
+
+\subsection{Dependent Features}
+Feature dependence comes in many forms, correlation being the simplest and most known.
+When features are dependent -- and they usually are -- disentangling the effect of one from the other are difficult if not impossible.
+For example, if you measure various markers of inflammation in a blood sample, they will be highly correlated.
+Using these markers in a predictive model for classifying diseases for which these markers are highly predictive, the model can rely on any of them with arbitrary weighting.
+Attributing which marker was the most important now becomes difficult.
+
+Almost all interpretation methods are affected by this issue.
+Most of them ignore this issue and pretend the features are independent of each other.
+For example the permutation feature importance measure quantifies the importance as the drop in performance when the feature is permuted.
+But permutation when features are dependent not only breaks the association with the target value, but also with the other features.
+Now if we permute one blood marker, it might create new combination that might be very unlikely.
+These combinations are now fed to the model to get the predictions, but these are outside of the training data distribution and the model never had to deal with similar combinations.
+It is totally unclear how the model will behave and it might even be irrelevant how the model will behave for these data points as they will never occur in real life.
+There are attempts to 'fix' this issue, namely to not permute the feature, but to draw from the conditional distribution.
+This means we still sample new values, but only the ones that are conforming with the other feature values.
+Unfortunately, this is not a simple 'fix' of the issue.
+While it solves the extrapolation issue, it becomes a new measure altogether, since conditional feature importance measure the drop in performance "given that we know the other feature values".
+This can mean that the two most important features can drop to almost zero importance when yhey are highly correlated.
+
+Similar things happen to 'fixes' for e.g. Shapley Values.
+Once we start sampling from the conditional distribution and not from the marginal, we don't get Shapley Values for our original question, but something else.
+
+I fear that there is no easy solution.
+
+
+\subsection{Causality}
+In general, we are not allowed to make a causal interpretation of machine learning models.
+There is an inherent conflict between prediction performance optimization and causal modeling.
+A feature might give some additional predictive performance, but its effect may not be interpreted causally, because, e.g., we did not include the confounder of both this feature and the target.
+The fact that the ground has some predictive value for tomorrow's weather, but it's not causal for it.
+The common confounder is today's weather -- todays rain makes the ground wet.
+And if we had no access to todays weather but only to the "wet ground"-feature, we have to decide between predictive performance and causal correct interpretation.
+
+\subsection{Inference}
+Example for confidence intervals for LRP https://arxiv.org/pdf/2008.01468.pdf.
+Is model-specific for Deep Neural Networks using Dropout.
+
+\subsection{Many More Topics}
+This was not an exhaustive list, and especially focused on the methodological side, neglecting views of the user interface, societal impacts, psychological insights and so on.
+These challenges are more from the methodological, mathematical view, i.e., what can be done given we have some data and model.
+This is also a rather static view point in the sense that we can do a lot if we allow a more interactive way of modeling and "having a conversation" between a person and the model or even the modeling process.
+
+\section{Discussion}
+
+While Interpretable Machine Learning can seem like a pretty young field, it has some old roots in Statistics and Computer Science.
+Yet, many new methods have come in the recent years and we have witnessed a Cambrian explosion of methods, software and institutional interest.
+We are seing both ways of making models themselves more interpretable, but also model-agnostic methods that work for any type of model.
+These methods also are implemented now in many software packages.
+Big leaps in the field came from old ideas in other fields.
+The Shapley Value has been for a long time part of game theory, and its introduction to machine learning interpretability has spurred a lot of development.
+We can learn a lot from Statistics and how it handles uncertainty.
+
+
+
+
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+% \bibliographystyle{splncs04}
+% \bibliography{mybibliography}
+%
+\begin{thebibliography}{8}
+\bibitem{ref_article1}
+Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
+
+\bibitem{ref_lncs1}
+Author, F., Author, S.: Title of a proceedings paper. In: Editor,
+F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
+Springer, Heidelberg (2016). \doi{10.10007/1234567890}
+
+\bibitem{ref_book1}
+Author, F., Author, S., Author, T.: Book title. 2nd edn. Publisher,
+Location (1999)
+
+\bibitem{ref_proc1}
+Author, A.-B.: Contribution title. In: 9th International Proceedings
+on Proceedings, pp. 1--2. Publisher, Location (2010)
+
+\bibitem{ref_url1}
+LNCS Homepage, \url{http://www.springer.com/lncs}. Last accessed 4
+Oct 2017
+\end{thebibliography}
+\end{document}
