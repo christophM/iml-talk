@@ -38,73 +38,133 @@ The authors of this work take full responsibilities for its content.
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-I present a very short history of the field of interpretable machine learning, give an overview of popular methods and discuss challenges when interpreting machine learning models.
+  I present a very short history of the field of interpretable machine learning (IML), give an overview of popular interpretation methods and discuss challenges when interpreting machine learning models.
 
-When machine learning (ML) is used, be it in a product, in a process or in research, interpretability of the model is often a deciding factor.
-Interpretable machine learning (IML) is not an entirely new field, as rule-based ML started already in the 1950s and linear regression models go even back to the 1800s.
-But I argue that it gained widespread attention in the formative last years starting around 2015.
-In this paper which accompanies a talk, I give a brief overview of the developments in IML, popular IML methods and discuss challenges the field faces.
-
-
-
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+\keywords{Interpretable Machine Learning \and Explainable AI}
 \end{abstract}
 %
 %
 %
-\section{Background}
-Today, ML is being used for knowledge discovery.
-Scientists that would have used some (interpretable) statistical model with carefully crafted features and assumptions about the data distribution switched to the machine learning approach which select the model that fits the data best, even if that means that the model is not interpretable.
-However, while this approach can yield much more accurate models, it became less obvious how to derive knowledge from the model.
-Today, ML is used in many products, such as drones, games, object detection and so on.
-To get a good product, the ML model is evaluated, usually using performance evaluation on test data.
-But this might not be enough, since this can hide more severe modeling errors such as overlooking some structure in the training data.
-Examples are Amazons hiring tool which made mysognyst decisions or an hospital system that wrongly assigns lower lung problem probability to asthma patients.
-These examples have in common that the performance on test data was not affected and would go unnoticed without further looking into the model.
-Today, ML is used in decision making in processes.
-For example for pre-sorting fraudulent insurance claims.
-Once a claim is flagged, it goes to a case worker.
-A claim that is not only flagged, but that comes in with some explanations why it was flagged is much more useful to the case worker.
+Interpretability is often a deciding factor when machine learning (ML) is used in a product, a decision process or in research.
+Interpretable Machine learning gives the means to debug a model, extract insights and justify decisions.
+I want to give three very common use cases:
 
-All these cases have in common that they have two goals: High predictive performance AND interpretability.
-This was also recognized by the researcher community who is now very busy producing research and tools for intepreting ML models.
-Learning interpretable prediction models from data -- that is not new and has been focus of, e.g. statistical learning and rule learning for a long time.
-I would still argue that the field has reached a new form, as evidenced by new keywords "Interpretable Machine Learning" and "Explainable Artificial Intelligence", but also by bringing in new ideas from other fields, pulling many unconnected research fields together and an additional focus on model-agnostic ML interpretation methods.
-I will shortly review how we got where we are, which methods are available and what the challenges are still.
+%\paragraph{For science:} In applied sciences, data is often modeled with ML nowadays, where before statistical modeling approach would have been used.
+%The goal of science is not only to predict the world well, but also to generate further insights.
+%Examples are species distribution models in ecology which aim to explain why certain species can be found on certain areas based on e.g. the local climate.
+%Here, interpretability of the prediction model is needed to understand why a species, e.g., has a high probability to occur in a specific reason.
 
 
+\paragraph{A Very Short History of IML.}
+Learning interpretable prediction models from data is not new, but has been the focus of statistical learning and rule-based ML for a long time.
+Statistics has a long tradition of learning interpretable prediction  models from data, starting in 1800 \cite{stigler1986history} with works on least squares by Legendre 1805, \cite{legendre1805nouvelles}, Gauss in 1809 \cite{gauss1809theoria} and Quetelet in 1827 \cite{quetelet1827recherches}.
+Another methodological pillow are rule-based machine learning approaches, which includes models such as decision rules and decision trees.
+  This took off in the 80s with decision tree approaches such as CART CITE, ID3 CITE and rule learners like AQ CITE but reaches back to first research in the 1960s \cite{hajek1966guha}.
+Both research on linear regression models and its extensions and rule-based ML remain important and busy research areas to this day and are even blending together (e.g. model-based trees CITE).
+As a next stepping stone to the field of IML are random forests, an early approach to explain more complex machine learning models.
+I argue that one of the success factors of the random forest as a prediction model was (and is) the built-in feature importance measure.
+The high citation counts of the original paper (CITE), but also suggestions for how to improve the feature importance (CITE, CITE, CITE) are evidence for this.
+The IML field really took off in around 2015, judging on usage of the search terms "Interpretable Machine Learning" and "Explainable AI" on Google (see Figure XXX) and papers published with these terms (see Figure XXX).
+Could it be that only the terms have changed, but the field has always been there and the same?
+I would say no, since a lot of commonly used methods, especially model-agnostic ones and the ones for deep neural network also came about this time, see chapter (XXX).
 
-\section{A Very Short History}
-When we go back to the roots, I think this would be linear models and decision rules.
-Things like cybernetics and expert systems are not of interest here, as we focus on a subset of AI technologies that learn from data, so only machine learning.
+\paragraph{Today} we have reached a first state of maturity where some methods were established, implemented in software and used by practitioners and applied researchers.
+There is a lot of open source software that implement various techniques (CITE iml, CITE DALEX, CITE sklearn, ...).
+Big tech companies offer software (CITE ai360, CITE what-if tool, ...).
+Regulation such as GDPR has spurred a discussion around further needs of interpretability.
+Many startup are now focused on explainable / interpretable ML (TODO: Find good source).
 
-Linear models are very old, starting with Gauss and legegegegeg who used it for solar system equations.
-qtetetetet then later popularized it for learning from data in the social sciences.
 
+\section{Methods:}
+
+In this section I want to very broadly talk about methods that we have to explain models.
+A first useful distinction is between inherently interpretable models and usually model-agnostic explanation methods that describe the behavior of the model.
+This is a distinction between trying to make sense of a model by analyzing its parts vs. making sense of it by analyzing its prediction for certain inputs (sensitivity analysis).
+However we interpret a model, the interpretation is always projected back to the features themselves or some abstract transformation of them.
+
+\paragraph{Inherently interpretable models} are models where we can interpret its learned structure and parameters.
+In this category, I see all linear regression models of the form $Y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p$, where the weights $\beta$ are learned parameters of the model.
+Through the models structure (weighted sum of features) we can interpret the weights as the effect that a feature has on the prediction.
+Similarly, decision trees and other rule-based ML models have a learned structure which we can interpret as how the model makes a prediction.
+For example, an individual prediction can be traced through a decision tree and we retrieve an explanation of the form "If feature $x_1$ larger than two and feature $x_4$ in category A, then prediction is 10".
+However, the more complex these structures get (e.g., a linear model with hundres of features and complex interaction terms or very deep decision trees), the more difficult it becomes to see this as interpretable.
+Surprisingly, we can also try assing meaning to structures of more complex models such as individual neurons or layers in a convolutional neural network.
+This leads to the famous results where we find out that CNNs learn edge detectors at the lowest levels and increasingly abstract concepts at higher layers.
+
+\paragraph{Sensitivity-analysis-like (model-agnostic) interpretation methods} often treats the model as a black-box (but not always).
+Here I also want to distinguis between local and global explanations.
+
+\paragraph{Local explanations} explain how individual predictions are derived.
+Here we have a great variety of methods, with very different methodological motivations.
+Popular methods are LIME, Shapley Values and Counterfactual Explanations.
+I want to highlight especially their very different approaches to the problem of local explanations.
+Counterfactual explanations are what-if scenarios.
+How does an instance have to change to get another (desired) prediction or classification.
+They build on a rich tradition in philosophy and also thrive in what the social sciences discovered:
+Good explanations are contrastive and focus on a few reasons.
+A very different approach originates from collaborative game theory: The Shapley Values.
+How do you fairly share some payout from a game among the players?
+The Shapley Values provide an answer for this question, by trying out all constellations of players and averaging the additional payout a player would add to the total payout when the player is added to a team.
+The same idea can be applied to ML: The predicted value is the payout, the player is a certain feature value.Many variations, extensions and more efficient implementations for specific ML models exist (CITE shap, tree shap, Other stuff).
+The third mention here is LIME.
+LIME is a surrogate model, i.e., the procedure approximates the original ML model with a simpler interpretable model.
+LIME does so locally, meaning only in some neighborhood around the data point that we want to explain.
+
+\paragraph{Surrogate Models} are an interesting and huge class of explanation method.
+This approach is very common in sensitivity analysis where we have emulation? models.
+Surrogate models combine the two strategies:
+First, approximate the predictions of the ML model with an interpretable model, such as a decision tree.
+This is a kind of sensitivity-like approach, where we see the original model as a black box and artificially probe the ML model and derive information from the behavior.
+Then we interpret the interpretable model, which now acts as a surrogate to the more complex ML model.
+
+
+\paragraph{Global, model-agnostic explanation methods} are also very popular.
+Here we have have feature importance, which rank features based on how relevant they were for the prediction and the feature effect, which expresses how a change in that feature changes the predicted outcome on average.
+Permutation Feature Importance, which is based on permuting features is popular importance measure, originally suggested for random forests, now available as model-agnostic version.
+Alternatives are variance based measures, see XXX for an overview of all the ways to measure importance.
+For feature effects we have Partial Dependence Plots (CITE), Individual Conditional Expectation Plots (ICE) and Accumulated Local Effect (ALE) Plots (CITE), with of course many variations (CITE, CITE).
+
+
+
+
+
+\section{old}
+
+
+\paragraph{A Very Short History of Machine Learning Interpretability}
+Learning interpretable prediction models from data is not new, but has been the focus of statistical learning and rule-based ML for a long time.
+In statistics, there is a long tradition of learning interpretable models from data, starting in 1800 \cite{stigler1986history}.
+The least squares  method to fit linear models reaches back to 1805 by Legendre. \cite{legendre1805nouvelles}
+Later the linear regression model became a tool for astronomy and geodesy, e.g. by Gauss in 1809 \cite{gauss1809theoria}.
+Starting 1827 Quetelet used linear regression models (with least squares method) for (at that time) large amounts of data from social sciences, such as crime data \cite{quetelet1827recherches}.
+We can hardly call the least squares method interpretable machine learning, but it remains a highly relevant building block.
+Another methodological pillow are rule-based machine learning approaches, which includes models such as decision rules and decision trees.
 Until 1950s mostly statistical methods available, so I guess we can't speak yet of interpretable machine learning.
 A side note: I don't want to distinguish too sharply between statistics and machine learning.
 But for this context, I would say in statistical modeling the focus is on finding a suitable linear model using in-sample metrics such as R squared and AIC.
 In machine learning we use an external test set to minimize the generalization loss and the model itself does not matter as long as the loss is low.
 
-From 1950s on there is some first research on ML, with an AI winter following in the 1970s.
-Again in 1980s / 1990s research picked up for SVMs, neural networks and so on.
-Very interesting milestone is random forest in 1995, which comes with some built-in interpretability tools, 1995, and extended and popularized in 2001 by Breiman.
-Still used to this day in many sciences such as medicine and psychology.
+I want to highlight the random forest CITE as a representative for early interpretable ML approach, which also lay out some more groundwork and a new paradigm for feature importance.
 
 In 2010s then came the deep learning hype.
 
+I would still argue that the field has reached a new form, as evidenced by new keywords "Interpretable Machine Learning" and "Explainable Artificial Intelligence", but also by bringing in new ideas from other fields, pulling many unconnected research fields together and an additional focus on model-agnostic ML interpretation methods.
+
 The big leap came in the mid 2010's, visible in Google Search trends [link] and Web of Science statistics when searching for 'Explainable AI' and 'Interpretable Machine Learning'.
 These figures look like there has not been much research on explaining prediction models before, which would be a wrong conclusion.
+
 Research was done, big time in statistics for regression models in its various extensions, rule based stuff in computer science, random forest and its many extensions and interpretation.
 What has changed is that Interpretable Machine Learning or Explainable Artificial Intelligence has become a field that now ties all these topics together.
 Especially model-agnostic methods that work for any type of model have grown a lot in this new field.
 
-\section{Where Do We Stand Today in 2020?}
+\paragraph{Where Do We Stand Today in 2020?}
 
+We have software that implements interpretability (CITE lots of stuff here).
+Many of the big IT companies
 We have software, big companies that offer solutions and many startups.
 Research is heavily underway and people are already using the solutions.
 
-\section{What Methods do We Have?}
+\paragraph{What Methods do We Have?}
 
 There are many overview papers with categorizations of all these methods.
 Here are the properties I find the most useful to categorize the various methods and allow a user to understand when to use which.
@@ -129,8 +189,7 @@ But also rule based explanations are very common types of explanations.
 There are many new tree algorithms, such as XXX and XXX.
 
 \paragraph{Linear Models}
-Linear models have been around since 1800s.
-The beauty of them is that they are additive, meaning that the influences of each feature on the target can be added together to give the full effect.
+The beauty of linear models is that they are additive, meaning that the influences of each feature on the target can be added together to give the full effect.
 That makes estimation and interpretation simple.
 But this is often not adequate since in the real world the effects are usually not linear.
 Many extensions exists, such as non-linear transformations for the case that the target follows a different distribtuion (GLMs, logistic regression).
@@ -144,7 +203,16 @@ They all have in common that they find decision rules in the form of conditions 
 There are different ways to find this rules and if they are allowed to overlap and so on.
 Differences in how they are optimized and so on.
 
+
 \subsection{Explain Individual Predictions}
+
+There was a great explosion in different methods to explain individual predictions of ML models in a model-agnostic way.
+Among the most popular are Local Interpretable Model-agnostic Explanations (LIME) CITE, Shapley Values from Game Theory (CITE x2) and Counterfactual Explanations.
+Their outputs of LIME and Shapley Value are weighted sums and are estimated using method from linear regression, again showing the deep roots with statistics.
+Counterfactual explanations are presented as decision rules, for LIME this is also possible
+
+\paragraph{Surrogate Models}
+Many methods -- a confusing amount, really -- are nothing but simple models that approximate the behavior of the (complex) model to be explained.
 
 \paragraph{Counterfactual Explanations}
 Counterfactual explanations are rather simple explanations for individual predictions.
@@ -229,38 +297,17 @@ Big leaps in the field came from old ideas in other fields.
 The Shapley Value has been for a long time part of game theory, and its introduction to machine learning interpretability has spurred a lot of development.
 We can learn a lot from Statistics and how it handles uncertainty.
 
-
-
-
-
 %
 % ---- Bibliography ----
 %
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
-% \bibliographystyle{splncs04}
 % \bibliography{mybibliography}
 %
-\begin{thebibliography}{8}
-\bibitem{ref_article1}
-Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
 
-\bibitem{ref_lncs1}
-Author, F., Author, S.: Title of a proceedings paper. In: Editor,
-F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
-Springer, Heidelberg (2016). \doi{10.10007/1234567890}
+\vskip 0.2in
+\bibliographystyle{splncs04}
+\bibliography{Bib}
 
-\bibitem{ref_book1}
-Author, F., Author, S., Author, T.: Book title. 2nd edn. Publisher,
-Location (1999)
-
-\bibitem{ref_proc1}
-Author, A.-B.: Contribution title. In: 9th International Proceedings
-on Proceedings, pp. 1--2. Publisher, Location (2010)
-
-\bibitem{ref_url1}
-LNCS Homepage, \url{http://www.springer.com/lncs}. Last accessed 4
-Oct 2017
-\end{thebibliography}
 \end{document}
