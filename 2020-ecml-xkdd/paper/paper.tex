@@ -136,32 +136,32 @@ They build on a rich tradition in philosophy and also thrive in what the social 
 Good explanations are contrastive and focus on a few reasons.
 A very different approach originates from collaborative game theory: The Shapley Values.
 How do you fairly share some payout from a game among the players?
-The Shapley Values provide an answer for this question, by trying out all constellations of players and averaging the additional payout a player would add to the total payout when the player is added to a team.
-The same idea can be applied to ML: The predicted value is the payout, the player is a certain feature value.Many variations, extensions and more efficient implementations for specific ML models exist (CITE shap, tree shap, Other stuff).
-The third mention here is LIME.
+The Shapley values \cite{shapley1953value} provide an answer for this question, by trying out all constellations of players and averaging the additional payout a player would add to the total payout when the player is added to a team.
+The same idea can be applied to ML: The predicted value is the payout, the player is a certain feature value.Many variations, extensions and more efficient implementations for specific ML models exist \cite{vstrumbelj2014explaining,lundberg2017unified,lundberg2018consistent}.
+The third mention here are local interpretable model-agnostic explanations, short LIME \cite{ribeiro2016should}
 LIME is a surrogate model, i.e., the procedure approximates the original ML model with a simpler interpretable model.
 LIME does so locally, meaning only in some neighborhood around the data point that we want to explain.
 
-\paragraph{Surrogate Models} are an interesting and huge class of explanation method.
+\paragraph{Surrogate Models} are an interesting and huge class of explanation method \cite{puri2017magix,molnar2019,ming2018rulematrix}.
 This approach is very common in sensitivity analysis where we have emulation? models.
 Many methods -- a confusing amount, really -- are nothing but simple models that approximate the behavior of the (complex) model to be explained.
 Surrogate models combine the two strategies:
 First, approximate the predictions of the ML model with an interpretable model, such as a decision tree.
 This is a kind of sensitivity-like approach, where we see the original model as a black box and artificially probe the ML model and derive information from the behavior.
 Then we interpret the interpretable model, which now acts as a surrogate to the more complex ML model.
-
+There are also methods for extracting, e.g., decision rules from specific models based on their internal components such as weights \cite{andrews1995survey,augasta2012rule}, which would be more the introspection approach.
 
 \paragraph{Global, model-agnostic explanation methods} are also very popular.
 Here we have have feature importance, which rank features based on how relevant they were for the prediction and the feature effect, which expresses how a change in that feature changes the predicted outcome on average.
-Permutation Feature Importance, which is based on permuting features is popular importance measure, originally suggested for random forests, now available as model-agnostic version.
-Alternatives are variance based measures, see XXX for an overview of all the ways to measure importance.
-For feature effects we have Partial Dependence Plots (CITE), Individual Conditional Expectation Plots (ICE) and Accumulated Local Effect (ALE) Plots (CITE), with of course many variations (CITE, CITE).
+Permutation Feature Importance \cite{fisher2019all}, which is based on permuting features is popular importance measure, originally suggested for random forests \cite{breiman2001random}, now available as model-agnostic version.
+Alternatives are variance based measures, see \cite{wei2015variable} for an overview of all the ways to measure importance.
+For feature effects we have Partial Dependence Plots \cite{friedman2001greedy}, Individual Conditional Expectation Plots \cite{goldstein2015peeking} and Accumulated Local Effect  (ALE)  Plots \cite{apley2016visualizing}.
 
 
 \section{Challenges}
 
 There are also challenges for the field, that are already being tackled but still remain issues.
-This list is also based on this paper (CITE Pitfalls).
+This list is also based on this paper \cite{molnar2020pitfalls}.
 
 \paragraph{Feature dependence} makes interpretation more difficult.
 Inherently, when two features are dependent, e.g., correlated, attributing effects and importance to them is difficult.
@@ -174,8 +174,8 @@ But also interpretation for inherently interpretable models can suffer:
 When features are strongly correlated, the variance of estimated weights in a linear model can become large.
 Also the interpretation of a weight is conditional that all other features remain fixed, which becomes the more unrealistic the more dependence there is between features.
 There are some "fixes" for it, which enforce that any manipulation of the data respects the joint distribution.
-All solutions have the problem that they now mix the effects and importance of features that switch the focus of interpretation or even break the original interpretation method in the case of Shapley values (CITE, CITE).
-Solutions exist for feature importance, called conditional feature importance CITE APPROACHES.
+All solutions have the problem that they now mix the effects and importance of features that switch the focus of interpretation or even break the original interpretation method in the case of Shapley values \cite{sundararajan2019many,janzing2019feature}.
+Solutions exist for feature importance, called conditional feature importance \cite{watson2019testing,candes2018panning,strobl2008conditional,molnar2020model}
 Currently there is no satisfying solution that fixes extrapolation, but keeps the original marginal interpretation.
 I fear that there is no easy solution.
 
@@ -213,7 +213,7 @@ I think of "Intepretable ML" and "Explainable AI" as useful terms to collect all
 There is also very valid critique in lack of definition.
 Because there is no single, clean definition of interpretability, quantitative research results can be hard to come by, e.g., how can you show that some interpretation method delivers better explanations than another?
 This is connected to a lack of groundtruth, we just don't know what the correct explanation is.
-To counter this argument, interpretability depends on audience and context TODO:CITE.
+To counter this argument, interpretability depends on audience and context.
 It seems like we are on our way to have many definitions of \textit{various aspects} of interpretability such as sparsity, interaction strength, simulability (CHECK) and much more \cite{poursabzi2018manipulating,philipp2018measuring,molnar2019quantifying,hauenstein2018computing,zhou2018measuring,akaike1998information,schwarz1978estimating,poursabzi2018manipulating,dhurandhar2017tip,friedler2019assessing},
 It will take some time to establish some best practice for evaluation interpretation methods and the explanations they produce.
 
