@@ -11,6 +11,8 @@
 % If you use the hyperref package, please uncomment the following line
 % to display URLs in blue roman font according to Springer's eBook style:
 % \renewcommand\UrlFont{\color{blue}\rmfamily}
+% For correct quotation marks (command \enquote)
+\usepackage{csquotes}
 
 \begin{document}
 %
@@ -44,11 +46,9 @@ The authors of this work take full responsibilities for its content.
 \end{abstract}
 %
 %
-%
 Interpretability is often a deciding factor when machine learning (ML) is used in a product, a decision process or in research.
-Interpretable Machine learning gives the means to debug a model, extract insights and justify decisions.
-I want to give three very common use cases:
-
+With interpretable machine learning (IML) \footnote{We will be using Interpretable Machine Learning and Explainable AI exchangably} the user can find out problems, extract insights and justify decisions.
+%I want to give three very common use cases:
 %\paragraph{For science:} In applied sciences, data is often modeled with ML nowadays, where before statistical modeling approach would have been used.
 %The goal of science is not only to predict the world well, but also to generate further insights.
 %Examples are species distribution models in ecology which aim to explain why certain species can be found on certain areas based on e.g. the local climate.
@@ -98,7 +98,7 @@ Often the distinction is made between model-specific (works only for one type of
 I want to distinguish between introspection and sensitivity analysis.
 An interpretation method that works by introspection assigns semantic meaning to \textit{(learned) model parameters and structures} while sensitivity analysis \textit{probes the model and describes its behavior}.
 Introspection is necessarily model-specific.
-Sensitivity analysis is mostly model-agnostic, but can also be done by leveraging model-specific knowledge such as gradient-based methods. FOOTNOTE: An example are the various heatmap-like explanation for CNNs for image classification \cite{sundararajan2017axiomatic,lundberg2017unified,montavon2017explaining,simonyan2013deep,shrikumar2016not} which study the sensitivity of the prediction to the input pixels. Technically this is done by backpropagation and therefore model-specific. Model-agnostic versions \cite{ribeiro2016should,lundberg2017unified,zeiler2014visualizing} exist.
+Sensitivity analysis is mostly model-agnostic, but can also be done by leveraging model-specific knowledge such as gradient-based methods. \footnote{An example are the various heatmap-like explanation for CNNs for image classification \cite{sundararajan2017axiomatic,lundberg2017unified,montavon2017explaining,simonyan2013deep,shrikumar2016not} which study the sensitivity of the prediction to the input pixels. Technically this is done by backpropagation and therefore model-specific. Model-agnostic versions \cite{ribeiro2016should,lundberg2017unified,zeiler2014visualizing} exist.}
 The other useful category is local vs. global explanations.
 Local means that the method explains individual predictions, and global means it explains the average model behavior.
 For inherently interpretable models, global and local explanations are often the same: In linear models, the coefficients both how the model behaves globally, but also is used for individuals instances.
@@ -160,78 +160,66 @@ For feature effects we have Partial Dependence Plots \cite{friedman2001greedy}, 
 
 \section{Challenges}
 
-There are also challenges for the field, that are already being tackled but still remain issues.
-This list is also based on this paper \cite{molnar2020pitfalls}.
+This is an incomplete list of some of the challenges of IML, mostly based on \cite{molnar2020pitfalls}.
 
-\paragraph{Feature dependence} makes interpretation more difficult.
-Inherently, when two features are dependent, e.g., correlated, attributing effects and importance to them is difficult.
-Most methods also suffer from extrapolation when features are dependent.
-When features are, e.g., permuted individually, this breaks the association with the target to predict (that is desirable) but it also breaks the association with the other features (which can cause problems).
-The problem here is that new data points are being generated that are unlikely.
-These points are then used for computing importance values, explanations for individual predictions and so on.
-Many model-agnostic methods have this issue: PFI, PDP, Shapley values, LIME, ...
-But also interpretation for inherently interpretable models can suffer:
-When features are strongly correlated, the variance of estimated weights in a linear model can become large.
-Also the interpretation of a weight is conditional that all other features remain fixed, which becomes the more unrealistic the more dependence there is between features.
-There are some "fixes" for it, which enforce that any manipulation of the data respects the joint distribution.
-All solutions have the problem that they now mix the effects and importance of features that switch the focus of interpretation or even break the original interpretation method in the case of Shapley values \cite{sundararajan2019many,janzing2019feature}.
-Solutions exist for feature importance, called conditional feature importance \cite{watson2019testing,candes2018panning,strobl2008conditional,molnar2020model}
-Currently there is no satisfying solution that fixes extrapolation, but keeps the original marginal interpretation.
-I fear that there is no easy solution.
+\paragraph{Feature dependence:} When two features share information (e.g., BMI and weight) separating their effects and importances is difficult.
+Some IML methods (e.g.LIME, permutation feature importance or Shapley values) simply \enquote{ignore} such dependence, which results in extrapolation, i.e., for the interpretation new, unrealistic data points are created (e.g., low weight but high BMI).
+Interpretations based on extrapolation into areas where the model never saw data can be very misleading \cite{hooker2019please}.
+There have been attempts to \enquote{fix} IML methods by creating only realistic data points (using the conditional instead of the marginal distribution).
+These conditional IML methods fix the extrapolation problem, but they also entangle the interpretations of a feature's effect and importance with all other features it depends on.
+In the case of Shapley values the conditional variant even breaks the interpretation \cite{sundararajan2019many,janzing2019feature}.
 
-\paragraph{Inference}
-In statistics it is common procedure to quantify the uncertainties that come with estimates of, e.g., coefficients in a linear model.
-Quantification of uncertainty, be it in the form of error bars, confidence intervals, test statistics or p-values, helps to separate signal from noise.
-Many techniques in IML currently only give the point estimates, but don't quantify the uncertainty.
-For things like feature importance there are variations, but we need to have these things built into common software tools.
-Also it is unclear which uncertainty should be quantified and for what purpose.
-Should we treat the model as fixed?
-Or should we quantify the uncertainty of some feature effect in the same manner as we do for the generalization error, that is with for example cross-validation.
+\paragraph{Uncertainty quantification} is a typical part of statistical modeling and becomes visible as error bars, confidence intervals, test statistics and p-values.
+Uncertainty quantification helps to separate signal from noise.
+Many IML methods only return the point estimates, but don't quantify the uncertainty.
+This reaches across most methods: rule-based ML , feature effect plots, feature importance, ...
+There is research about uncertainty quantification of model interpretations, e.g., feature importance \cite{watson2019testing,fisher2019all}, layer-wise relevance propagation \cite{fabi2020feature} and Shapley values \cite{williamson2020efficient}.
+However, it is not implemented as default in most IML software.
+Also we need a more united view on the topic, and specify which uncertainty is quantified (model bias, model variance, IML estimation error, ...) and to what end.
+The statistics community is very deep into statistical inference and IML can learn a lot.
 Here we have to dig deeper into the statistics literature which can be our guide.
-Example for confidence intervals for LRP https://arxiv.org/pdf/2008.01468.pdf.
-Is model-specific for Deep Neural Networks using Dropout.
 
-
+\paragraph{Statistical inference:}
+When uncertainty quantification is combined with assumptions about the data generating process, we can draw conclusions about the real world.
+But for that we have to better understand the properties and assumptions of the various IML methods.
+For example, methods such as partial dependence plots require that features are independent.
+To enable statistical inference, there are at least two challenges to overcome: 1) define the assumptions needed that allow a model (and an IML method) to be interpreted as the \enquote{true} model and 2) tools and procedures to check these assumptions.
 
 \paragraph{Causal interpretation}
-Usually, we desire a causal interpretation of an effect or importance.
-As a researcher you want to draw conclusion about the true underlying process that generated your observations and learn about the world.
-When you want to use ML for decision making, you need causal reasons that can change the target in the real world.
-For example, when modeling the likelihood that customers will quit their subscription, only a good prediction will not be enough, but you have the desire to prevent a customer from leaving.
-Only causal interpretation of the model will help you find reasonable real-world interventions.
-However, this is generally not possible and causality can even be a conflicting goal to predictive accuracy.
-For example when we don't have access to an important confounder of a (non-causal) feature and the target, it improve predictive performance if we include the non-causal feature.
-When we want to predict whether it will rain tomorrow, a useful feature might be whether the ground is wet today, assuming we don't have access to today's weather.
-Todays weather is the cause for both the wet ground and tomorrows weather.
-Including it in the model will improve performance, but we are not allowed to interpret the effect and importance for the wet ground causally for the weather tomorrow.
-Here, knowledge from the causality community is important.
-It's not enough to somehow fix causality within the interpretation method, but we must go back to the modeling process itself to consider causality already there.
+Ideally, a model relies on the true causes to make a prediction.
+Then we could also interpret it causally, making statements about the underlying phenomenon, which is the focus of ML in research, but also makes models robust against adversarial attacks, but also makes the model more usefule when used as a basis for decision making.
+Unfortunately, predictive performance and causality can be conflicting goals.
+For example, today's weather directly causes tomorrow's weather, but we might only have access to feature \enquote{wet ground}.
+Using \enquote{wet ground} in the prediction model for \enquote{tomorrow's weather} is useful as it has information about \enquote{today's weather}, but we are not allowed to interpret it causally, because the confounder \enquote{today's weather} is missing.
+Further research is needed to understand when we are allowed to make causal interpretations of an ML model.
 
-\paragraph{Lack of definition of interpretability and explainability} is a common critique of the field \cite{lipton2018mythos}.
-First, I don't think the lack of definition is a problem for the "naming" of the field.
-I think of "Intepretable ML" and "Explainable AI" as useful terms to collect all topics that are related to analyzing ML models beyond performance metrics.
-There is also very valid critique in lack of definition.
-Because there is no single, clean definition of interpretability, quantitative research results can be hard to come by, e.g., how can you show that some interpretation method delivers better explanations than another?
-This is connected to a lack of groundtruth, we just don't know what the correct explanation is.
-To counter this argument, interpretability depends on audience and context.
-It seems like we are on our way to have many definitions of \textit{various aspects} of interpretability such as sparsity, interaction strength, simulability (CHECK) and much more \cite{poursabzi2018manipulating,philipp2018measuring,molnar2019quantifying,hauenstein2018computing,zhou2018measuring,akaike1998information,schwarz1978estimating,poursabzi2018manipulating,dhurandhar2017tip,friedler2019assessing},
-It will take some time to establish some best practice for evaluation interpretation methods and the explanations they produce.
+\paragraph{Lack of definition} is a common critique of the field \cite{lipton2018mythos,doshi2017towards}.
+Without a definition of "interpretability", how can we decide if a new method is better at explanation an ML method?
+To evaluate the \textbf{predictive performance} of an ML model, we simply compute the prediction error on test data given the groundtruth label.
+To evaluate the \textbf{interpretability} of that same ML model is not as easy.
+We do not know what the groundtruth explanation looks like and have no straightforward mean to quantify how interpretable a model is or how correct an explanation is.
+Instead of having one groundtruth explanation, various \textbf{quantifiable aspects of interpretability} are emerging.\cite{poursabzi2018manipulating,philipp2018measuring,molnar2019quantifying,hauenstein2018computing,zhou2018measuring,akaike1998information,schwarz1978estimating,poursabzi2018manipulating,dhurandhar2017tip,friedler2019assessing}
+Sparsity of the explanation (or the model itself), interaction strength of features within the ML model and
+It seems like we are on our way to have many definitions of \textit{various aspects} of interpretability such as sparsity, interaction strength and a user's ability to run a model on a given input (simulatability) are examples of such aspects.
+The challenge ahead remains to establish a best practice on how to evaluate interpretation methods and the explanations they produce.
 
-\paragraph{And much more} research has to be done on which I did not touch.
-This was not an exhaustive list, and especially focused on the methodological side, neglecting views of the user interface, societal impacts, psychological insights and so on.
-These challenges are more from the methodological, mathematical view, i.e., what can be done given we have some data and model.
+We have focused mostly on the methodological, mathematical challenges in a rather static setting, where you are given a machine learning model and data.
+\paragraph{Many more} challenges lie ahead to improve interpretability of machine learning.
+What is the best way to explain a machine learning model for people with a specific background and how do we present the explanations?
+How are people affected by explanations, how are explanations maybe misused (CITE fairwashing by HIma)?
 This is also a rather static view point in the sense that we can do a lot if we allow a more interactive way of modeling and "having a conversation" between a person and the model or even the modeling process.
 How do we present multiple maybe conflicting explanations, e.g., when you generate multiple counterfactual explanations?
 
 \section{Discussion}
 
-While Interpretable Machine Learning can seem like a pretty young field, it has some old roots in Statistics and Computer Science.
-Yet, many new methods have come in the recent years and we have witnessed a Cambrian explosion of methods, software and institutional interest.
-We are seeing both ways of making models themselves more interpretable, but also model-agnostic methods that work for any type of model.
-These methods also are implemented now in many software packages.
-Big leaps in the field came from old ideas in other fields.
-The Shapley Value has been for a long time part of game theory, and its introduction to machine learning interpretability has spurred a lot of development.
-We can learn a lot from Statistics and how it handles uncertainty.
+Interpretable Machine Learning is a young field, but has deeper roots in Statistics and Computer Science and also draws from other fields such as the social sciences.
+There has been Cambrian explosion of methods since 2015, including model-agnostic interpretation methods and many specialised methods for, e.g., deep neural networks.
+Many of these methods have found their way into open source software and products of startups and tech companies.
+Interpretable Machine Learning is used in science, company products and processes.
+While we have reached a first maturity, there a still some challenges ahead, such as feature dependence, causality and inference.
+Many IML methods are imported from other fields, so thinking outside the box (pun intended) might help in the challenges ahead.
+We believe that the field has to both reach out horizontally -- to other domains -- and vertically -- draw from the rich research in statistics and computer science.
+
 
 %
 % ---- Bibliography ----
