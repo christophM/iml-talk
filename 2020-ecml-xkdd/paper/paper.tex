@@ -16,11 +16,11 @@
 
 \begin{document}
 %
-\title{Interpretable Machine Learning -- A Short History, State of the Art and Challenges\thanks{This project is funded by the Bavarian State Ministry of Science and the Arts and coordinated by the Bavarian Research Institute for Digital Transformation (bidt) and supported by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
+\title{Interpretable Machine Learning Methods -- A Brief History, State of the Art and Challenges\thanks{This project is funded by the Bavarian State Ministry of Science and the Arts and coordinated by the Bavarian Research Institute for Digital Transformation (bidt) and supported by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
 The authors of this work take full responsibilities for its content.
 }}
 %
-%\titlerunning{Abbreviated paper title}
+\titlerunning{IML - History, State of the Art, Challenges}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
@@ -41,124 +41,134 @@ The authors of this work take full responsibilities for its content.
 %
 \begin{abstract}
   I present a very short history of the field of interpretable machine learning (IML), give an overview of popular interpretation methods and discuss challenges when interpreting machine learning models.
+  This view might be a bit biased through the eyes of a statistician.
 
 \keywords{Interpretable Machine Learning \and Explainable AI}
 \end{abstract}
 %
 %
 Interpretability is often a deciding factor when machine learning (ML) is used in a product, a decision process or in research.
-With interpretable machine learning (IML) \footnote{We will be using Interpretable Machine Learning and Explainable AI exchangably} the user can find out problems, extract insights and justify decisions.
+With interpretable machine learning (IML) \footnote{We will be using Interpretable Machine Learning and Explainable AI exchangably} the user can find out problems of the ML model, extract insights and justify decisions.
 %I want to give three very common use cases:
 %\paragraph{For science:} In applied sciences, data is often modeled with ML nowadays, where before statistical modeling approach would have been used.
 %The goal of science is not only to predict the world well, but also to generate further insights.
 %Examples are species distribution models in ecology which aim to explain why certain species can be found on certain areas based on e.g. the local climate.
 %Here, interpretability of the prediction model is needed to understand why a species, e.g., has a high probability to occur in a specific reason.
 
-TODO: Mention sensitivity analysis
-
-
 \paragraph{A Very Short History of IML.}
-Learning interpretable prediction models from data is not new, but has been the focus of statistical learning and rule-based ML for a long time.
-Statistics has a long tradition of learning interpretable prediction  models from data, starting in 1800 \cite{stigler1986history} with works on least squares by Legendre 1805, \cite{legendre1805nouvelles}, Gauss in 1809 \cite{gauss1809theoria} and Quetelet in 1827 \cite{quetelet1827recherches}.
-Another methodological pillow are rule-based machine learning approaches, which includes models such as decision rules and decision trees.
-Many extensions exists, such as non-linear transformations for the case that the target follows a different distribtuion (GLMs, logistic regression).
-The beauty of linear models is that they are additive, meaning that the influences of each feature on the target can be added together to give the full effect.
-  This took off in the 80s with decision tree approaches such as CART and ID3 and rule learners like AQ \cite{furnkranz2012foundations} but reaches back to first research in the 1960s \cite{hajek1966guha}.
-Both research on linear regression models and its extensions and rule-based ML remain important and busy research areas to this day and are even blending together (e.g. model-based trees \cite{zeileis2008model}).
-As a next stepping stone to the field of IML are random forests, an early approach to explain more complex machine learning models.
-I argue that one of the success factors of the random forest as a prediction model was (and is) the built-in feature importance measure.
-The high citation counts (>60000 citation on Google Scholar as of September 2020) of the original paper \cite{breiman2001random}, but also suggestions for how to improve the random forest feature importance (\cite{strobl2008conditional,strobl2007bias,hapfelmeier2014new,ishwaran2007variable}) are evidence for this.
-
-In 2010s then came the deep learning hype.
-And a few years after that, the IML field really took off in around 2015, judging on usage of the search terms "Interpretable Machine Learning" and "Explainable AI" on Google (Figure \ref{fig:count} right)and papers published with these terms (Figure \ref{fig:count} left).
+A lot of IML research just happened in the last five years.
+But learning interpretable models from data has a much longer tradition.
+Linear regression models have been used back in 1800 by Gauss, Legendre and Quetelet \cite{stigler1986history,legendre1805nouvelles,gauss1809theoria,quetelet1827recherches}.
+Rule-based machine learning (e.g., decision rules and trees) has been an active research areas since the 1980s \cite{furnkranz2012foundations} with some roots reaching back into the 1960s \cite{hajek1966guha}.
+Both research on linear regression models and its extensions and rule-based ML remain important and busy research areas to this day and are even blending together (e.g. model-based trees \cite{zeileis2008model} or RuleFit \cite{friedman2008predictive}).
+Machine learning research in general also started around that time, e.g., support vector machines in 1974 \cite{vapnik1974theory}, early important work on neural networks in the 1960s and boosting in 1990 \cite{schapire1990strength}.
+Interpretability has always been a companion to ML.
+A good example for this is the random forest, which I also see as an IML milestone for making ML practical.
+Random forests, a black box machine learning model that often works well without tuning, came with a built-in feature importance measure, which contributed to the success.
+The evidence that interpretability was success factor are the many citations (>60000 citation on Google Scholar as of September 2020) of the original paper \cite{breiman2001random}, but also of papers improving the importance measure (\cite{strobl2008conditional,strobl2007bias,hapfelmeier2014new,ishwaran2007variable}).
+In the 2010s came the deep learning hype, after a deep neural network won the ImageNet challenge.
+A few years after that, the IML field really took off (around 2015), judging by frequency of the search terms "Interpretable Machine Learning" and "Explainable AI" on Google (Figure \ref{fig:count} right)and papers published with these terms (Figure \ref{fig:count} left).
 \begin{figure}
   \includegraphics[width=\textwidth]{citation-search.png}
   \caption{Left, Right}
   \label{fig:count}
 \end{figure}
-Could it be that only the terms have changed, but the field has always been there and the same?
-I would still argue that the field has reached a new form, as evidenced by new keywords "Interpretable Machine Learning" and "Explainable Artificial Intelligence", but also by bringing in new ideas from other fields, pulling many unconnected research fields together and an additional focus on model-agnostic ML interpretation methods.
-I would say no, since a lot of commonly used methods, especially model-agnostic ones and the ones for deep neural network also came about this time.
-These figures look like there has not been much research on explaining prediction models before, which would be a wrong conclusion, since developments happened under different names and in different fields.
-What has changed is that Interpretable Machine Learning or Explainable Artificial Intelligence has become a field that now ties all these topics together.
+Since then, many approaches have been introduced to the field, many of them model-agnostic explanation methods, i.e., working for different types of ML models, but also model-specific explanation methods to interpret, e.g., deep neural networks and tree ensembles.
+Rule-based ML and statistical regression models continue to be developed.
+%Could it be that only the terms have changed, but the field has always been there and the same?
+%I would still argue that the field has reached a new form, as evidenced by new keywords "Interpretable Machine Learning" and "Explainable Artificial Intelligence", but also by bringing in new ideas from other fields, pulling many unconnected research fields together and an additional focus on model-agnostic ML interpretation methods.
 
 
-\paragraph{Today} we have reached a first state of maturity where some methods were established, implemented in software and used by practitioners and applied researchers.
-There is a lot of open source software that implement various techniques (\cite{iml,biecek2018dalex,pedregosa2011scikit,klaise2020alibi,nori2019interpretml}, ...).
-Big tech companies offer software \cite{exler2019if,arya2020ai,hall2017machine}...
+\paragraph{Today} IML reached a first state of usability.
+Some methods have been established with a better understanding of weaknesses and strengths.
+There is a lot of open source software that implement various techniques (\cite{iml,biecek2018dalex,pedregosa2011scikit,klaise2020alibi,nori2019interpretml}, ...) and also big tech companies offer software \cite{exler2019if,arya2020ai,hall2017machine}.
+These software tools gives ML practitioners the means to interpret their models.
 Regulation such as GDPR has spurred a discussion around further needs of interpretability.
-Many startup are now focused on explainable / interpretable ML (TODO: Find good source).
+Many startup are now focused on interpretable ML.
 
 
-\section{Methods:}
+\section*{IML Methods}
 
-In this section I want to very broadly talk about methods that we have to explain models.
-However we interpret a model, the interpretation is always projected back to the features themselves or some abstract transformation of them.
-Often the distinction is made between model-specific (works only for one type of model) and model-agnostic (works for all models) interpretation methods.
-I want to distinguish between introspection and sensitivity analysis.
-An interpretation method that works by introspection assigns semantic meaning to \textit{(learned) model parameters and structures} while sensitivity analysis \textit{probes the model and describes its behavior}.
-Introspection is necessarily model-specific.
-Sensitivity analysis is mostly model-agnostic, but can also be done by leveraging model-specific knowledge such as gradient-based methods. \footnote{An example are the various heatmap-like explanation for CNNs for image classification \cite{sundararajan2017axiomatic,lundberg2017unified,montavon2017explaining,simonyan2013deep,shrikumar2016not} which study the sensitivity of the prediction to the input pixels. Technically this is done by backpropagation and therefore model-specific. Model-agnostic versions \cite{ribeiro2016should,lundberg2017unified,zeiler2014visualizing} exist.}
-The other useful category is local vs. global explanations.
-Local means that the method explains individual predictions, and global means it explains the average model behavior.
-For inherently interpretable models, global and local explanations are often the same: In linear models, the coefficients both how the model behaves globally, but also is used for individuals instances.
+In this section we broadly cover some popular IML methods.
+%Often a distinction is made between model-specific and model-agnostic explanation methods.
+%An interpretation method is model-specific if it only works for a specific ML model, it is model-agnostic if it can be applied to any model.
+We distinguish IML methods between introspection and sensitivity analysis\footnote{Not to be confused with the research field of sensitivity analysis, which studies the uncertainty of outputs in mathematical models and systems. But there are methodological overlaps (e.g., Shapley values)}.
+An IML method that works by introspection assigns meaning to \textit{(learned) model parameters and structures} while sensitivity analysis \textit{probes the model with artificial data points and describes its behavior}.
+The introspection is always model-specific, e.g., a linear regression model can be interpreted by analyzing its coefficients, while a decision tree can be interpreted by visualizing the learned decision structure.
+Sensitivity analysis is mostly model-agnostic and works by manipulating input data and analyzing ML model  predictions.
+Some IML sensitivity analysis methods rely on model-specific knowledge such as gradients of neural networks. An example are the various heatmap-like explanation for CNNs for image classification \cite{sundararajan2017axiomatic,lundberg2017unified,montavon2017explaining,simonyan2013deep,shrikumar2016not} which study the sensitivity of the prediction to the input pixels. Technically this is done by backpropagation and therefore model-specific. Model-agnostic versions \cite{ribeiro2016should,lundberg2017unified,zeiler2014visualizing} exist.
 
-\paragraph{Inherently interpretable models} are models where we can interpret its learned structure and parameters.
-As a rule of thumb for when we do an introspection is that we are not probing the model with various (manipulated data points).
-In this category, I see all linear regression models of the form $Y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p$, where the weights $\beta$ are learned parameters of the model.
-Through the models structure (weighted sum of features) we can interpret the weights as the effect that a feature has on the prediction.
-Similarly, decision trees and other rule-based ML models have a learned structure which we can interpret as how the model makes a prediction.
-For example, an individual prediction can be traced through a decision tree and we retrieve an explanation of the form "If feature $x_1$ larger than two and feature $x_4$ in category A, then prediction is 10".
-However, the more complex these structures get (e.g., a linear model with hundreds of features and complex interaction terms or very deep decision trees), the more difficult it becomes to see this as interpretable.
-Surprisingly, we can also try assign meaning to structures of more complex models such as individual neurons or layers in a convolutional neural network.
-This leads to the famous results where we find out that CNNs learn edge detectors at the lowest levels and increasingly abstract concepts at higher layers.
-Another example is the random forest minimal depth distribution:\cite{randomForestExplainer}
-The distribution of minimal depth shows for a feature for all the trees in the forest at which depth it occurs, with the notation that it the feature is more important if it appears early in the tree, it is more important.
-This is again an example how we analyze the structure of a model to get an understanding of how it makes decisions, but the model is more complex (hundreds of decision trees) so there is more work to interpreting its learned structure.
-The random forest is also a useful example for another measure, the feature importance, for which various measures exist, such as decrease in accuracy and decrease in Gini impurity.
-By using our distinction of introspection and sensitivity analysis Gini impurity would fall into the former while mean decrease accuracy falls into the latter.
-Gini importance collects for each feature and tree how the split decreased the Gini impurity.
-It does not rely on making predictions, but only on internal statistics.
-For mean decrease accuracy, we probe the random forest with perturbed data, i.e., we shuffle a feature and see how the prediction changes.
-It's a model-specific methods since we do this tree-wise and use the out-of-bag sample of the tree, so this procedure is cleverly adapted to the random forest.
-Model-agnostic versions of this permutation feature importance exists \cite{fisher2019all}.
 
-\paragraph{Sensitivity-analysis-like (model-agnostic) interpretation methods} often treats the model as a black-box (but not always).
-Here I also want to distinguish between local and global explanations.
+%The other useful category is local vs. global explanations.
+%Local means that the method explains individual predictions, and global means it explains the average model behavior.
+%For inherently interpretable models, global and local explanations are often the same: In linear models, the coefficients both how the model behaves globally, but also is used for individuals instances.
 
-\paragraph{Local explanations} explain how individual predictions are derived.
-Here we have a great variety of methods, with very different methodological motivations.
-Popular methods are LIME, Shapley Values and Counterfactual Explanations.
-I want to highlight especially their very different approaches to the problem of local explanations.
-Counterfactual explanations are what-if scenarios.
-How does an instance have to change to get another (desired) prediction or classification.
-They build on a rich tradition in philosophy and also thrive in what the social sciences discovered:
-Good explanations are contrastive and focus on a few reasons.
+\paragraph{Inherently interpretable models} are models with interpretable, learned structures and parameters (introspection).
+%As a rule of thumb for when we do an introspection is that we are not probing the model with various (manipulated data points).
+Linear regression models ($Y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p$) can be interpreted by introspection:
+The model structure, a weighted sum of features, allows that we interpret the $\beta$-weights as the effect that a feature has on the prediction.
+Many extensions exists and linear regression models are remain an active field of research.
+Decision trees and other rule-based ML models have a learned structure (e.g.,\enquote{IF feature $x_1 > 0$ and feature $x_2 \in \{A,B\}$, THEN predict 0.6}).
+We can interpret the learned structure to trace how the model makes predictions.
+Rule-based ML also remains an active area of research.
+%For example, an individual prediction can be traced through a decision tree and we retrieve an explanation of the form "If feature $x_1$ larger than two and feature $x_4$ in category A, then prediction is 10".
+The more complex interpretable models get (e.g., linear models with hundreds of features and complex interaction terms or deep decision trees), the more difficult the interpretation becomes.
+
+Even for complex models such as deep neural networks, introspection can be a means of interpretation.
+For example, the abstract features learned by deep convolutional neural networks can be visualized by finding or generating images that activate a feature map of the CNN the most \cite{olah2017feature}.
+Feature visualization showed that CNNs learn low-level features such as edge-detectors at the early neural layers and gradually more abstract detectors for textures and objects in higher layers.
+%CNN feature visualization lead to the famous results where we find out that CNNs learn edge detectors at the lowest levels and increasingly abstract concepts at higher layers.
+In random forests, the minimal depth distribution \cite{randomForestExplainer,ishwaran2010high}, analyzes at which tree depth a feature is used, which can be interpreted as importance of a feature.
+Minimal tree depth is another example of analyzing the structure of a model to get an understanding of how it makes decisions.
+%The random forest is also a useful example for another measure, the feature importance, for which various measures exist, such as decrease in accuracy and decrease in Gini impurity.
+%By using our distinction of introspection and sensitivity analysis Gini impurity would fall into the former while mean decrease accuracy falls into the latter.
+%Gini importance collects for each feature and tree how the split decreased the Gini impurity.
+%It does not rely on making predictions, but only on internal statistics.
+%For mean decrease accuracy, we probe the random forest with perturbed data, i.e., we shuffle a feature and see how the prediction changes.
+%It's a model-specific methods since we do this tree-wise and use the out-of-bag sample of the tree, so this procedure is cleverly adapted to the random forest.
+%Model-agnostic versions of this permutation feature importance exists \cite{fisher2019all}.
+Since all IML methods that rely on introspection are model-specific, the explanations are tied to that ML model.
+If a different ML model is used, the IML method has to change, which is a disadvantage.
+But if a model is well understood and frequently used in community, like random forest in ecology research \cite{cutler2007random}, model introspection can be a powerful tool.
+
+
+\paragraph{IML method based on sensitivity analysis} often treat the ML model as a closed system that receives an input and produces an output, the prediction.
+We further distinguish between local and global explanations that sensitivity based IML methods can produce.
+
+\paragraph{Local explanations} are used to explain individual predictions of an ML model.
+Local explanation methods have received a lot of attention and there has been a lot of innovation in the last years.
+Popular local IML methods are LIME \cite{ribeiro2016should}, Shapley Values \cite{lundberg2017unified,vstrumbelj2014explaining} and Counterfactual Explanations \cite{wachter2017counterfactual,dandl2020multi}.
+Counterfactual explanations explain predictions in the form of what-if scenarios, which builds on a rich tradition in philosophy.
+According to findings in the social sciences \cite{miller2019explanation}, counterfactual explanations are \enquote{good} explanations because they are contrastive and focus on a few reasons.
 A very different approach originates from collaborative game theory: The Shapley Values.
 How do you fairly share some payout from a game among the players?
-The Shapley values \cite{shapley1953value} provide an answer for this question, by trying out all constellations of players and averaging the additional payout a player would add to the total payout when the player is added to a team.
-The same idea can be applied to ML: The predicted value is the payout, the player is a certain feature value.Many variations, extensions and more efficient implementations for specific ML models exist \cite{vstrumbelj2014explaining,lundberg2017unified,lundberg2018consistent}.
-The third mention here are local interpretable model-agnostic explanations, short LIME \cite{ribeiro2016should}
-LIME is a surrogate model, i.e., the procedure approximates the original ML model with a simpler interpretable model.
-LIME does so locally, meaning only in some neighborhood around the data point that we want to explain.
+The Shapley values \cite{shapley1953value} provide an answer to how to fairly share a payout among the players of a collaborative game.
+The collaborative game idea can be applied to ML \cite{vstrumbelj2014explaining,lundberg2017unified,lundberg2018consistent}: The predicted value is the payout, each player is a certain feature value.
+Another popular method is local interpretable model-agnostic explanations, short LIME \cite{ribeiro2016should}
+LIME uses surrogate models, i.e., the method trains an interpretable model such as a liner regression model to approximate the predictions of original ML model.
 
-\paragraph{Surrogate Models} are an interesting and huge class of explanation method \cite{puri2017magix,molnar2019,ming2018rulematrix}.
-This approach is very common in sensitivity analysis where we have emulation? models.
-Many methods -- a confusing amount, really -- are nothing but simple models that approximate the behavior of the (complex) model to be explained.
-Surrogate models combine the two strategies:
-First, approximate the predictions of the ML model with an interpretable model, such as a decision tree.
-This is a kind of sensitivity-like approach, where we see the original model as a black box and artificially probe the ML model and derive information from the behavior.
-Then we interpret the interpretable model, which now acts as a surrogate to the more complex ML model.
+\paragraph{Global, model-agnostic explanation methods} are used to explain how the model behaves on average for some given dataset.
+A useful distinction of global explanations are feature importance and feature effect.
+Feature importance ranks features based on how relevant they were for the prediction.
+Permutation Feature Importance \cite{fisher2019all}, which is based on permuting features is popular importance measure, originally suggested for random forests \cite{breiman2001random}, now available as model-agnostic version.
+An alternative are variance based measures.
+See \cite{wei2015variable} for an overview of all the ways to measure importance.
+The feature effect expresses how a change in a feature changes the predicted outcome.
+Popular feature effect plots are Partial Dependence Plots \cite{friedman2001greedy}, Individual Conditional Expectation Plots \cite{goldstein2015peeking} and Accumulated Local Effect  (ALE)  Plots \cite{apley2016visualizing}.
+
+
+\paragraph{Surrogate models}\footnote{Surrogate models are related to knowledge distillation and the teacher-student model} are interpretable models designed to \enquote{copy} the behavior of the ML model.
+They do not neatly fit into the categorization of sensitivity analysis or introspection, as they combine both:
+The surrogate approach treats the ML model as a black box, only requiring the input / output data  (similar to sensitivity analysis), but the interpretation is based on introspection of the interpretable surrogate model.
+Many methods are surrogate model approaches \cite{puri2017magix,molnar2019,ming2018rulematrix,ribeiro2016should,frosst2017distilling,bastani2017interpreting}.
+They differ in the ML model they can be used for, the data sampling strategy, the interpretable model that is used and so on.
 There are also methods for extracting, e.g., decision rules from specific models based on their internal components such as weights \cite{andrews1995survey,augasta2012rule}, which would be more the introspection approach.
 
-\paragraph{Global, model-agnostic explanation methods} are also very popular.
-Here we have have feature importance, which rank features based on how relevant they were for the prediction and the feature effect, which expresses how a change in that feature changes the predicted outcome on average.
-Permutation Feature Importance \cite{fisher2019all}, which is based on permuting features is popular importance measure, originally suggested for random forests \cite{breiman2001random}, now available as model-agnostic version.
-Alternatives are variance based measures, see \cite{wei2015variable} for an overview of all the ways to measure importance.
-For feature effects we have Partial Dependence Plots \cite{friedman2001greedy}, Individual Conditional Expectation Plots \cite{goldstein2015peeking} and Accumulated Local Effect  (ALE)  Plots \cite{apley2016visualizing}.
+%\paragraph{Blending all together.} This list was not exhaustive. For example, there are also ways to add interpretability constraints to a model, such as monotonicity or sparsity.
+%This can helps introspection, e.g., a linear model with most coefficients at zero is easier to interpret.
+%But this can also help with sensitivity analysis, as PDPs of monotonic features will only show in one direction.
 
-
-\section{Challenges}
+\section*{Challenges}
 
 This is an incomplete list of some of the challenges of IML, mostly based on \cite{molnar2020pitfalls}.
 
@@ -210,7 +220,7 @@ How are people affected by explanations, how are explanations maybe misused (CIT
 This is also a rather static view point in the sense that we can do a lot if we allow a more interactive way of modeling and "having a conversation" between a person and the model or even the modeling process.
 How do we present multiple maybe conflicting explanations, e.g., when you generate multiple counterfactual explanations?
 
-\section{Discussion}
+\section*{Discussion}
 
 Interpretable Machine Learning is a young field, but has deeper roots in Statistics and Computer Science and also draws from other fields such as the social sciences.
 There has been Cambrian explosion of methods since 2015, including model-agnostic interpretation methods and many specialised methods for, e.g., deep neural networks.
