@@ -16,11 +16,11 @@
 
 \begin{document}
 %
-\title{Interpretable Machine Learning Methods -- A Brief History, State of the Art and Challenges\thanks{This project is funded by the Bavarian State Ministry of Science and the Arts and coordinated by the Bavarian Research Institute for Digital Transformation (bidt) and supported by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
+\title{Interpretable Machine Learning -- A Brief History, State-Of-The-Art and Challenges\thanks{This project is funded by the Bavarian State Ministry of Science and the Arts and coordinated by the Bavarian Research Institute for Digital Transformation (bidt) and supported by the German Federal Ministry of Education and Research (BMBF) under Grant No. 01IS18036A.
 The authors of this work take full responsibilities for its content.
 }}
 %
-\titlerunning{IML - History, State of the Art, Challenges}
+\titlerunning{IML - History, Methods, Challenges}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
@@ -49,6 +49,7 @@ The authors of this work take full responsibilities for its content.
 %
 Interpretability is often a deciding factor when machine learning (ML) is used in a product, a decision process or in research.
 With interpretable machine learning (IML) \footnote{We will be using Interpretable Machine Learning and Explainable AI exchangably} the user can find out problems of the ML model, extract insights and justify decisions.
+This short paper views IML through a methodological viewpoint, with an emphasis on \textbf{what can we, mathematically and algorithmically, derive from an ML model} and less on the human part.
 %I want to give three very common use cases:
 %\paragraph{For science:} In applied sciences, data is often modeled with ML nowadays, where before statistical modeling approach would have been used.
 %The goal of science is not only to predict the world well, but also to generate further insights.
@@ -92,8 +93,11 @@ Many startup are now focused on interpretable ML.
 In this section we broadly cover some popular IML methods.
 %Often a distinction is made between model-specific and model-agnostic explanation methods.
 %An interpretation method is model-specific if it only works for a specific ML model, it is model-agnostic if it can be applied to any model.
-We distinguish IML methods between introspection and sensitivity analysis\footnote{Not to be confused with the research field of sensitivity analysis, which studies the uncertainty of outputs in mathematical models and systems. But there are methodological overlaps (e.g., Shapley values)}.
-An IML method that works by introspection assigns meaning to \textit{(learned) model parameters and structures} while sensitivity analysis \textit{probes the model with artificial data points and describes its behavior}.
+We distinguish IML methods between component and sensitivity analysis\footnote{Not to be confused with the research field of sensitivity analysis, which studies the uncertainty of outputs in mathematical models and systems. But there are methodological overlaps (e.g., Shapley values)}.
+An IML method that works by component analysis assigns meaning to \textit{(learned) model parameters and structures} while sensitivity analysis \textit{probes the model with artificial data points and describes its behavior}.\footnote{Some surveys \cite{vilone2020explainable,guidotti2018survey} divide methods into \textit{ante-hoc (alternatively: transparent design, white box models)} and \textit{post-hoc} IML method, depending on whether interpretability is considered at model design and training or after training, leaving the (black-box) model unchanged. Another category divides model-agnostic and model-specific. Component vs. sensitivity analysis is, in our opinion, another interesting view and why only repeat what others already have said?}
+The idea of component analysis is closely related to decomposability:
+You can only analyse components of a model that can be decomposed into individual components that we can interpret individually.
+Component analysis does not necessarily require that the user understands the model in its entirety (simulatability).
 The introspection is always model-specific, e.g., a linear regression model can be interpreted by analyzing its coefficients, while a decision tree can be interpreted by visualizing the learned decision structure.
 Sensitivity analysis is mostly model-agnostic and works by manipulating input data and analyzing ML model  predictions.
 Some IML sensitivity analysis methods rely on model-specific knowledge such as gradients of neural networks. An example are the various heatmap-like explanation for CNNs for image classification \cite{sundararajan2017axiomatic,lundberg2017unified,montavon2017explaining,simonyan2013deep,shrikumar2016not} which study the sensitivity of the prediction to the input pixels. Technically this is done by backpropagation and therefore model-specific. Model-agnostic versions \cite{ribeiro2016should,lundberg2017unified,zeiler2014visualizing} exist.
@@ -104,6 +108,7 @@ Some IML sensitivity analysis methods rely on model-specific knowledge such as g
 %For inherently interpretable models, global and local explanations are often the same: In linear models, the coefficients both how the model behaves globally, but also is used for individuals instances.
 
 \paragraph{Inherently interpretable models} are models with interpretable, learned structures and parameters (introspection).
+Linear regression models, decision trees and decision rules are considered to be interpetable \cite{freitas2014comprehensible,huysmans2011empirical}.
 %As a rule of thumb for when we do an introspection is that we are not probing the model with various (manipulated data points).
 Linear regression models ($Y = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p$) can be interpreted by introspection:
 The model structure, a weighted sum of features, allows that we interpret the $\beta$-weights as the effect that a feature has on the prediction.
@@ -111,25 +116,29 @@ Many extensions exists and linear regression models are remain an active field o
 Decision trees and other rule-based ML models have a learned structure (e.g.,\enquote{IF feature $x_1 > 0$ and feature $x_2 \in \{A,B\}$, THEN predict 0.6}).
 We can interpret the learned structure to trace how the model makes predictions.
 Rule-based ML also remains an active area of research.
-%For example, an individual prediction can be traced through a decision tree and we retrieve an explanation of the form "If feature $x_1$ larger than two and feature $x_4$ in category A, then prediction is 10".
+%For example, an individual prediction can be traced through a decision tree and we retrieve an explanation of the form "IF condition 1 AND condition 2, THEN predict \textit{outcome}".
 The more complex interpretable models get (e.g., linear models with hundreds of features and complex interaction terms or deep decision trees), the more difficult the interpretation becomes.
 
-Even for complex models such as deep neural networks, introspection can be a means of interpretation.
+Component analysis is how we interpret inherently interpretable models, but component analysis can be used to explain black box models.
+Even for complex models such as deep neural networks, component analysis can be a means of interpretation.
 For example, the abstract features learned by deep convolutional neural networks can be visualized by finding or generating images that activate a feature map of the CNN the most \cite{olah2017feature}.
 Feature visualization showed that CNNs learn low-level features such as edge-detectors at the early neural layers and gradually more abstract detectors for textures and objects in higher layers.
 %CNN feature visualization lead to the famous results where we find out that CNNs learn edge detectors at the lowest levels and increasingly abstract concepts at higher layers.
 In random forests, the minimal depth distribution \cite{randomForestExplainer,ishwaran2010high}, analyzes at which tree depth a feature is used, which can be interpreted as importance of a feature.
 Minimal tree depth is another example of analyzing the structure of a model to get an understanding of how it makes decisions.
 %The random forest is also a useful example for another measure, the feature importance, for which various measures exist, such as decrease in accuracy and decrease in Gini impurity.
-%By using our distinction of introspection and sensitivity analysis Gini impurity would fall into the former while mean decrease accuracy falls into the latter.
+%By using our distinction of component and sensitivity analysis Gini impurity would fall into the former while mean decrease accuracy falls into the latter.
 %Gini importance collects for each feature and tree how the split decreased the Gini impurity.
 %It does not rely on making predictions, but only on internal statistics.
 %For mean decrease accuracy, we probe the random forest with perturbed data, i.e., we shuffle a feature and see how the prediction changes.
 %It's a model-specific methods since we do this tree-wise and use the out-of-bag sample of the tree, so this procedure is cleverly adapted to the random forest.
 %Model-agnostic versions of this permutation feature importance exists \cite{fisher2019all}.
-Since all IML methods that rely on introspection are model-specific, the explanations are tied to that ML model.
+Since all IML methods that rely on component analysis are model-specific, the explanations are tied to that ML model.
 If a different ML model is used, the IML method has to change, which is a disadvantage.
-But if a model is well understood and frequently used in community, like random forest in ecology research \cite{cutler2007random}, model introspection can be a powerful tool.
+But if a model is well understood and frequently used in community, like random forest in ecology research \cite{cutler2007random}, model component analysis can be a powerful tool.
+A component analysis can explain the overall model behavior (global) or individiual predictions (local).
+In many cases of component analysis global and local analysis collapses to the same thing.
+For example in linear models the weights explain both how the features affect an individual prediction, but also the average, global behavior.
 
 
 \paragraph{IML method based on sensitivity analysis} often treat the ML model as a closed system that receives an input and produces an output, the prediction.
@@ -158,14 +167,26 @@ Popular feature effect plots are Partial Dependence Plots \cite{friedman2001gree
 
 
 \paragraph{Surrogate models}\footnote{Surrogate models are related to knowledge distillation and the teacher-student model} are interpretable models designed to \enquote{copy} the behavior of the ML model.
-They do not neatly fit into the categorization of sensitivity analysis or introspection, as they combine both:
-The surrogate approach treats the ML model as a black box, only requiring the input / output data  (similar to sensitivity analysis), but the interpretation is based on introspection of the interpretable surrogate model.
-Many methods are surrogate model approaches \cite{puri2017magix,molnar2019,ming2018rulematrix,ribeiro2016should,frosst2017distilling,bastani2017interpreting}.
+They do not neatly fit into the categorization of component or sensitivity analysis, as they combine both:
+The surrogate approach treats the ML model as a black box, only requiring the input / output data  (similar to sensitivity analysis), but the interpretation is based on analyzing components of the interpretable surrogate model.
+Many methods are surrogate model approaches \cite{puri2017magix,molnar2019,ming2018rulematrix,ribeiro2016should,frosst2017distilling,bastani2017interpreting,craven1996extracting,krishnan2017palm}.
 They differ in the ML model they can be used for, the data sampling strategy, the interpretable model that is used and so on.
-There are also methods for extracting, e.g., decision rules from specific models based on their internal components such as weights \cite{andrews1995survey,augasta2012rule}, which would be more the introspection approach.
+There are also methods for extracting, e.g., decision rules from specific models based on their internal components such as weights \cite{andrews1995survey,augasta2012rule}, which would be more the component analysis approach.
+
+What I missed out on:
+
+- Human-Computer Interaction, e.g. (Explainable Artificial Intelligence: a Systematic Review) sees Explainable AI as the intersection between Artificial Intelligence and Human-Computer Interaction.
+- Ethics and Philosophy.
+- Explanations can have different \textit{structure}: text, image, tables, ...
+- Methods that are model-agnostic might not be input data agnostic, e.g., PDP does not make sense for pixel data as used in image classification
+- Some methods are designed or adapted so that we can more easily understand what its components do. For example for neural networks we can \textit{disentangle} the invidual neurons TODO:CITE, so that we can interpret them better.
+- TODO: Add more to the idea of making components of a (black-box) ML model more interpretable. This can be e.g. tree pruning, adding sparsity to linear regression models, disentangle neurons.
+- We can use sensitivity analysis also to interpretable models
+- We did not touch topics where data is analyzed before modeling to understand the data better
+- Idea that we can decompose the function with functional ANOVA and so on
 
 %\paragraph{Blending all together.} This list was not exhaustive. For example, there are also ways to add interpretability constraints to a model, such as monotonicity or sparsity.
-%This can helps introspection, e.g., a linear model with most coefficients at zero is easier to interpret.
+%This can helps component analysis, e.g., a linear model with most coefficients at zero is easier to interpret.
 %But this can also help with sensitivity analysis, as PDPs of monotonic features will only show in one direction.
 
 \section*{Challenges}
@@ -208,10 +229,13 @@ Without a definition of "interpretability", how can we decide if a new method is
 To evaluate the \textbf{predictive performance} of an ML model, we simply compute the prediction error on test data given the groundtruth label.
 To evaluate the \textbf{interpretability} of that same ML model is not as easy.
 We do not know what the groundtruth explanation looks like and have no straightforward mean to quantify how interpretable a model is or how correct an explanation is.
-Instead of having one groundtruth explanation, various \textbf{quantifiable aspects of interpretability} are emerging.\cite{poursabzi2018manipulating,philipp2018measuring,molnar2019quantifying,hauenstein2018computing,zhou2018measuring,akaike1998information,schwarz1978estimating,poursabzi2018manipulating,dhurandhar2017tip,friedler2019assessing}
+Instead of having one groundtruth explanation, various \textbf{quantifiable aspects of interpretability} are emerging \cite{poursabzi2018manipulating,philipp2018measuring,molnar2019quantifying,hauenstein2018computing,zhou2018measuring,akaike1998information,schwarz1978estimating,poursabzi2018manipulating,dhurandhar2017tip,friedler2019assessing}.
+
+Two ways of evaluation of interpretability have emerged: \textit{objective evaluations} which are mathematically quantifiable metrics, and {human-centered evaluations} which involve studies with users.
 Sparsity of the explanation (or the model itself), interaction strength of features within the ML model and
-It seems like we are on our way to have many definitions of \textit{various aspects} of interpretability such as sparsity, interaction strength and a user's ability to run a model on a given input (simulatability) are examples of such aspects.
+It seems like we are on our way to have many definitions of \textit{various aspects} of interpretability such as sparsity, interaction strength, fidelity (how well explanation approximates the ML model), sensitivity to perturbations,  and a user's ability to run a model on a given input (simulatability) are examples of such aspects.
 The challenge ahead remains to establish a best practice on how to evaluate interpretation methods and the explanations they produce.
+Here we should also look to the field of Human-Computer Interaction who do exactly that.
 
 We have focused mostly on the methodological, mathematical challenges in a rather static setting, where you are given a machine learning model and data.
 \paragraph{Many more} challenges lie ahead to improve interpretability of machine learning.
