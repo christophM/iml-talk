@@ -154,44 +154,23 @@ plot(imp)
 
 ## How do features affect predictions?
 
-## Accumulated Local Effects
 
-```{r,  out.width = '78%'}
-knitr::include_graphics("../images/ale-intuition-1.jpg")
-```
+## ICE and PDP
 
-## Accumulated Local Effects
-
-```{r,  out.width = '78%'}
-knitr::include_graphics("../images/ale-intuition-2.jpg")
-```
-
-## Accumulated Local Effects
-
-```{r,  out.width = '78%'}
-knitr::include_graphics("../images/ale-intuition-3.jpg")
-```
-
-## Accumulated Local Effects
-```{r,  out.width = '78%'}
-knitr::include_graphics("../images/ale-intuition-4.jpg")
-```
-
-## Accumulated Local Effects
-```{r,  out.width = '78%'}
-knitr::include_graphics("../images/ale-intuition-5.jpg")
+```{r,  out.width = '72%'}
+knitr::include_graphics("../images/pdp.gif")
 ```
 
 
 ## Effect of Alcohol
 ```{r}
-eff = FeatureEffect$new(pred, "alcohol", method = 'ale')
+eff = FeatureEffect$new(pred, "alcohol", method = 'pdp+ice')
 plot(eff)
 ```
 
 ## Effect of Volatile Acidity
 ```{r}
-eff = FeatureEffect$new(pred, "volatile.acidity", method = 'ale')
+eff = FeatureEffect$new(pred, "volatile.acidity", method = 'pdp+ice')
 plot(eff)
 ```
 
@@ -199,7 +178,7 @@ plot(eff)
 ## How do features affect predictions?
 
 ```{r}
-effs = FeatureEffects$new(pred)
+effs = FeatureEffects$new(pred, method = "pdp")
 plot(effs, ncols = 4)
 ```
 
