@@ -29,7 +29,7 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 
 ## {.center data-background=../images/explain.png data-background-size=contain}
 
-```{r, child="../chunks/tools.Rmd"}
+```{r, child="../chunks/tools.Rmd", eval = FALSE}
 ```
 
 
@@ -37,7 +37,6 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
 
-# Backup
 
 ## Units in Wine dataset
 
