@@ -102,6 +102,7 @@ colnames(bmr_tab) = c("", "Model", "Mean Absolute Error")
 knitr::kable(bmr_tab[-1])
 ```
 
+$$MAE(y,f(X)) = abs(y - f(X))$$
 
 ```{r final-model}
 mod = train(lrn.ranger, tsk)
@@ -159,8 +160,8 @@ Looking inside the black box
 knitr::include_graphics("../images/permimp-shuffle.png")
 ```
 
-1. Measure model error on test data
-1. Shuffle feature of interest
+1. Measure model error on test data (e.g. MAE)
+1. Permute feature of interest
 1. Measure model error again
 1. Compute difference or ratio
 
@@ -190,10 +191,11 @@ PDP: Partial Dependence Plots
 
 ## ICE and PDP
 
-```{r,  out.width = '72%'}
+```{r,  out.width = '50%'}
 knitr::include_graphics("../images/pdp.gif")
 ```
 
+$$PDP(x) = \frac{1}{n} \sum_{i=1}^n f(x, x_C^{(i)})$$
 
 ## Effect of Alcohol
 ```{r}
@@ -230,9 +232,9 @@ p3 = FeatureEffect$new(pred, method = "pdp", feature = c("alcohol", "volatile.ac
 ## Interactions (H-Statistic)
 
 
-H-Statistic tells us how much of the effect of two is due to interactions.
+H-Statistic tells us how much of the effect of two is due to interactions: $H^2_{jk}= \frac{\sum_{i=1}^n\left[PD_{jk}(x^{(i)})-PD_j(x^{(i)})-PD_k(x^{(i)})\right]^2}{\sum_{i=1}^n{PD}^2_{jk}(x^{(i)})}$
 
-```{r}
+```{r, out.width = "80%"}
 ntrct = Interaction$new(pred, feature = "alcohol")
 plot(ntrct, ncols = 4)
 ```
