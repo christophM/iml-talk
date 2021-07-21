@@ -1,0 +1,59 @@
+---
+title: "Model-agnostic Interpretable Machine Learning"
+author: "Christoph Molnar"
+date: "2021-08"
+institute: "BIPS bremen"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: "header_pagenrs.tex"
+---
+
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+  warning = FALSE,
+  message = FALSE, 
+  fig.align='center', 
+  out.width = '90%',
+  dev = "CairoPNG")
+
+ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
+```
+
+# Some ideas
+
+- Cite pitfalls at many places in the talk
+- INtroduction with History: INterweave motivation, and also cite history paper
+- 
+
+# Outline
+
+- A Brief History of Interpretability
+- A Closer Look at Model-agnostic interpretability
+- methods:
+  - Feature Effects: PDP, ICE and ALE
+  - Feature Importance: PFI
+- Overview of Stuff I did in my PhD 
+- Measuring Model Complexity
+- Conditional Feature Importance Using Subgroups
+- Inference of Effects
+
+
+
+
+# Summary of Thesis
+
+In my thesis I did a lot of consolidation work:
+
+- Book
+- R package
+- History paper
+- Pitfalls paper
+
+
+
+What if we embrace black box view of models?
+
+Special focus on old, established tools, and make them fit for 
