@@ -30,7 +30,7 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 
 # Outline
 
-- A Brief History of Interpretability
+- A Brief History of Interpretable Modeling
 - A Closer Look at Model-agnostic interpretability
 - methods:
   - Feature Effects: PDP, ICE and ALE
@@ -40,10 +40,70 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 - Conditional Feature Importance Using Subgroups
 - Inference of Effects
 
+# Before You Pin Me Down
 
+To get this out of the way, here is how I use "Interpretable Machine Learning":
+
+It's an umbrella term for approaches that analyze or describe prediction mechanisms in models that were learned on data.
+
+# A Brief History of Interpretable Modeling
+
+Interpretable Models with data have a longer history, but the field of interpretable machine learning is still very young as consolidated field.
+
+* 1800s: Linear regression models
+* 1960: Rule-based ML (AID, CHAID, CART, association rules, ...)
+* 2001: Random Forest
+* 2021: Deep Learning Boom kicked off
+* 2016: Interpretable ML / Explainable AI boom
+
+While 200 years of history, consolidation as larger field only started in 2016.
+
+TODO: Add citation report and or google trends image
+
+# Why Interpretability?
+
+* The more non-linear and complex a model, the more difficult to understand how it operates
+* Trust
+* Debugging
+* Control 
+* ...
+
+# Interpretable Models
+
+* GAM and other linear models
+* Trees and decision rules
+* More complex models, but interpretation requires more work or post-processing
+
+# Model-agnostic Interpretation
+
+Basic idea: Treat the model as a black box, not allowed to look inside.
+
+Idea very powerful: Allows modularity, works for most models, results are comparable across models 
+
+TODO: CITE SIPA paper here
+
+
+# PDP and ICE
+
+# PFI
+
+TODO: Explain how PFI works
+
+# PFI and PDP similarity
+
+CITE paper GC here
+
+# Difference between model-agnostic and model-specific interpetation
+
+* Analyzing components vs. analyzing behavior
+* Components not very powerful, unless they directly describe behavior
+* For complex model, components do not directly tell us about behavior of model
+* Behavior more comparable
 
 
 # Summary of Thesis
+
+TODO: Draw image with Ipad
 
 In my thesis I did a lot of consolidation work:
 
@@ -52,8 +112,95 @@ In my thesis I did a lot of consolidation work:
 - History paper
 - Pitfalls paper
 
-
-
 What if we embrace black box view of models?
 
-Special focus on old, established tools, and make them fit for 
+Special focus on old, established tools, and make them fit for right use in practice
+
+Also some more specific papers
+
+* subgroups
+* inference
+* quantifying
+
+and some contributions to
+
+* MOC
+* relative feature importance
+* SIPA
+* feature importance and PDP (GC)
+
+# Paper: Subgroups
+
+## Problem: Dependent features
+
+Show example with dependent features for PFI
+
+## Soluation: Conditional variants
+
+Show solution
+
+* But: Not meaningful for PDP, or other measure more useful (LOESS)
+* But: Conditioning unclear
+* But: Intepretation difficult
+
+## Our solution: Permute in subgroups
+
+TODO: Show algorithm
+
+## Some results from our paper
+
+TODO: Show results or application
+
+# Paper: IML Inference
+
+## Problem: Uncertainty quantification
+
+PDP and PFI and most other just descriptive tools
+Often practictioner draw confidence intervals
+but only based on monte carlo approximation
+
+* But what is even the ground truth?
+* And what about the uncertainty in the model fit?
+* How could we estimate the uncertainty?
+
+## Solution: Treat as statistical estimator
+
+
+## How to Compute the variance
+
+## Problem of too low variance estimates
+
+# Paper: Quantifying
+
+TODO: Copy as much as possible from the talk that already exists for this paper
+
+Motivation: want to quantify in a model-agnostic way how complex a model is
+
+## Functional Decomposition
+
+Explain how functional decomposition works
+
+## ALE
+
+Formula: 
+
+TODO: For estimation show the images 
+
+## The three measures
+
+* Mean effect complexity
+* non linearity
+* number of features
+
+
+## Using in benchmarking (multi-objective)  
+
+
+
+
+## Thank You for Your Attention
+
+
+
+
+
