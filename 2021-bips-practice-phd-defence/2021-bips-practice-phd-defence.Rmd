@@ -3,10 +3,7 @@ title: "Model-agnostic Interpretable Machine Learning"
 author: "Christoph Molnar"
 date: "2021-08"
 institute: "BIPS bremen"
-output: 
-  beamer_presentation:
-    includes:
-      in_header: "header_pagenrs.tex"
+output: ioslides_presentation
 ---
 
 
@@ -22,45 +19,43 @@ knitr::opts_chunk$set(echo = FALSE,
 ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
-# Some ideas
+## Some ideas
 
 - Cite pitfalls at many places in the talk
 - INtroduction with History: INterweave motivation, and also cite history paper
-- 
 
-# Outline
+
+## Outline
 
 - A Brief History of Interpretable Modeling
-- A Closer Look at Model-agnostic interpretability
-- methods:
-  - Feature Effects: PDP, ICE and ALE
-  - Feature Importance: PFI
-- Overview of Stuff I did in my PhD 
-- Measuring Model Complexity
-- Conditional Feature Importance Using Subgroups
-- Inference of Effects
+- Model-agnostic interpretability
+- Methods PDP and PFI
+- What I did in my PhD 
+    - Conditional Feature for PFI and PDP Importance Using Subgroups
+    - Statistical Inference for PDP and PFI
+    - Measuring Model Complexity
 
-# Before You Pin Me Down
+## Before You Pin Me Down
 
 To get this out of the way, here is how I use "Interpretable Machine Learning":
 
 It's an umbrella term for approaches that analyze or describe prediction mechanisms in models that were learned on data.
 
-# A Brief History of Interpretable Modeling
+## A Brief History of Interpretable Modeling
 
-Interpretable Models with data have a longer history, but the field of interpretable machine learning is still very young as consolidated field.
 
 * 1800s: Linear regression models
-* 1960: Rule-based ML (AID, CHAID, CART, association rules, ...)
-* 2001: Random Forest
-* 2021: Deep Learning Boom kicked off
-* 2016: Interpretable ML / Explainable AI boom
+* 1960s: Rule-based ML
+* 2001:  Random Forest
+* 2012:  Deep Learning Boom kicked off
+* 2016:  Interpretable ML / Explainable AI boom
 
-While 200 years of history, consolidation as larger field only started in 2016.
+
+Interpretable ML has 200 year old roots, but consolidation only started in 2016.
 
 TODO: Add citation report and or google trends image
 
-# Why Interpretability?
+## Why Interpretability?
 
 * The more non-linear and complex a model, the more difficult to understand how it operates
 * Trust
@@ -68,11 +63,18 @@ TODO: Add citation report and or google trends image
 * Control 
 * ...
 
-# Interpretable Models
+## Interpretable Models
 
 * GAM and other linear models
 * Trees and decision rules
 * More complex models, but interpretation requires more work or post-processing
+
+## Interpretable Models
+
+```{r, echo = FALSE}
+knitr::include_graphics("../images/white-box.png")
+```
+
 
 # Model-agnostic Interpretation
 
@@ -82,16 +84,59 @@ Idea very powerful: Allows modularity, works for most models, results are compar
 
 TODO: CITE SIPA paper here
 
+## Interpreting Models
 
-# PDP and ICE
+```{r, echo=FALSE}
+knitr::include_graphics("../images/black-box.png")
+```
 
-# PFI
+## Model-agnostic Methods
 
-TODO: Explain how PFI works
+```{r, echo=FALSE}
+knitr::include_graphics("../images/agnostic-black-box.png")
+```
 
-# PFI and PDP similarity
+
+
+# Methodological Background
+
+## Individual Conditional Expectations (ICE)
+
+maybe use ice + pdp animation, but split into individual frames so they are clickable
+
+## Partial Dependence Plot (PDP)
+
+The theoretical construct:
+$$ PD(x) = \mathbb{E}_{X_{C}}[\hat{f}(x, X_{C})] $$
+
+The estimator:
+$$\widehat{PD} = \frac{1}{n_2}\sum_{i=1}^{n_2} \hat{f}(x, x_{C}^{(i)})$$
+
+What it looks like:
+
+TODO: 1D-plot and 2D-plot
+
+
+## Permutation Feature Importance PFI
+
+The construct:
+$$PFI =  \mathbb{E}_{Y \tilde{X}_S X_C}(L(Y, \hat{f}(\tilde{X}_S, X_C))) - \mathbb{E}_{Y X_S X_C}(L(Y,\hat{f}(X_S, X_C)))$$
+
+The algorithm (simples form): CITE Breiman
+
+- Measure original loss $L$ on test data.
+- Permute features $X_S$ to get sample $\tilde{X}_S$.
+- Get prediction with $\tilde{X}_S$, measure loss again.
+- Measure difference between losses.
+- Interpretation: PFI is performance drop when "destroying" information about feature.
+
+
+## PFI and PDP similarity
 
 CITE paper GC here
+
+
+
 
 # Difference between model-agnostic and model-specific interpetation
 
@@ -135,7 +180,7 @@ and some contributions to
 
 Show example with dependent features for PFI
 
-## Soluation: Conditional variants
+## Solution: Conditional variants
 
 Show solution
 
@@ -196,9 +241,68 @@ TODO: For estimation show the images
 ## Using in benchmarking (multi-objective)  
 
 
+# Inference of Feature Effects and Importance in Machine Learning
+
+## Status-Quo
+
+- For inference, practitioner rely on interpretable models
+- remember: interpretable models have parameters that map to data-generating process
+- but: situations where more flexible models match DGP better (measured in test loss)
+- we have: model-agnostic interpretation
+- But: only describes the model behavior
+- Question: Can we link PD and PFI to the DGP? and even do inference?
+
+## Example
+
+TODO: Show PDP and PFI from some papers?
+
+## Linking external tools to DGP
+
+- Hope: Lift PDP and PFI to status of statistical estimator
+- Needed: estimand. A definition of what it is supposed to estimate in the DGP (not the model)
+- Idea: PDP and PFI are expectation of a function
+- Assumption: True function $f$ exists in DGP
+- Then: We can apply same interpretation tools to DGP. Very simple.
+
+TODO: simple image
+
+## Source of uncertainty
+
+- The ground truth estimand allows use to do the usual statistical estimator stuff:
+- For example: Measure MSE
+- Or: split up MSE into bias (systematic deviation of estimator to estimand)
+- Variance: Two sources in the estimation process:
+  - Model is a random variable bc. training data is a sample + model-specific inherent randomness (such as subset sampling in random forests)
+  - Expectations are based on Monte carlo sampling
 
 
-## Thank You for Your Attention
+## Model-PD and Model-PFI
+
+Show definition plus confidence intervals plus image
+
+
+
+## Learner-PD and Learner-PFI
+
+
+Show definition plus confidence intervals plus image
+
+But there is a problem when estimating this variance
+
+
+## Variance correction
+
+- Variance is underestimated as training data is shared by models.
+- Same for test data.
+- Underestimating variance also means confidence intervals are too short, appearing more certain than they really are.
+- Same problem exists for variance estimates for model performance, as needed for comparing models
+- Nadeau et. al (CITE) proposed correction term
+- term very naive, but MUCH better than without correction
+
+## Show simulation results
+
+
+# Thank You for Your Attention
 
 
 
