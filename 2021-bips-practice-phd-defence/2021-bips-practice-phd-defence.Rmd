@@ -9,20 +9,15 @@ output: ioslides_presentation
 
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE, 
+knitr::opts_chunk$set(echo = FALSE,
   warning = FALSE,
-  message = FALSE, 
-  fig.align='center', 
+  message = FALSE,
+  fig.align='center',
   out.width = '90%',
   dev = "CairoPNG")
 
 ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
-
-## Some ideas
-
-- Cite pitfalls at many places in the talk
-- INtroduction with History: INterweave motivation, and also cite history paper
 
 
 ## Outline
@@ -30,7 +25,7 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 - A Brief History of Interpretable Modeling
 - Model-agnostic interpretability
 - Methods PDP and PFI
-- What I did in my PhD 
+- What I did in my PhD
     - Conditional Feature for PFI and PDP Importance Using Subgroups
     - Statistical Inference for PDP and PFI
     - Measuring Model Complexity
@@ -60,7 +55,7 @@ TODO: Add citation report and or google trends image
 * The more non-linear and complex a model, the more difficult to understand how it operates
 * Trust
 * Debugging
-* Control 
+* Control
 * ...
 
 ## Interpretable Models
@@ -78,9 +73,11 @@ knitr::include_graphics("../images/white-box.png")
 
 # Model-agnostic Interpretation
 
+## Model-agnostic Interpretation
+
 Basic idea: Treat the model as a black box, not allowed to look inside.
 
-Idea very powerful: Allows modularity, works for most models, results are comparable across models 
+Idea very powerful: Allows modularity, works for most models, results are comparable across models
 
 TODO: CITE SIPA paper here
 
@@ -100,21 +97,122 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 
 # Methodological Background
 
-## Individual Conditional Expectations (ICE)
+## Individual Conditional Expectation (ICE)
 
-maybe use ice + pdp animation, but split into individual frames so they are clickable
+How does a feature influence the prediction for an individual observation?
+
+```{r}
+load(url("https://github.com/christophM/interpretable-ml-book/blob/master/data/bike.RData?raw=true"))
+library("mlr")
+library("iml")
+library("ggplot2")
+library(dplyr)
+library(tidyr)
+
+bike.task = makeRegrTask(data = bike, target = "cnt")
+mod.bike = mlr::train(mlr::makeLearner(cl = 'regr.randomForest', id = 'bike-rf'), bike.task)
+
+set.seed(42)
+bike.sub = bike[sample(1:nrow(bike), size = 15),]
+
+pred.bike = Predictor$new(mod.bike, data = bike.sub)
+pdp = FeatureEffect$new(pred.bike, "temp", method = "ice", grid.size = 7)
+
+
+res.raw = pdp$results
+theme_set(theme_classic(base_size = 20))
+
+
+## Step 1: Define grid over feature
+grid.dat = data.frame(temp = unique(res.raw$temp), .id = 1, temp2 = 1)
+p = ggplot(grid.dat) + geom_vline(aes(xintercept = temp)) +
+  scale_y_continuous("Prediction", limits = c(min(res.raw$.y.hat), max(res.raw$.y.hat))) +
+  ggtitle("1) Define grid along feature") +
+  scale_x_continuous("Feature")
+  #scale_y_continuous("Prediction")
+p
+```
+
+## Individual Conditional Expectation (ICE)
+
+How does a feature influence the prediction for an individual observation?
+
+
+```{r}
+## Step 2: Get predictions for data set when at grid
+grid.dat = data.frame(temp = unique(res.raw$temp))
+res.raw$tt = res.raw$temp
+p = ggplot(res.raw, aes(x = temp, y = .value)) +
+  geom_vline(data = grid.dat, aes(xintercept = temp)) +
+  geom_point(aes(color = factor(.id)), size = 3)+
+  scale_color_discrete(guide = "none") +
+  ggtitle("2) Model predictions at grid points") +
+  scale_x_continuous("Feature") +
+  scale_y_continuous("Prediction", breaks = NULL)
+p
+```
+
+## Individual Conditional Expectation (ICE)
+
+How does a feature influence the prediction for an individual observation?
+
+
+```{r}
+res.raw$.id2 = factor(res.raw$.id)
+p = ggplot(res.raw, aes(x = temp, y = .value))  +
+  #geom_vline(aes(xintercept = temp), data = grid.dat) +
+  geom_line(aes(group = .id), size  = 1)  +
+  geom_point(data = res.raw[c("temp", ".value", ".id2")], aes(color = .id2), size = 3) +
+  scale_color_discrete(guide = "none") +
+  ggtitle("3) Line per data instance -> ICE curves") +
+  scale_x_continuous("Feature") +
+  scale_y_continuous("Prediction", breaks = NULL)
+p
+```
 
 ## Partial Dependence Plot (PDP)
+
+How does a feature influence the prediction for an individual observation **on average**?
+
+
+
+## Partial Dependence Plot (PDP)
+
+How does a feature influence the prediction for an individual observation **on average**?
+
+```{r}
+p
+```
+
+
+## Partial Dependence Plot (PDP)
+
+How does a feature influence the prediction for an individual observation **on average**?
+
+```{r}
+res = res.raw %>% group_by(temp) %>%
+  summarize(pdp = mean(.value))
+
+p = ggplot(res) +
+  geom_line(aes(x = temp, y = pdp), size = 1.5) +
+  geom_point(data = res.raw[c("temp", ".value", ".id2")], aes(color = .id2, x = temp, y = .value), size = 1, alpha = 0.5) +
+  ggtitle("4) Average curves to get a PDP") +
+  scale_color_discrete(guide = "none") +
+  scale_x_continuous("Feature") +
+  scale_y_continuous("Prediction", breaks = NULL)
+p
+```
+
+
+
+## Partial Dependence Plot (PDP)
+
 
 The theoretical construct:
 $$ PD(x) = \mathbb{E}_{X_{C}}[\hat{f}(x, X_{C})] $$
 
 The estimator:
-$$\widehat{PD} = \frac{1}{n_2}\sum_{i=1}^{n_2} \hat{f}(x, x_{C}^{(i)})$$
-
-What it looks like:
-
-TODO: 1D-plot and 2D-plot
+$$\widehat{PD} = \frac{1}{n}\sum_{i=1}^{n} \hat{f}(x, x_{C}^{(i)})$$
 
 
 ## Permutation Feature Importance PFI
@@ -227,9 +325,9 @@ Explain how functional decomposition works
 
 ## ALE
 
-Formula: 
+Formula:
 
-TODO: For estimation show the images 
+TODO: For estimation show the images
 
 ## The three measures
 
@@ -238,7 +336,7 @@ TODO: For estimation show the images
 * number of features
 
 
-## Using in benchmarking (multi-objective)  
+## Using in benchmarking (multi-objective)
 
 
 # Inference of Feature Effects and Importance in Machine Learning
