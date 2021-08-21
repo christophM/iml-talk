@@ -22,47 +22,45 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 
 ## Outline
 
-- A Brief History of Interpretable Modeling
-- Model-agnostic interpretability
-- Methods PDP and PFI
+- Introduction
+  - Brief History of Interpretability
+  - What Is Model-Agnostic Interpretability?
+  - Partial Dependence Plot (PDP)
+  - Permutation Feature Importance (PFI)
 - What I did in my PhD
-    - Conditional Feature for PFI and PDP Importance Using Subgroups
-    - Statistical Inference for PDP and PFI
-    - Measuring Model Complexity
+- Statistical Inference for PDP and PFI
 
-## Before You Pin Me Down
-
-To get this out of the way, here is how I use "Interpretable Machine Learning":
-
-It's an umbrella term for approaches that analyze or describe prediction mechanisms in models that were learned on data.
+# Introduction
 
 ## A Brief History of Interpretable Modeling
 
+Interpretable ML has 200 year old roots, but consolidation only started in 2016.
 
-* 1800s: Linear regression models
-* 1960s: Rule-based ML
-* 2001:  Random Forest
-* 2012:  Deep Learning Boom kicked off
-* 2016:  Interpretable ML / Explainable AI boom
+>- 1800s: Linear regression models
+>- 1960s: Rule-based ML
+>- 2001:  Random Forest
+>- 2012:  Deep Learning Boom kicked off
+>- 2016:  Interpretable ML / Explainable AI boom
 
+## A Brief History of Interpretable Modeling
 
 Interpretable ML has 200 year old roots, but consolidation only started in 2016.
 
-TODO: Add citation report and or google trends image
+TODO: Web Of Science for keywords XAI and IML (written out)
+
 
 ## Why Interpretability?
 
-* The more non-linear and complex a model, the more difficult to understand how it operates
-* Trust
-* Debugging
-* Control
-* ...
+```{r, out.width = 500}
+knitr::include_graphics("../images/explain.png")
+```
+
 
 ## Interpretable Models
 
-* GAM and other linear models
-* Trees and decision rules
-* More complex models, but interpretation requires more work or post-processing
+* Decision trees and decision rules
+* Generalized additive models and the whole gang of statistical modeling
+* Interpretable models allow interpretation of internal structure and parameters.
 
 ## Interpretable Models
 
@@ -73,6 +71,16 @@ knitr::include_graphics("../images/white-box.png")
 
 # Model-agnostic Interpretation
 
+
+## Black Box Models
+
+
+```{r, echo=FALSE}
+knitr::include_graphics("../images/black-box.png")
+```
+
+Random forest, gradient-boosted trees, neural networks, ...
+
 ## Model-agnostic Interpretation
 
 Basic idea: Treat the model as a black box, not allowed to look inside.
@@ -80,12 +88,6 @@ Basic idea: Treat the model as a black box, not allowed to look inside.
 Idea very powerful: Allows modularity, works for most models, results are comparable across models
 
 TODO: CITE SIPA paper here
-
-## Interpreting Models
-
-```{r, echo=FALSE}
-knitr::include_graphics("../images/black-box.png")
-```
 
 ## Model-agnostic Methods
 
@@ -96,6 +98,10 @@ knitr::include_graphics("../images/agnostic-black-box.png")
 
 
 # Methodological Background
+
+## Individual Conditional Expectation (ICE)
+
+How does a feature influence the prediction for an individual observation?
 
 ## Individual Conditional Expectation (ICE)
 
@@ -215,9 +221,28 @@ The estimator:
 $$\widehat{PD} = \frac{1}{n}\sum_{i=1}^{n} \hat{f}(x, x_{C}^{(i)})$$
 
 
-## Permutation Feature Importance PFI
+## Permutation Feature Importance (PFI)
+
+How important is a feature for making correct predictions?
+
+
+## Permutation Feature Importance (PFI)
+
+How important is a feature for making correct predictions?
+
+Idea: Shuffle the feature, and see how much worse the predictions are.
+
+```{r}
+knitr::include_graphics("../images/permimp-shuffle.png")
+```
+
+
+
+## Permutation Feature Importance (PFI)
+
 
 The construct:
+
 $$PFI =  \mathbb{E}_{Y \tilde{X}_S X_C}(L(Y, \hat{f}(\tilde{X}_S, X_C))) - \mathbb{E}_{Y X_S X_C}(L(Y,\hat{f}(X_S, X_C)))$$
 
 The algorithm (simples form): CITE Breiman
@@ -228,10 +253,6 @@ The algorithm (simples form): CITE Breiman
 - Measure difference between losses.
 - Interpretation: PFI is performance drop when "destroying" information about feature.
 
-
-## PFI and PDP similarity
-
-CITE paper GC here
 
 
 
@@ -244,33 +265,34 @@ CITE paper GC here
 * Behavior more comparable
 
 
-# Summary of Thesis
+# Stuff I Did for My Thesis
 
-TODO: Draw image with Ipad
+## Most Important
 
-In my thesis I did a lot of consolidation work:
+## Not Part of My PhD Though
 
-- Book
-- R package
-- History paper
-- Pitfalls paper
+```{r, out.width = 540}
+knitr::include_graphics("../images/academic-credit.jpg")
+```
 
-What if we embrace black box view of models?
 
-Special focus on old, established tools, and make them fit for right use in practice
 
-Also some more specific papers
+## Summary of Thesis
 
-* subgroups
-* inference
-* quantifying
-
-and some contributions to
-
-* MOC
-* relative feature importance
-* SIPA
-* feature importance and PDP (GC)
+- Consolidation Work
+  - Book
+  - R package
+  - History paper
+  - Pitfalls paper
+- Improving Methods
+  - subgroups
+  - iml inference
+  - quantifying
+- Contributed to
+  - MOC
+  - relative feature importance
+  - SIPA
+  -  feature importance and PDP (GC)
 
 # Paper: Subgroups
 
