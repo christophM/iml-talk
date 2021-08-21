@@ -3,7 +3,8 @@ title: "Model-agnostic Interpretable Machine Learning"
 author: "Christoph Molnar"
 date: "2021-08"
 institute: "BIPS bremen"
-output: ioslides_presentation
+output:
+  xaringan::moon_reader
 ---
 
 
@@ -20,7 +21,7 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 ```
 
 
-## Outline
+# Outline
 
 - Introduction
   - Brief History of Interpretability
@@ -30,17 +31,39 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
 - What I did in my PhD
 - Statistical Inference for PDP and PFI
 
+---
+
 # Introduction
+
+---
 
 ## A Brief History of Interpretable Modeling
 
 Interpretable ML has 200 year old roots, but consolidation only started in 2016.
+--
 
->- 1800s: Linear regression models
->- 1960s: Rule-based ML
->- 2001:  Random Forest
->- 2012:  Deep Learning Boom kicked off
->- 2016:  Interpretable ML / Explainable AI boom
+- 1800s: Linear regression models
+
+--
+
+- 1960s: Rule-based ML
+
+--
+
+- 2001:  Random Forest
+
+--
+- 2012:  Deep Learning Boom kicked off
+
+--
+
+- 2016:  Interpretable ML / Explainable AI boom
+
+???
+
+Now impress audience with history
+
+---
 
 ## A Brief History of Interpretable Modeling
 
@@ -49,12 +72,15 @@ Interpretable ML has 200 year old roots, but consolidation only started in 2016.
 TODO: Web Of Science for keywords XAI and IML (written out)
 
 
+---
+
 ## Why Interpretability?
 
 ```{r, out.width = 500}
 knitr::include_graphics("../images/explain.png")
 ```
 
+---
 
 ## Interpretable Models
 
@@ -62,15 +88,19 @@ knitr::include_graphics("../images/explain.png")
 * Generalized additive models and the whole gang of statistical modeling
 * Interpretable models allow interpretation of internal structure and parameters.
 
+---
+
 ## Interpretable Models
 
 ```{r, echo = FALSE}
 knitr::include_graphics("../images/white-box.png")
 ```
 
+---
 
 # Model-agnostic Interpretation
 
+---
 
 ## Black Box Models
 
@@ -81,6 +111,8 @@ knitr::include_graphics("../images/black-box.png")
 
 Random forest, gradient-boosted trees, neural networks, ...
 
+---
+
 ## Model-agnostic Interpretation
 
 Basic idea: Treat the model as a black box, not allowed to look inside.
@@ -89,25 +121,27 @@ Idea very powerful: Allows modularity, works for most models, results are compar
 
 TODO: CITE SIPA paper here
 
+---
+
 ## Model-agnostic Methods
 
 ```{r, echo=FALSE}
 knitr::include_graphics("../images/agnostic-black-box.png")
 ```
 
-
+---
 
 # Methodological Background
 
-## Individual Conditional Expectation (ICE)
-
-How does a feature influence the prediction for an individual observation?
+---
 
 ## Individual Conditional Expectation (ICE)
 
 How does a feature influence the prediction for an individual observation?
 
-```{r}
+--
+
+```{r, out.width = 500}
 load(url("https://github.com/christophM/interpretable-ml-book/blob/master/data/bike.RData?raw=true"))
 library("mlr")
 library("iml")
@@ -138,13 +172,14 @@ p = ggplot(grid.dat) + geom_vline(aes(xintercept = temp)) +
   #scale_y_continuous("Prediction")
 p
 ```
+---
 
 ## Individual Conditional Expectation (ICE)
 
 How does a feature influence the prediction for an individual observation?
 
 
-```{r}
+```{r, out.width = 500}
 ## Step 2: Get predictions for data set when at grid
 grid.dat = data.frame(temp = unique(res.raw$temp))
 res.raw$tt = res.raw$temp
@@ -158,12 +193,14 @@ p = ggplot(res.raw, aes(x = temp, y = .value)) +
 p
 ```
 
+---
+
 ## Individual Conditional Expectation (ICE)
 
 How does a feature influence the prediction for an individual observation?
 
 
-```{r}
+```{r, out.width = 500}
 res.raw$.id2 = factor(res.raw$.id)
 p = ggplot(res.raw, aes(x = temp, y = .value))  +
   #geom_vline(aes(xintercept = temp), data = grid.dat) +
@@ -175,27 +212,25 @@ p = ggplot(res.raw, aes(x = temp, y = .value))  +
   scale_y_continuous("Prediction", breaks = NULL)
 p
 ```
+---
 
 ## Partial Dependence Plot (PDP)
 
 How does a feature influence the prediction for an individual observation **on average**?
 
+--
 
-
-## Partial Dependence Plot (PDP)
-
-How does a feature influence the prediction for an individual observation **on average**?
-
-```{r}
+```{r, out.width = 500}
 p
 ```
 
+---
 
 ## Partial Dependence Plot (PDP)
 
 How does a feature influence the prediction for an individual observation **on average**?
 
-```{r}
+```{r, out.width = 500}
 res = res.raw %>% group_by(temp) %>%
   summarize(pdp = mean(.value))
 
@@ -209,6 +244,7 @@ p = ggplot(res) +
 p
 ```
 
+---
 
 
 ## Partial Dependence Plot (PDP)
@@ -220,11 +256,14 @@ $$ PD(x) = \mathbb{E}_{X_{C}}[\hat{f}(x, X_{C})] $$
 The estimator:
 $$\widehat{PD} = \frac{1}{n}\sum_{i=1}^{n} \hat{f}(x, x_{C}^{(i)})$$
 
+---
 
 ## Permutation Feature Importance (PFI)
 
 How important is a feature for making correct predictions?
 
+
+---
 
 ## Permutation Feature Importance (PFI)
 
@@ -236,7 +275,7 @@ Idea: Shuffle the feature, and see how much worse the predictions are.
 knitr::include_graphics("../images/permimp-shuffle.png")
 ```
 
-
+---
 
 ## Permutation Feature Importance (PFI)
 
@@ -253,21 +292,28 @@ The algorithm (simples form): CITE Breiman
 - Measure difference between losses.
 - Interpretation: PFI is performance drop when "destroying" information about feature.
 
+---
 
-
-
-
-# Difference between model-agnostic and model-specific interpetation
+## Difference between model-agnostic and model-specific interpetation
 
 * Analyzing components vs. analyzing behavior
 * Components not very powerful, unless they directly describe behavior
 * For complex model, components do not directly tell us about behavior of model
 * Behavior more comparable
 
+---
 
 # Stuff I Did for My Thesis
 
-## Most Important
+---
+
+## Most Impactful Work
+
+```{r, out.width = 300}
+knitr::include_graphics("../images/book.jpg")
+```
+
+---
 
 ## Not Part of My PhD Though
 
@@ -275,7 +321,7 @@ The algorithm (simples form): CITE Breiman
 knitr::include_graphics("../images/academic-credit.jpg")
 ```
 
-
+---
 
 ## Summary of Thesis
 
@@ -292,89 +338,39 @@ knitr::include_graphics("../images/academic-credit.jpg")
   - MOC
   - relative feature importance
   - SIPA
-  -  feature importance and PDP (GC)
+  - feature importance and PDP (GC)
 
-# Paper: Subgroups
-
-## Problem: Dependent features
-
-Show example with dependent features for PFI
-
-## Solution: Conditional variants
-
-Show solution
-
-* But: Not meaningful for PDP, or other measure more useful (LOESS)
-* But: Conditioning unclear
-* But: Intepretation difficult
-
-## Our solution: Permute in subgroups
-
-TODO: Show algorithm
-
-## Some results from our paper
-
-TODO: Show results or application
-
-# Paper: IML Inference
-
-## Problem: Uncertainty quantification
-
-PDP and PFI and most other just descriptive tools
-Often practictioner draw confidence intervals
-but only based on monte carlo approximation
-
-* But what is even the ground truth?
-* And what about the uncertainty in the model fit?
-* How could we estimate the uncertainty?
-
-## Solution: Treat as statistical estimator
-
-
-## How to Compute the variance
-
-## Problem of too low variance estimates
-
-# Paper: Quantifying
-
-TODO: Copy as much as possible from the talk that already exists for this paper
-
-Motivation: want to quantify in a model-agnostic way how complex a model is
-
-## Functional Decomposition
-
-Explain how functional decomposition works
-
-## ALE
-
-Formula:
-
-TODO: For estimation show the images
-
-## The three measures
-
-* Mean effect complexity
-* non linearity
-* number of features
-
-
-## Using in benchmarking (multi-objective)
-
+---
 
 # Inference of Feature Effects and Importance in Machine Learning
+
+---
+
+## Goal of Paper
+
+Treat permutation feature importance (PFI) and partial dependence plots (PDP) as statistical estimators.
+
+---
+
+## Statistical Modeling
+
+- Assumptions made about the data-generating process
+- Mapping between model parameters and properties of data-generating process
+- Statistical Inference possible
+
+TODO: Draw image which shows link between model and DGP
+
+---
 
 ## Status-Quo
 
 - For inference, practitioner rely on interpretable models
-- remember: interpretable models have parameters that map to data-generating process
-- but: situations where more flexible models match DGP better (measured in test loss)
-- we have: model-agnostic interpretation
-- But: only describes the model behavior
+- But: situations where more flexible models match DGP better (measured in test loss)
+- Interpretation possible with PDP and PFI (among others)
+- However only describes the model behavior
 - Question: Can we link PD and PFI to the DGP? and even do inference?
 
-## Example
-
-TODO: Show PDP and PFI from some papers?
+---
 
 ## Linking external tools to DGP
 
@@ -384,7 +380,9 @@ TODO: Show PDP and PFI from some papers?
 - Assumption: True function $f$ exists in DGP
 - Then: We can apply same interpretation tools to DGP. Very simple.
 
-TODO: simple image
+TODO: simple image with DGP + model. External tools, PDP and PFI, applied externally and compared.
+
+---
 
 ## Source of uncertainty
 
@@ -395,12 +393,13 @@ TODO: simple image
   - Model is a random variable bc. training data is a sample + model-specific inherent randomness (such as subset sampling in random forests)
   - Expectations are based on Monte carlo sampling
 
+---
 
 ## Model-PD and Model-PFI
 
 Show definition plus confidence intervals plus image
 
-
+---
 
 ## Learner-PD and Learner-PFI
 
@@ -409,6 +408,7 @@ Show definition plus confidence intervals plus image
 
 But there is a problem when estimating this variance
 
+---
 
 ## Variance correction
 
@@ -419,12 +419,11 @@ But there is a problem when estimating this variance
 - Nadeau et. al (CITE) proposed correction term
 - term very naive, but MUCH better than without correction
 
-## Show simulation results
+---
 
+## Thank You for Your Attention
 
-# Thank You for Your Attention
-
-
-
-
+```{r, out.width = 500}
+knitr::include_graphics("../images/applause.gif")
+```
 
