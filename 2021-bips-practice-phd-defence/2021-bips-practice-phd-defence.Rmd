@@ -4,7 +4,8 @@ author: "Christoph Molnar"
 date: "2021-08"
 institute: "BIPS bremen"
 output:
-  xaringan::moon_reader
+  xaringan::moon_reader:
+    css: ["default", "default-fonts", "references.css"]
 ---
 
 
@@ -30,10 +31,6 @@ ggplot2::theme_set(ggplot2::theme_bw(base_size = 15))
   - Permutation Feature Importance (PFI)
 - What I did in my PhD
 - Statistical Inference for PDP and PFI
-
----
-
-# Introduction
 
 ---
 
@@ -63,30 +60,6 @@ Interpretable ML has 200 year old roots, but consolidation only started in 2016.
 
 Now impress audience with history
 
----
-
-## A Brief History of Interpretable Modeling
-
-Interpretable ML has 200 year old roots, but consolidation only started in 2016.
-
-TODO: Web Of Science for keywords XAI and IML (written out)
-
-
----
-
-## Why Interpretability?
-
-```{r, out.width = 500}
-knitr::include_graphics("../images/explain.png")
-```
-
----
-
-## Interpretable Models
-
-* Decision trees and decision rules
-* Generalized additive models and the whole gang of statistical modeling
-* Interpretable models allow interpretation of internal structure and parameters.
 
 ---
 
@@ -96,9 +69,18 @@ knitr::include_graphics("../images/explain.png")
 knitr::include_graphics("../images/white-box.png")
 ```
 
+???
+
+* Decision trees and decision rules
+* Generalized additive models and the whole gang of statistical modeling
+* Interpretable models allow interpretation of internal structure and parameters.
+
 ---
+class: center, middle
+background-color: darkgrey
 
 # Model-agnostic Interpretation
+
 
 ---
 
@@ -113,15 +95,6 @@ Random forest, gradient-boosted trees, neural networks, ...
 
 ---
 
-## Model-agnostic Interpretation
-
-Basic idea: Treat the model as a black box, not allowed to look inside.
-
-Idea very powerful: Allows modularity, works for most models, results are comparable across models
-
-TODO: CITE SIPA paper here
-
----
 
 ## Model-agnostic Methods
 
@@ -129,7 +102,19 @@ TODO: CITE SIPA paper here
 knitr::include_graphics("../images/agnostic-black-box.png")
 ```
 
+???
+
+Basic idea: Treat the model as a black box, not allowed to look inside.
+
+Idea very powerful: Allows modularity, works for most models, results are comparable across models
+
+TODO: CITE SIPA paper here
+
+
+
 ---
+class: center, middle
+background-color: darkgrey
 
 # Methodological Background
 
@@ -197,7 +182,7 @@ p
 
 ## Individual Conditional Expectation (ICE)
 
-How does a feature influence the prediction for an individual observation?
+How does a feature influence the prediction for an **individual data point**?
 
 
 ```{r, out.width = 500}
@@ -216,7 +201,7 @@ p
 
 ## Partial Dependence Plot (PDP)
 
-How does a feature influence the prediction for an individual observation **on average**?
+How does a feature influence the prediction **on average**?
 
 --
 
@@ -228,7 +213,7 @@ p
 
 ## Partial Dependence Plot (PDP)
 
-How does a feature influence the prediction for an individual observation **on average**?
+How does a feature influence the prediction **on average**?
 
 ```{r, out.width = 500}
 res = res.raw %>% group_by(temp) %>%
@@ -251,7 +236,7 @@ p
 
 
 The theoretical construct:
-$$ PD(x) = \mathbb{E}_{X_{C}}[\hat{f}(x, X_{C})] $$
+$$PD(x) = \mathbb{E}_{X_{C}}[\hat{f}(x, X_{C})]$$
 
 The estimator:
 $$\widehat{PD} = \frac{1}{n}\sum_{i=1}^{n} \hat{f}(x, x_{C}^{(i)})$$
@@ -284,7 +269,7 @@ The construct:
 
 $$PFI =  \mathbb{E}_{Y \tilde{X}_S X_C}(L(Y, \hat{f}(\tilde{X}_S, X_C))) - \mathbb{E}_{Y X_S X_C}(L(Y,\hat{f}(X_S, X_C)))$$
 
-The algorithm (simples form): CITE Breiman
+The algorithm (simples form):
 
 - Measure original loss $L$ on test data.
 - Permute features $X_S$ to get sample $\tilde{X}_S$.
@@ -293,19 +278,14 @@ The algorithm (simples form): CITE Breiman
 - Interpretation: PFI is performance drop when "destroying" information about feature.
 
 ---
+class: middle, center
+background-color: darkgrey
 
-## Difference between model-agnostic and model-specific interpetation
-
-* Analyzing components vs. analyzing behavior
-* Components not very powerful, unless they directly describe behavior
-* For complex model, components do not directly tell us about behavior of model
-* Behavior more comparable
-
----
 
 # Stuff I Did for My Thesis
 
 ---
+background-color: lightgrey
 
 ## Most Impactful Work
 
@@ -322,8 +302,12 @@ knitr::include_graphics("../images/academic-credit.jpg")
 ```
 
 ---
+background-image:url(../images/thesis-summary.jpeg)
+background-size: contain
 
-## Summary of Thesis
+
+
+???
 
 - Consolidation Work
   - Book
@@ -341,50 +325,68 @@ knitr::include_graphics("../images/academic-credit.jpg")
   - feature importance and PDP (GC)
 
 ---
+class: center, middle
+background-color: darkgrey
 
-# Inference of Feature Effects and Importance in Machine Learning
-
----
-
-## Goal of Paper
-
-Treat permutation feature importance (PFI) and partial dependence plots (PDP) as statistical estimators.
+# Treating PDP and PFI as Statistical Estimators
 
 ---
 
 ## Statistical Modeling
 
+
+```{r, out.width = 500}
+knitr::include_graphics("../images/dgp-model-mapping.jpeg")
+```
+
+
+???
+
 - Assumptions made about the data-generating process
 - Mapping between model parameters and properties of data-generating process
 - Statistical Inference possible
 
-TODO: Draw image which shows link between model and DGP
-
----
-
-## Status-Quo
-
-- For inference, practitioner rely on interpretable models
-- But: situations where more flexible models match DGP better (measured in test loss)
-- Interpretation possible with PDP and PFI (among others)
-- However only describes the model behavior
-- Question: Can we link PD and PFI to the DGP? and even do inference?
 
 ---
 
 ## Linking external tools to DGP
 
+```{r, out.width = 500}
+knitr::include_graphics("../images/no-dgp-model-mapping.jpeg")
+```
+
+???
+- For inference, practitioner rely on interpretable models
+- But: situations where more flexible models match DGP better (measured in test loss)
+- Interpretation possible with PDP and PFI (among others)
+- However only describes the model behavior
+- Question: Can we link PD and PFI to the DGP? and even do inference?
 - Hope: Lift PDP and PFI to status of statistical estimator
 - Needed: estimand. A definition of what it is supposed to estimate in the DGP (not the model)
 - Idea: PDP and PFI are expectation of a function
 - Assumption: True function $f$ exists in DGP
 - Then: We can apply same interpretation tools to DGP. Very simple.
 
-TODO: simple image with DGP + model. External tools, PDP and PFI, applied externally and compared.
+
+
+---
+
+## Linking External Tools to DGP
+
+```{r, out.width = 500}
+knitr::include_graphics("../images/external-dgp-model-mapping.jpeg")
+```
 
 ---
 
 ## Source of uncertainty
+
+```{r, out.width = 900}
+knitr::include_graphics("../images/pdp-pfi-deviations.png")
+```
+
+
+???
 
 - The ground truth estimand allows use to do the usual statistical estimator stuff:
 - For example: Measure MSE
@@ -395,22 +397,23 @@ TODO: simple image with DGP + model. External tools, PDP and PFI, applied extern
 
 ---
 
-## Model-PD and Model-PFI
-
-Show definition plus confidence intervals plus image
-
----
-
 ## Learner-PD and Learner-PFI
 
-
-Show definition plus confidence intervals plus image
-
-But there is a problem when estimating this variance
-
+```{r, out.width = 640}
+knitr::include_graphics("../images/pdp-pfi-ci.png")
+```
 ---
 
-## Variance correction
+## One Problem: Variance Underestimation
+
+
+```{r, out.width = 500}
+knitr::include_graphics("../images/overlapping-training-data.jpeg")
+```
+
+-> Variance correction needed
+
+???
 
 - Variance is underestimated as training data is shared by models.
 - Same for test data.
@@ -418,6 +421,27 @@ But there is a problem when estimating this variance
 - Same problem exists for variance estimates for model performance, as needed for comparing models
 - Nadeau et. al (CITE) proposed correction term
 - term very naive, but MUCH better than without correction
+
+
+---
+
+class: small
+
+## References
+
+
+- Molnar, C., Casalicchio, G., & Bischl, B. (2018). iml: An R package for Interpretable Machine Learning. Journal of Open Source Software, 3, 786.
+- Molnar, C.. (2018). Interpretable Machine Learning - A Guide for Making Black Box Models Explainable.
+- Molnar, C., Casalicchio, G., & Bischl, B. (2019). Quantifying Model Complexity via Functional Decomposition for Better Post-Hoc Interpretability. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 193–204).
+- Dandl, S., Molnar, C., Binder, M., & Bischl, B. (2020). Multi-objective counterfactual explanations. In Bäck T. et al. (eds) Parallel Problem Solving from Nature – PPSN XVI. PPSN 2020. Lecture Notes in Computer Science (pp. 448–469).
+- Molnar, C., König, G., Bischl, B., & Casalicchio, G. (2020). Model-agnostic Feature Importance and Effects with Dependent Features–A Conditional Subgroup Approach. arXiv preprint arXiv:2006.04628.
+- Molnar, C., König, G., Herbinger, J., Freiesleben, T., Dandl, S., Scholbeck, C., Casalicchio, G., Grosse-Wentrup, M., & Bischl, B. (2020). Pitfalls to Avoid when Interpreting Machine Learning Models. In ICML workshop XXAI: Extending Explainable AI Beyond Deep Models and Classifiers.
+- Molnar, C. (2013). Recursive partitioning by conditional inference. Department of Statistics, University of Munich: Munich, Germany.
+- Molnar, C., Casalicchio, G., & Bischl, B. (2020). Interpretable Machine Learning - A Brief History, State-of-the-Art and Challenges. arXiv preprint arXiv:2010.09337.
+- Molnar, C., Freiesleben, T., König, G., Casalicchio, G., Wright, M., & Bischl, B. (2021), Relating Partial Dependence Plot and Permutation Feature Importance to the Data-Generating Process (Working Title). Not even on arxiv yet.
+- Casalicchio, G., Molnar, C., & Bischl, B. (2018). Visualizing the feature importance for black box models. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 655–670).
+- Scholbeck, C., Molnar, C., Heumann, C., Bischl, B., & Casalicchio, G. (2019). Sampling, intervention, prediction, aggregation: A generalized framework for model-agnostic interpretations. arXiv preprint arXiv:1904.03959.
+- König, G., Molnar, C., Bischl, B., & Grosse-Wentrup, M. (2021). Relative Feature Importance. In 2020 25th International Conference on Pattern Recognition (ICPR) (pp. 9318–9325).
 
 ---
 
